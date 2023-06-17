@@ -12,7 +12,6 @@ interface user{
 
 export class User implements user {
 
-    // @ts-ignore
     @PrimaryGeneratedColumn()
     id: number
 
