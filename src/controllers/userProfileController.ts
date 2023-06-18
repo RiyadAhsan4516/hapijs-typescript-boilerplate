@@ -15,7 +15,7 @@ export class UserProfileController{
     async createProfile(req: Request, h:ResponseToolkit<ReqRefDefaults>){
         // @ts-ignore
         const attributes = {...req.payload};
-        console.log(attributes.name)
+        console.log(attributes)
         return "hello"
     }
 

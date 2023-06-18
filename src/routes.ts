@@ -63,16 +63,18 @@ const routes : ServerRoute<ReqRefDefaults>[] = [
         path: "/api/v1/userProfile/create",
         options:  {
             payload: {
-                parse: true,
                 allow: "multipart/form-data",
+                parse: true,
                 multipart: {
-                    output: 'stream'
+                    output: "file"
                 },
                 maxBytes: 1000 * 1000 * 5, // 5 Mb
+                uploads: 'public/tmp',
             }
         },
         handler: new UserProfileController().createProfile
     }
+
 ]
 
 export default routes;

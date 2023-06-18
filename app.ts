@@ -33,6 +33,16 @@ const server : Hapi.Server<Hapi.ServerApplicationState> = Hapi.server({
 
 const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
     await server.register(inert);
+
+    server.route({
+        method: 'GET',
+        path: '/{picture}',
+        handler: function (req, h) {
+
+            return h.file(`${req.params.picture}`);
+        }
+    });
+
     server.route(routes);
     return server
 };
