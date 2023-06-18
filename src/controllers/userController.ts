@@ -24,8 +24,8 @@ export class UserController{
 
 
     public async CreateUser(req: Request, h:ResponseToolkit<ReqRefDefaults>){
-        let service = new UserService();
-        let inputs : string | object;
+        let service : UserService = new UserService();
+        let inputs : object
         if(typeof req.payload === 'string') throw new Boom("payload has to be an object", {statusCode: 400});
         else inputs = {...req.payload};
         let result = await service.createUser(inputs);
@@ -39,8 +39,8 @@ export class UserController{
 
 
     public async UpdateUser(req: Request, h:ResponseToolkit<ReqRefDefaults>){
-        let service = new UserService();
-        let inputs : string | object;
+        let service : UserService = new UserService();
+        let inputs : object;
         if(typeof req.payload === 'string') throw new Boom("payload has to be an object", {statusCode: 400});
         else inputs = {...req.payload};
 

@@ -2,11 +2,12 @@
   "name": "hapiscript",
   "version": "1.0.0",
   "description": "hapi.js with typescript",
-  "main": "app.ts",
+  "main": "server.ts",
   "author": "Riyad Ahsan",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node-dev --respawn app.ts"
+    "start": "ts-node-dev --respawn server.ts",
+    "production" : "NODE_ENV=production ts-node-dev --respawn server.ts"
   },
   "dependencies": {
     "@hapi/bell": "^13.0.1",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "@hapi/inert": "^7.1.0",
+    "@hapi/lab": "^25.1.2",
     "@types/bcrypt": "^5.0.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/http-errors": "^2.0.1",
