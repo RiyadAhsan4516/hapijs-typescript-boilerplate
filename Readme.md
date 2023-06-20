@@ -20,7 +20,8 @@ N.B: The project is still ongoing. The following features are yet to be integrat
  * Password Reset (Through email/ OTP)  
  * Dependency injection using typedi/tsyringe
 
-    > #### This boilerplate is written following the service-repository pattern
+ 
+> ### Note: This boilerplate is written following the service-repository pattern
  
 
 ### Installation:
