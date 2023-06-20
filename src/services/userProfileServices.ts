@@ -2,6 +2,7 @@ import { UserProfileRepository } from "../repositories/userProfileRepository";
 import * as fs from "fs";
 import Joi from 'joi';
 import createError from "http-errors";
+import {Boom} from "@hapi/boom";
 
 export class UserProfileService{
 
@@ -12,13 +13,15 @@ export class UserProfileService{
     }
 
 
-    async createUserProfile(inputs: any, file: any){
-        if (file) {
-            const dest : string = 'public/' + file.filename;
+    async createUserProfile(inputs: any){
+        if (inputs.profile_photo) {
+            let file = inputs.profile_photo
+            const fileType = file.headers['content-type'].split("/")[1];
+            const dest : string = `public${file.path.split("tmp")[1]}.${fileType}`
             fs.rename(file.path, dest, (err) => {
-                if (err) return {error: createError(500, "the file did not upload")}
+                if (err) throw new Boom("the file did not upload", {statusCode:500})
             });
-            inputs.profile_photo = '/' + file.filename;
+            inputs.profile_photo = dest.split("public")[1];
         }
         return await this.repository.createUserProfile(inputs)
     }

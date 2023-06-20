@@ -3,20 +3,14 @@ import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
 import {Boom} from "@hapi/boom";
 import * as fs from "fs";
 
-
-let service : UserProfileService;
-
 export class UserProfileController{
 
-    constructor(){
-        service = new UserProfileService()
-    }
-
     async createProfile(req: Request, h:ResponseToolkit<ReqRefDefaults>){
+        let service = new UserProfileService();
         // @ts-ignore
         const attributes = {...req.payload};
-        console.log(attributes)
-        return "hello"
+        let result = await service.createUserProfile(attributes)
+        return result
     }
 
     // async getProfile(req: Request, h:ResponseToolkit<ReqRefDefaults>): Promise<void>{
