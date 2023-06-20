@@ -32,6 +32,22 @@ The boilerplate is built using yarn. So use the following:
 
      yarn install
 
+Set up a .env file in the root directory of the project containing the following:
+   * NODE_ENV=``set the node environment to development``
+   * PORT= ``set your port here``
+   * LOCALHOST=``set localhost to 127.0.0.1``
+   * DB_USER=``your database username``
+   * DB_PASSWORD=``your database password``
+   * DB_LOCAL=``people``
+
+For development use the following command to run:
+   
+    yarn start
+
+For production use the following:
+
+    yarn run production
+
 And voila! you're good to go!  
 
 #### HAPPY CODING ! 👊👊
