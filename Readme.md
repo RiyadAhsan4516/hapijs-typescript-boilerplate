@@ -18,7 +18,7 @@ It's a simple role based authentication system project which is commonly require
 N.B: The project is still ongoing. The following features are yet to be integrated :
  * Casbin RBAC/ABAC
  * Password Reset (Through email/ OTP)  
- * TypeDi/tsyringe for dependency injection
+ * Dependency injection using typedi/tsyringe
 
     > #### This boilerplate is written following the service-repository pattern
  
