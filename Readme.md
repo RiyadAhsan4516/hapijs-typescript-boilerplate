@@ -29,7 +29,7 @@ Just simply clone the repository:
 
     git clone https://github.com/RiyadAhsan4516/hapijs-typescript-boilerplate.git
 
-The boilerplate is built using yarn. So use the following:  
+The packages are maintained using yarn. So use yarn to install all the packages:  
 
      yarn install
 
