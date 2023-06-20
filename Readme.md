@@ -8,7 +8,7 @@
 
 ### Description : 
 
-This is a simple boilerplate for a rest api designed with hapijs and typescript. This particular api example has 3 entities:  
+This is a simple boilerplate for a rest api designed with hapi and typescript. This particular api example has 3 entities:  
 1. User
 2. Role
 3. User Profile
@@ -38,7 +38,7 @@ Set up a .env file in the root directory of the project containing the following
    * LOCALHOST=``set localhost to 127.0.0.1``
    * DB_USER=``your database username``
    * DB_PASSWORD=``your database password``
-   * DB_LOCAL=``people``
+   * DB_LOCAL=``name of your database``
 
 For development use the following command to run:
    
@@ -48,7 +48,7 @@ For production use the following:
 
     yarn run production
 
-And voila! you're good to go!  
+And voilà! you're good to go!  
 
 #### HAPPY CODING ! 👊👊
 
