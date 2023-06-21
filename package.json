@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "hapi.js with typescript",
   "main": "server.ts",
-  "type": "module",
   "author": "Riyad Ahsan",
   "license": "MIT",
   "scripts": {
