@@ -2,9 +2,9 @@ import * as dotenv from "dotenv"
 dotenv.config();
 
 import * as Hapi from "@hapi/hapi"
-import path from "path";
+import * as path from "path";
 import routes from "./src/routes";
-import inert from "@hapi/inert";
+import * as inert from "@hapi/inert";
 
 
 // ********************************************
