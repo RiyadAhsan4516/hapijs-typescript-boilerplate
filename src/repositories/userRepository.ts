@@ -1,7 +1,9 @@
 import { Repository } from "typeorm";
 import { User } from "../entities/userEntity";
 import { AppDataSource } from "../data-source";
+import {Service} from "typedi";
 
+@Service()
 export class UserRepository{
 
     private userRepo : Repository<User>
@@ -48,11 +50,11 @@ export class UserRepository{
 
     }
 
-    // async DeleteUser(input: number): Promise<void> {
-    //     await this.userRepo.createQueryBuilder()
-    //         .delete()
-    //         .from(User)
-    //         .where({id: input})
-    //         .execute()
-    // }
+    async DeleteUser(input: number): Promise<void> {
+        await this.userRepo.createQueryBuilder()
+            .delete()
+            .from(User)
+            .where({id: input})
+            .execute()
+    }
 }

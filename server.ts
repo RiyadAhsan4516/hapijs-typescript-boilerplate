@@ -57,6 +57,7 @@ async function launch(){
         console.log("LAUNCHING THE SERVER =====>")
         await init();
         await start()
+        console.log(`[server:] running on http://${process.env.LOCALHOST}:${process.env.PORT}`)
     } else {
         await init();
         await start()

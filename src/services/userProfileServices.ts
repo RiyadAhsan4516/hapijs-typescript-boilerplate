@@ -1,9 +1,11 @@
 import { UserProfileRepository } from "../repositories/userProfileRepository";
+import {Service} from "typedi";
 import * as fs from "fs";
 import Joi from 'joi';
 import createError from "http-errors";
 import {Boom} from "@hapi/boom";
 
+@Service()
 export class UserProfileService{
 
     private repository : UserProfileRepository

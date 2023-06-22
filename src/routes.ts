@@ -4,7 +4,7 @@ import Joi from "joi";
 import {RoleController} from "./controllers/roleController";
 import {UserController} from "./controllers/userController";
 import {UserProfileController} from "./controllers/userProfileController";
-
+import {Container} from "typedi";
 
 const routes : ServerRoute<ReqRefDefaults>[] = [
     {
@@ -15,7 +15,7 @@ const routes : ServerRoute<ReqRefDefaults>[] = [
     {
         method: "GET",
         path: "/api/v1/users",
-        handler: new UserController().getUsers
+        handler: Container.get(UserController).getUsers
     },
     {
         method: "GET",
@@ -27,7 +27,7 @@ const routes : ServerRoute<ReqRefDefaults>[] = [
                 })
             }
         },
-        handler: new UserController().getUser
+        handler: Container.get(UserController).getUser
     },
     {
         method: "POST",
@@ -40,7 +40,7 @@ const routes : ServerRoute<ReqRefDefaults>[] = [
                 })
             }
         },
-        handler: new UserController().CreateUser
+        handler: Container.get(UserController).CreateUser
     },
     {
         method: "PUT",
@@ -56,7 +56,7 @@ const routes : ServerRoute<ReqRefDefaults>[] = [
                 })
             }
         },
-        handler: new UserController().UpdateUser
+        handler: Container.get(UserController).UpdateUser
     },
     {
         method: "POST",
@@ -72,7 +72,7 @@ const routes : ServerRoute<ReqRefDefaults>[] = [
                 uploads: 'public/tmp',
             }
         },
-        handler: new UserProfileController().createProfile
+        handler: Container.get(UserProfileController).createProfile
     }
 
 ]

@@ -1,12 +1,15 @@
 import { UserRepository } from "../repositories/userRepository";
-import Joi from 'joi';
+import {Service} from "typedi";
+import {Container} from "typedi";
 
+@Service()
 export class UserService{
 
     private repository : UserRepository
 
     constructor(){
-        this.repository = new UserRepository()
+        this.repository = Container.get(UserRepository)
+        console.log("hello from user repository")
     }
 
 
