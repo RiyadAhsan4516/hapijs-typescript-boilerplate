@@ -1,15 +1,13 @@
-import type { ReqRefDefaults, Request, ResponseToolkit } from '@hapi/hapi';
-import { GetServiceResponse } from "../services/roleService";
-import {Boom} from "@hapi/boom";
+import type {ReqRefDefaults, Request, ResponseToolkit} from '@hapi/hapi';
+import {RoleService} from "../services/roleService";
+import {Container, Service} from "typedi";
 
-export class RoleController{
-    async getRole(req: Request, h:ResponseToolkit<ReqRefDefaults>){
-        let result = await GetServiceResponse()
+@Service()
+export class RoleController {
 
-        if(!result || result.length<1){
-            throw new Boom("nothing found", {statusCode:404})
-        }
-
-        return result;
+    public async getAllRoles(req: Request,  h: ResponseToolkit<ReqRefDefaults>) {
+        const service: RoleService = Container.get(RoleService);
+        return await service.getAllRoles();
     }
+
 }

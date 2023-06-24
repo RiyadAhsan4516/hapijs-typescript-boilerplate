@@ -1,7 +1,9 @@
 import { AppDataSource } from "../data-source";
 import { Roles } from "../entities/roleEntity";
 import { Repository } from "typeorm";
+import {Service} from "typedi";
 
+@Service()
 export class RoleRepository{
     private _roleRepo: Repository<Roles>
 

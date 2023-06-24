@@ -45,8 +45,6 @@ export class UserController{
         if(typeof req.payload === 'string') throw new Boom("payload has to be an object", {statusCode: 400});
         else inputs = {...req.payload};
 
-        let result = await service.updateUser(inputs, req.params.id)
-
-        return result
+        return await service.updateUser(inputs, req.params.id)
     }
 }
