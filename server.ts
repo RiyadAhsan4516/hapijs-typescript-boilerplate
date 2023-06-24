@@ -67,5 +67,6 @@ async function launch(){
 launch().then(()=>{
     if(process.env.NODE_ENV === 'development') console.log("<========== SERVER LAUNCHED")
 }).catch(err=>{
+    console.log(err);
     console.log("THERE WAS AN ERROR LAUNCHING THE SERVER")
 })

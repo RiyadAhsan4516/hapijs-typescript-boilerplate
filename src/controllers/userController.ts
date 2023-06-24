@@ -23,7 +23,6 @@ export class UserController{
     }
 
 
-
     public async CreateUser(req: Request, h:ResponseToolkit<ReqRefDefaults>){
         let service : UserService = Container.get(UserService);
         let inputs : object

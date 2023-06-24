@@ -1,0 +1,42 @@
+import {Service, Container} from "typedi";
+import {Boom} from "@hapi/boom";
+import bcrypt from "bcryptjs";
+import {UserRepository} from "../repositories/userRepository";
+import {GenerateTokens} from "../helpers/generateTokens";
+import {RoleRepository} from "../repositories/roleRepository";
+import {UserProfileRepository} from "../repositories/userProfileRepository";
+import {User} from "../entities/userEntity";
+
+interface token{
+    id: number,
+    type: string
+}
+@Service()
+export class AuthService{
+
+    public async validateExistence(email : string, password: string) : Promise<{accessToken: string, refreshToken: string}>{
+
+        // "SELECT" OPTION FOR PASSWORD IN USER ENTITY IS SET TO FALSE. CALL A SEPARATE QUERY TO FIND THE USER ALONG WITH THE PASSWORD
+        const user : User | null = await Container.get(UserRepository).getUserWithPassword(email)
+
+        // THROW ERROR IF NO USER IS FOUND
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            throw new Boom("email or password invalid", {statusCode:401});
+        }
+
+        // GENERATE AN ACCESS TOKEN WITH TYPE 'ACCESS'
+        const payload : token = {
+            id: user.id,
+            type: 'access'
+        }
+        const accessToken: string = await Container.get(GenerateTokens).createToken(payload, "15m")
+
+        // GENERATE A REFRESH TOKEN WITH TYPE 'REFRESH'
+        payload.type = "refresh"
+        const refreshToken: string = await Container.get(GenerateTokens).createToken(payload, "1d")
+
+        // RETURN THE GENERATED ACCESS AND REFRESH TOKEN
+        return {accessToken, refreshToken}
+
+    }
+}

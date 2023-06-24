@@ -5,7 +5,9 @@ import * as Hapi from "@hapi/hapi"
 import * as path from "path";
 import routes from "./src/routes";
 import * as inert from "@hapi/inert";
-
+import * as HapiJwt from "hapi-auth-jwt2";
+import {Authenticator} from "./src/controllers/authController";
+import {Container} from "typedi";
 
 // ********************************************
 // *                                          *
@@ -32,7 +34,16 @@ const server : Hapi.Server<Hapi.ServerApplicationState> = Hapi.server({
 // ********************************************
 
 const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
-    await server.register(inert);
+    await server.register([
+        {
+            plugin: inert
+        },
+        // {
+        //     plugin: HapiJwt
+        // }
+    ]);
+
+    // server.auth.strategy('jwt', 'jwt', Container.get(Authenticator))
 
     server.route({
         method: 'GET',

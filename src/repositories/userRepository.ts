@@ -21,6 +21,13 @@ export class UserRepository{
         return await this.userRepo.findOneBy({id})
     }
 
+    async getUserWithPassword(email: string) : Promise<User | null>{
+        return await this.userRepo.createQueryBuilder("user")
+            .select(["user.id", "user.email", "user.password"])
+            .where("user.email = :email", {email: email})
+            .getOne();
+    }
+
     async createUser(inputs: object) : Promise<any>{
 
         try{
