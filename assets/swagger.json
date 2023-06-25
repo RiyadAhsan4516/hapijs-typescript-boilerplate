@@ -14,7 +14,6 @@
     }
   ],
 
-
   "paths": {
     "/api/v1/roles": {
       "get": {
@@ -29,20 +28,27 @@
               "type": "object",
               "properties": {
                 "id": {
-                  "type": "integer",
-                  "example": 1
+                  "type": "number"
                 },
                 "name": {
-                  "type": "string",
-                  "example": "admin"
+                  "type": "string"
                 }
-              }
+              },
+              "example": [
+                {
+                  "id": 1,
+                  "name": "super admin"
+                },
+                {
+                  "id": 2,
+                  "name": "admin"
+                }
+              ]
             }
           }
         }
       }
     }
   }
-
 
 }
