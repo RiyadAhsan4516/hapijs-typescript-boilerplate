@@ -15,11 +15,6 @@ import * as vision from "@hapi/vision";
 const SwaggerYaml = require("./assets/swagger.json")
 
 const swaggerOptions : {} = {
-    // info: {
-    //     title: 'HapiScript documentation',
-    //     description: 'This is a sample example of API documentation.'
-    // },
-    // OAS: 'v3.0',
     customSwaggerFile : SwaggerYaml
 }
 

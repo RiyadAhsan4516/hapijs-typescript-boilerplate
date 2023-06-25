@@ -86,7 +86,6 @@ const routes : ServerRoute<ReqRefDefaults>[] = [
                     password: Joi.string().min(8).required()
                 })
             },
-            description: "Route for logging in"
         },
         handler: Container.get(AuthController).login,
     }

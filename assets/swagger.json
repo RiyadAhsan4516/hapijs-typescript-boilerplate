@@ -6,16 +6,23 @@
   },
   "host": "127.0.0.1:4000",
   "basePath": "/api/v1",
-  "schemes": ["http"],
+  "schemes": [
+    "http"
+  ],
   "tags": [
     {
       "name": "Roles",
       "description": "Operations related to roles"
+    },
+    {
+      "name": "Users",
+      "description": "Operations related to users"
     }
   ],
-
   "paths": {
-    "/api/v1/roles": {
+
+
+    "/roles": {
       "get": {
         "tags": [
           "Roles"
@@ -48,7 +55,83 @@
           }
         }
       }
-    }
-  }
+    },
 
+
+    "/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Retrieve users",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "email": {
+                  "type": "string"
+                }
+              },
+              "example": [
+                {
+                  "id": 1,
+                  "email": "riyad.ahsan4516@gmail.com"
+                },
+                {
+                  "id": 2,
+                  "email": "mark@gmail.com"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+
+
+    "/users/getOne/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Retrieve users",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "email": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "id": 1,
+                "email": "riyad.ahsan4516@gmail.com"
+              }
+            }
+          }
+        }
+      }
+    }
+
+
+
+  }
 }
