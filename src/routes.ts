@@ -4,19 +4,20 @@ import {ReqRefDefaults} from "@hapi/hapi";
 import {RoleController} from "./controllers/roleController";
 import {UserController} from "./controllers/userController";
 import {UserProfileController} from "./controllers/userProfileController";
-import {Authenticator} from "./controllers/authController";
+import {AuthController} from "./controllers/authController";
 import {Container} from "typedi";
 
 const routes : ServerRoute<ReqRefDefaults>[] = [
     {
         method: "GET",
         path: "/api/v1/roles",
-        handler: Container.get(RoleController).getAllRoles
+        handler: Container.get(RoleController).getAllRoles,
+
     },
     {
         method: "GET",
         path: "/api/v1/users",
-        handler: Container.get(UserController).getUsers
+        handler: Container.get(UserController).getUsers,
     },
     {
         method: "GET",
@@ -57,7 +58,7 @@ const routes : ServerRoute<ReqRefDefaults>[] = [
                 })
             }
         },
-        handler: Container.get(UserController).UpdateUser
+        handler: Container.get(UserController).UpdateUser,
     },
     {
         method: "POST",
@@ -84,9 +85,10 @@ const routes : ServerRoute<ReqRefDefaults>[] = [
                     email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required(),
                     password: Joi.string().min(8).required()
                 })
-            }
+            },
+            description: "Route for logging in"
         },
-        handler: Container.get(Authenticator).login
+        handler: Container.get(AuthController).login,
     }
 
 ]

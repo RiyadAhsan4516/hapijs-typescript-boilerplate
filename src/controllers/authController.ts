@@ -8,13 +8,13 @@ interface tokens{
 }
 
 @Service()
-export class Authenticator{
+export class AuthController {
 
     public async login(req: Request, h:ResponseToolkit<ReqRefDefaults>): Promise<{message: string, token: string}>{
         const service: AuthService = Container.get(AuthService);
         // @ts-ignore
         const {email, password} = req.payload;
-        const result: tokens  = await service.validateExistence(email, password);
+        const result: tokens  = await service.validateLogin(email, password);
 
         // SET THE COOKIE WITH NECESSARY OPTIONS
         h.state('jwt', result.refreshToken, {encoding:'none', isSecure: true, isHttpOnly: true, isSameSite: "None"})
@@ -27,7 +27,7 @@ export class Authenticator{
     }
 
     public async isLoggedIn(decoded: any, req: Request, h:ResponseToolkit<ReqRefDefaults>){
-        // FINISH THE FUNCTION
+        return await Container.get(AuthService).validateTokenInfo(decoded);
     }
 
 }

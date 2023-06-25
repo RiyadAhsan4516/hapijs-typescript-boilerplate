@@ -1,0 +1,48 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "HapiScript documentation",
+    "version": "1.0"
+  },
+  "host": "127.0.0.1:4000",
+  "basePath": "/api/v1",
+  "schemes": ["http"],
+  "tags": [
+    {
+      "name": "Roles",
+      "description": "Operations related to roles"
+    }
+  ],
+
+
+  "paths": {
+    "/api/v1/roles": {
+      "get": {
+        "tags": [
+          "Roles"
+        ],
+        "summary": "Retrieve roles",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "admin"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+}

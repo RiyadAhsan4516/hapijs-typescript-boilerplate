@@ -14,7 +14,7 @@ interface token{
 @Service()
 export class AuthService{
 
-    public async validateExistence(email : string, password: string) : Promise<{accessToken: string, refreshToken: string}>{
+    public async validateLogin(email : string, password: string) : Promise<{accessToken: string, refreshToken: string}>{
 
         // "SELECT" OPTION FOR PASSWORD IN USER ENTITY IS SET TO FALSE. CALL A SEPARATE QUERY TO FIND THE USER ALONG WITH THE PASSWORD
         const user : User | null = await Container.get(UserRepository).getUserWithPassword(email)
@@ -38,5 +38,12 @@ export class AuthService{
         // RETURN THE GENERATED ACCESS AND REFRESH TOKEN
         return {accessToken, refreshToken}
 
+    }
+
+    public async validateTokenInfo(decoded: any){
+        const user : User | null = await Container.get(UserRepository).getOneUser(decoded.id);
+
+        if(!user) return {isValid: false}
+        else return {isValid: true}
     }
 }
