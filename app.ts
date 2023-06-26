@@ -12,10 +12,10 @@ import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
 import * as HapiSwagger from "hapi-swagger";
 import * as vision from "@hapi/vision";
 
-const SwaggerYaml = require("./assets/swagger.json")
+const SwaggerFile = require("./assets/swagger.json")
 
 const swaggerOptions : {} = {
-    customSwaggerFile : SwaggerYaml
+    customSwaggerFile : SwaggerFile
 }
 
 

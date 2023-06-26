@@ -6,6 +6,7 @@ import {UserController} from "./controllers/userController";
 import {UserProfileController} from "./controllers/userProfileController";
 import {AuthController} from "./controllers/authController";
 import {Container} from "typedi";
+import {Boom} from "@hapi/boom";
 
 const routes : ServerRoute<ReqRefDefaults>[] = [
     {
@@ -37,8 +38,8 @@ const routes : ServerRoute<ReqRefDefaults>[] = [
         options:{
             validate: {
                 payload: Joi.object({
-                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required(),
-                    password: Joi.string().min(8)
+                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(new Boom("email input validation failed", {statusCode:422})),
+                    password: Joi.string().min(8).error(new Boom("password input validation failed", {statusCode:422}))
                 })
             }
         },
@@ -50,8 +51,8 @@ const routes : ServerRoute<ReqRefDefaults>[] = [
         options: {
             validate: {
                 payload: Joi.object({
-                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }),
-                    password: Joi.string().min(8)
+                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).error(new Boom("email input validation failed", {statusCode:422})),
+                    password: Joi.string().min(8).error(new Boom("password input validation failed", {statusCode:422}))
                 }),
                 params: Joi.object({
                     id: Joi.string().alphanum().required()
@@ -82,8 +83,8 @@ const routes : ServerRoute<ReqRefDefaults>[] = [
         options: {
             validate: {
                 payload: Joi.object({
-                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required(),
-                    password: Joi.string().min(8).required()
+                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(new Boom("email input validation failed", {statusCode:422})),
+                    password: Joi.string().min(8).required().error(new Boom("password input validation failed", {statusCode:422}))
                 })
             },
         },
