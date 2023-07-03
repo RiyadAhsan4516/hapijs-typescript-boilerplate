@@ -13,7 +13,9 @@ const routes : ServerRoute<ReqRefDefaults>[] = [
         method: "GET",
         path: "/api/v1/roles",
         handler: Container.get(RoleController).getAllRoles,
-
+        options:{
+            auth: "jwt"
+        }
     },
     {
         method: "GET",
