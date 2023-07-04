@@ -21,6 +21,9 @@ const routes : ServerRoute<ReqRefDefaults>[] = [
         method: "GET",
         path: "/api/v1/users",
         handler: Container.get(UserController).getUsers,
+        options: {
+            auth: "jwt"
+        }
     },
     {
         method: "GET",

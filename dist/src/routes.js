@@ -7,16 +7,25 @@ const joi_1 = __importDefault(require("joi"));
 const roleController_1 = require("./controllers/roleController");
 const userController_1 = require("./controllers/userController");
 const userProfileController_1 = require("./controllers/userProfileController");
+const authController_1 = require("./controllers/authController");
+const typedi_1 = require("typedi");
+const boom_1 = require("@hapi/boom");
 const routes = [
     {
         method: "GET",
         path: "/api/v1/roles",
-        handler: new roleController_1.RoleController().getRole
+        handler: typedi_1.Container.get(roleController_1.RoleController).getAllRoles,
+        options: {
+            auth: "jsonWebToken"
+        }
     },
     {
         method: "GET",
         path: "/api/v1/users",
-        handler: new userController_1.UserController().getUsers
+        handler: typedi_1.Container.get(userController_1.UserController).getUsers,
+        options: {
+            auth: "jsonWebToken"
+        }
     },
     {
         method: "GET",
@@ -28,7 +37,7 @@ const routes = [
                 })
             }
         },
-        handler: new userController_1.UserController().getUser
+        handler: typedi_1.Container.get(userController_1.UserController).getUser
     },
     {
         method: "POST",
@@ -36,12 +45,12 @@ const routes = [
         options: {
             validate: {
                 payload: joi_1.default.object({
-                    email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required(),
-                    password: joi_1.default.string().min(8)
+                    email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(new boom_1.Boom("email input validation failed", { statusCode: 422 })),
+                    password: joi_1.default.string().min(8).error(new boom_1.Boom("password input validation failed", { statusCode: 422 }))
                 })
             }
         },
-        handler: new userController_1.UserController().CreateUser
+        handler: typedi_1.Container.get(userController_1.UserController).CreateUser
     },
     {
         method: "PUT",
@@ -49,15 +58,15 @@ const routes = [
         options: {
             validate: {
                 payload: joi_1.default.object({
-                    email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }),
-                    password: joi_1.default.string().min(8)
+                    email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).error(new boom_1.Boom("email input validation failed", { statusCode: 422 })),
+                    password: joi_1.default.string().min(8).error(new boom_1.Boom("password input validation failed", { statusCode: 422 }))
                 }),
                 params: joi_1.default.object({
                     id: joi_1.default.string().alphanum().required()
                 })
             }
         },
-        handler: new userController_1.UserController().UpdateUser
+        handler: typedi_1.Container.get(userController_1.UserController).UpdateUser,
     },
     {
         method: "POST",
@@ -73,7 +82,20 @@ const routes = [
                 uploads: 'public/tmp',
             }
         },
-        handler: new userProfileController_1.UserProfileController().createProfile
+        handler: typedi_1.Container.get(userProfileController_1.UserProfileController).createProfile
+    },
+    {
+        method: "POST",
+        path: "/api/v1/login",
+        options: {
+            validate: {
+                payload: joi_1.default.object({
+                    email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(new boom_1.Boom("email input validation failed", { statusCode: 422 })),
+                    password: joi_1.default.string().min(8).required().error(new boom_1.Boom("password input validation failed", { statusCode: 422 }))
+                })
+            },
+        },
+        handler: typedi_1.Container.get(authController_1.AuthController).login,
     }
 ];
 exports.default = routes;

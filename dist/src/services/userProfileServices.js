@@ -15,6 +15,12 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -22,45 +28,64 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserProfileService = void 0;
 const userProfileRepository_1 = require("../repositories/userProfileRepository");
+const typedi_1 = require("typedi");
 const fs = __importStar(require("fs"));
 const joi_1 = __importDefault(require("joi"));
-const http_errors_1 = __importDefault(require("http-errors"));
-class UserProfileService {
-    repository;
+const boom_1 = require("@hapi/boom");
+let UserProfileService = exports.UserProfileService = class UserProfileService {
     constructor() {
         this.repository = new userProfileRepository_1.UserProfileRepository();
     }
-    async createUserProfile(inputs, file) {
-        if (file) {
-            const dest = 'public/' + file.filename;
-            fs.rename(file.path, dest, (err) => {
-                if (err)
-                    return { error: (0, http_errors_1.default)(500, "the file did not upload") };
-            });
-            inputs.profile_photo = '/' + file.filename;
-        }
-        return await this.repository.createUserProfile(inputs);
+    createUserProfile(inputs) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (inputs.profile_photo) {
+                let file = inputs.profile_photo;
+                const fileType = file.headers['content-type'].split("/")[1];
+                const dest = `public${file.path.split("tmp")[1]}.${fileType}`;
+                fs.rename(file.path, dest, (err) => {
+                    if (err)
+                        throw new boom_1.Boom("the file did not upload", { statusCode: 500 });
+                });
+                inputs.profile_photo = dest.split("public")[1];
+            }
+            return yield this.repository.createUserProfile(inputs);
+        });
     }
-    async getUserProfile(id) {
-        const validation = this.validateIdInput(id);
-        if (validation.error) {
-            console.log(validation.error);
-            return { errno: 400, error: validation.error.details[0].message };
-        }
-        const result = await this.repository.getAUserProfile(id);
-        if (result.length > 0)
-            return result;
-        else
-            return { errno: 404, error: "no result found" };
+    getUserProfile(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validation = this.validateIdInput(id);
+            if (validation.error) {
+                return { errno: 400, error: validation.error.details[0].message };
+            }
+            const result = yield this.repository.getAUserProfile(id);
+            if (result.length > 0)
+                return result;
+            else
+                return { errno: 404, error: "no result found" };
+        });
     }
-    async getProfiles() {
-        return await this.repository.getAllProfiles();
+    getProfiles() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.repository.getAllProfiles();
+        });
     }
     validateIdInput(input) {
         const schema = joi_1.default.object({
@@ -79,5 +104,8 @@ class UserProfileService {
         });
         return schema.validate(input);
     }
-}
-exports.UserProfileService = UserProfileService;
+};
+exports.UserProfileService = UserProfileService = __decorate([
+    (0, typedi_1.Service)(),
+    __metadata("design:paramtypes", [])
+], UserProfileService);

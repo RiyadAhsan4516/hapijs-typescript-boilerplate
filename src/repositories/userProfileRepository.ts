@@ -21,7 +21,6 @@ export class UserProfileRepository{
 
             return newUserProfile.raw[0]
         }catch(err){
-            console.log(err);
             return err
         }
     }

@@ -16,13 +16,16 @@ const routes = [
         path: "/api/v1/roles",
         handler: typedi_1.Container.get(roleController_1.RoleController).getAllRoles,
         options: {
-            auth: "jwt"
+            auth: "jsonWebToken"
         }
     },
     {
         method: "GET",
         path: "/api/v1/users",
         handler: typedi_1.Container.get(userController_1.UserController).getUsers,
+        options: {
+            auth: "jsonWebToken"
+        }
     },
     {
         method: "GET",

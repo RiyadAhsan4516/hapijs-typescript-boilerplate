@@ -34,7 +34,6 @@ export class UserProfileService{
     async getUserProfile(id:number){
         const validation  = this.validateIdInput(id)
         if(validation.error){
-            console.log(validation.error);
             return {errno: 400, error: validation.error.details[0].message};
         }
         const result = await this.repository.getAUserProfile(id);

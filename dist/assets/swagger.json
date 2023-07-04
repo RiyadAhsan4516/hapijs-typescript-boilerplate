@@ -1,0 +1,137 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "HapiScript documentation",
+    "version": "1.0"
+  },
+  "host": "127.0.0.1:4000",
+  "basePath": "/api/v1",
+  "schemes": [
+    "http"
+  ],
+  "tags": [
+    {
+      "name": "Roles",
+      "description": "Operations related to roles"
+    },
+    {
+      "name": "Users",
+      "description": "Operations related to users"
+    }
+  ],
+  "paths": {
+
+
+    "/roles": {
+      "get": {
+        "tags": [
+          "Roles"
+        ],
+        "summary": "Retrieve roles",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "example": [
+                {
+                  "id": 1,
+                  "name": "super admin"
+                },
+                {
+                  "id": 2,
+                  "name": "admin"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+
+
+    "/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Retrieve users",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "email": {
+                  "type": "string"
+                }
+              },
+              "example": [
+                {
+                  "id": 1,
+                  "email": "riyad.ahsan4516@gmail.com"
+                },
+                {
+                  "id": 2,
+                  "email": "mark@gmail.com"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+
+
+    "/users/getOne/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Retrieve users",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "name": "id",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "email": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "id": 1,
+                "email": "riyad.ahsan4516@gmail.com"
+              }
+            }
+          }
+        }
+      }
+    }
+
+
+
+  }
+}

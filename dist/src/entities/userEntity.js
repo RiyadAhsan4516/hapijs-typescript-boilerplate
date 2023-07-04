@@ -13,10 +13,6 @@ exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const userProfileEntity_1 = require("./userProfileEntity");
 let User = exports.User = class User {
-    id;
-    email;
-    password;
-    user_profile_id;
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),

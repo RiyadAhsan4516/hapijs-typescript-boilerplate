@@ -13,9 +13,6 @@ exports.Roles = void 0;
 const typeorm_1 = require("typeorm");
 const userProfileEntity_1 = require("./userProfileEntity");
 let Roles = exports.Roles = class Roles {
-    id;
-    name;
-    userProfiles;
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
