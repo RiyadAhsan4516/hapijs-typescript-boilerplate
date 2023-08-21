@@ -24,8 +24,7 @@ let UserProfileController = exports.UserProfileController = class UserProfileCon
             this.service = typedi_1.Container.get(userProfileServices_1.UserProfileService);
             // @ts-ignore
             const attributes = Object.assign({}, req.payload);
-            let result = yield this.service.createUserProfile(attributes);
-            return result;
+            return yield this.service.createUserProfile(attributes);
         });
     }
 };

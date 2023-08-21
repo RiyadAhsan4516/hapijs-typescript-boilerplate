@@ -74,10 +74,8 @@ process.on('unhandledRejection', (err) => {
 function launch() {
     return __awaiter(this, void 0, void 0, function* () {
         if (process.env.NODE_ENV === 'development') {
-            console.log("LAUNCHING THE SERVER =====>");
             yield (0, app_1.init)();
             yield (0, app_1.start)();
-            console.log(`[server:] running on http://${process.env.LOCALHOST}:${process.env.PORT}`);
         }
         else {
             yield (0, app_1.init)();
@@ -85,10 +83,7 @@ function launch() {
         }
     });
 }
-launch().then(() => {
-    if (process.env.NODE_ENV === 'development')
-        console.log("<========== SERVER LAUNCHED");
-}).catch(err => {
+launch().then(() => { }).catch(err => {
     console.log(err);
     console.log("THERE WAS AN ERROR LAUNCHING THE SERVER");
 });

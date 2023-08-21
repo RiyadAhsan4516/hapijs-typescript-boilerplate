@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import {Repository, UpdateResult} from "typeorm";
 import { User } from "../entities/userEntity";
 import { AppDataSource } from "../data-source";
 import {Service} from "typedi";
@@ -46,7 +46,7 @@ export class UserRepository{
     async UpdateUser(inputs : any, id: string): Promise<User>{
         let {...newInputs} = inputs
 
-        let user = await this.userRepo.createQueryBuilder()
+        let user : UpdateResult = await this.userRepo.createQueryBuilder()
             .update(User)
             .set(newInputs)
             .where(id)

@@ -9,7 +9,6 @@ export class UserService{
 
     constructor(){
         this.repository = Container.get(UserRepository)
-        console.log("hello from user repository")
     }
 
 

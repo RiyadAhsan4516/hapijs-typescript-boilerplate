@@ -40,13 +40,14 @@ const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const Hapi = __importStar(require("@hapi/hapi"));
 const path = __importStar(require("path"));
-const routes_1 = __importDefault(require("./src/routes"));
 const inert = __importStar(require("@hapi/inert"));
 const HapiJwt = __importStar(require("hapi-auth-jwt2"));
-const authController_1 = require("./src/controllers/authController");
-const typedi_1 = require("typedi");
 const HapiSwagger = __importStar(require("hapi-swagger"));
 const vision = __importStar(require("@hapi/vision"));
+const pino = __importStar(require("hapi-pino"));
+const authController_1 = require("./src/controllers/authController");
+const typedi_1 = require("typedi");
+const routes_1 = __importDefault(require("./src/routes"));
 const SwaggerFile = require("./assets/swagger.json");
 const swaggerOptions = {
     customSwaggerFile: SwaggerFile
@@ -73,22 +74,35 @@ const server = Hapi.server({
 const init = () => __awaiter(void 0, void 0, void 0, function* () {
     yield server.register([
         {
-            plugin: inert
+            plugin: inert // inert is a plugin used for serving static files
         },
         {
-            plugin: HapiJwt
+            plugin: HapiJwt // jwt plugin required for creating auth strategy. Look up authentication in hapi.js documentation
         },
         {
-            plugin: vision
+            plugin: vision // a plugin used for rendering templates
         },
         {
             plugin: HapiSwagger,
             options: swaggerOptions
+        },
+        {
+            plugin: pino,
+            options: {
+                transport: {
+                    target: 'pino-pretty',
+                    options: {
+                        colorize: true,
+                    }
+                },
+                level: 'debug'
+            }
         }
     ]);
-    server.auth.strategy('jsonWebToken', 'jwt', {
+    server.logger.info('');
+    server.auth.strategy('jwt', 'jwt', {
         key: `${process.env.SECRET}`,
-        validate: typedi_1.Container.get(authController_1.AuthController).isLoggedIn
+        validate: typedi_1.Container.get(authController_1.AuthController).isLoggedIn // the token will be decoded by the plugin automatically
     });
     server.route({
         method: 'GET',

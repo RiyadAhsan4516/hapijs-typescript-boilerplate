@@ -25,7 +25,6 @@ const typedi_2 = require("typedi");
 let UserService = exports.UserService = class UserService {
     constructor() {
         this.repository = typedi_2.Container.get(userRepository_1.UserRepository);
-        console.log("hello from user repository");
     }
     getAll() {
         return __awaiter(this, void 0, void 0, function* () {

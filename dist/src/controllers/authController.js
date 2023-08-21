@@ -22,11 +22,10 @@ let AuthController = exports.AuthController = class AuthController {
     login(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
             const service = typedi_1.Container.get(authService_1.AuthService);
-            // @ts-ignore
             const { email, password } = req.payload;
             const result = yield service.validateLogin(email, password);
             // SET THE COOKIE WITH NECESSARY OPTIONS
-            h.state('jwt', result.refreshToken, { encoding: 'none', isSecure: true, isHttpOnly: true, isSameSite: "None" });
+            h.state('refresh', result.refreshToken, { encoding: 'none', isSecure: true, isHttpOnly: true, isSameSite: "None" });
             // RETURN THE ACCESS TOKEN ALONG WITH A MESSAGE
             return {
                 message: "Login successful",

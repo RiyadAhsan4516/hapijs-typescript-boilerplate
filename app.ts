@@ -3,14 +3,15 @@ dotenv.config();
 
 import * as Hapi from "@hapi/hapi"
 import * as path from "path";
-import routes from "./src/routes";
 import * as inert from "@hapi/inert";
 import * as HapiJwt from "hapi-auth-jwt2";
+import * as HapiSwagger from "hapi-swagger";
+import * as vision from "@hapi/vision";
+import * as pino from "hapi-pino";
 import {AuthController} from "./src/controllers/authController";
 import {Container} from "typedi";
 import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
-import * as HapiSwagger from "hapi-swagger";
-import * as vision from "@hapi/vision";
+import routes from "./src/routes";
 
 const SwaggerFile = require("./assets/swagger.json")
 
@@ -46,24 +47,38 @@ const server : Hapi.Server<Hapi.ServerApplicationState> = Hapi.server({
 const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
     await server.register([
         {
-            plugin: inert
+            plugin: inert   // inert is a plugin used for serving static files
         },
         {
-            plugin: HapiJwt
+            plugin: HapiJwt // jwt plugin required for creating auth strategy. Look up authentication in hapi.js documentation
         },
         {
-            plugin: vision
+            plugin: vision  // a plugin used for rendering templates
         },
         {
-            plugin: HapiSwagger,
+            plugin: HapiSwagger,    // swagger api
             options: swaggerOptions
+        },
+        {
+            plugin: pino,    // request logger
+            options: {
+                transport: {
+                    target: 'pino-pretty',
+                    options: {
+                        colorize: true,
+                    }
+                },
+                level: 'debug'
+            }
         }
     ]);
 
+    server.logger.info('')
 
-    server.auth.strategy('jwt', 'jwt', {
+
+    server.auth.strategy('jwt', 'jwt', {        // inject the auth strategy as jwt into the server
         key: `${process.env.SECRET}`,
-        validate: Container.get(AuthController).isLoggedIn
+        validate: Container.get(AuthController).isLoggedIn      // the token will be decoded by the plugin automatically
     })
 
     server.route({

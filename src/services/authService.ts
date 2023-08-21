@@ -3,8 +3,6 @@ import {Boom} from "@hapi/boom";
 import bcrypt from "bcryptjs";
 import {UserRepository} from "../repositories/userRepository";
 import {GenerateTokens} from "../helpers/generateTokens";
-import {RoleRepository} from "../repositories/roleRepository";
-import {UserProfileRepository} from "../repositories/userProfileRepository";
 import {User} from "../entities/userEntity";
 
 interface token{
@@ -40,7 +38,7 @@ export class AuthService{
 
     }
 
-    public async validateTokenInfo(decoded: any){
+    public async validateTokenInfo(decoded: any) : Promise<{isValid: boolean}>{
         const user : User | null = await Container.get(UserRepository).getOneUser(decoded.id);
 
         if(!user) return {isValid: false}

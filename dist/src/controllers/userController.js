@@ -49,7 +49,7 @@ let UserController = exports.UserController = class UserController {
                 inputs = Object.assign({}, req.payload);
             let result = yield service.createUser(inputs);
             if (!result || result.length < 1) {
-                throw new boom_1.Boom("No data found", { statusCode: 404 });
+                throw new boom_1.Boom("No data found", { statusCode: 204 });
             }
             return result;
         });

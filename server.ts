@@ -54,19 +54,15 @@ process.on('unhandledRejection', (err) => {
 
 async function launch(){
     if(process.env.NODE_ENV === 'development') {
-        console.log("LAUNCHING THE SERVER =====>")
         await init();
         await start()
-        console.log(`[server:] running on http://${process.env.LOCALHOST}:${process.env.PORT}`)
     } else {
         await init();
         await start()
     }
 }
 
-launch().then(()=>{
-    if(process.env.NODE_ENV === 'development') console.log("<========== SERVER LAUNCHED")
-}).catch(err=>{
+launch().then(()=>{}).catch(err=>{
     console.log(err);
     console.log("THERE WAS AN ERROR LAUNCHING THE SERVER")
 })

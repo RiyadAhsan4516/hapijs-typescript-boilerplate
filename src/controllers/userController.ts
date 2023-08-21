@@ -2,21 +2,22 @@ import type { ReqRefDefaults, Request, ResponseToolkit } from '@hapi/hapi';
 import {Container, Service} from "typedi";
 import { UserService } from "../services/userService"
 import {Boom} from "@hapi/boom";
+import {User} from "../entities/userEntity";
 
 @Service()
 export class UserController{
 
     public async getUsers(req: Request, h:ResponseToolkit<ReqRefDefaults>){
-        let service = Container.get(UserService);
-        let result = await service.getAll()
+        let service : UserService = Container.get(UserService);
+        let result : User[] = await service.getAll()
         if(!result || result.length<1) throw new Boom("no users found", {statusCode:404});
         return result
     }
 
     public async getUser(req: Request, h:ResponseToolkit<ReqRefDefaults>){
-        let service = Container.get(UserService);
+        let service : UserService = Container.get(UserService);
         let id = req.params.id;
-        let result = await service.getOne(id)
+        let result : User | null = await service.getOne(id)
         if(!result) throw new Boom("no user found with this id", {statusCode:404})
 
         return result
@@ -30,7 +31,7 @@ export class UserController{
         else inputs = {...req.payload};
         let result = await service.createUser(inputs);
         if(!result || result.length<1){
-            throw new Boom("No data found", {statusCode:404})
+            throw new Boom("No data found", {statusCode:204})
         }
 
         return result;

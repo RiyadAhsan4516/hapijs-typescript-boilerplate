@@ -1,6 +1,5 @@
 import Joi from "joi";
 import {ServerRoute} from "@hapi/hapi";
-import {ReqRefDefaults} from "@hapi/hapi";
 import {RoleController} from "./controllers/roleController";
 import {UserController} from "./controllers/userController";
 import {UserProfileController} from "./controllers/userProfileController";
@@ -8,7 +7,7 @@ import {AuthController} from "./controllers/authController";
 import {Container} from "typedi";
 import {Boom} from "@hapi/boom";
 
-const routes : ServerRoute<ReqRefDefaults>[] = [
+const routes : ServerRoute[] = [
     {
         method: "GET",
         path: "/api/v1/roles",

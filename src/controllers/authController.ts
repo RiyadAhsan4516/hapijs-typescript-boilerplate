@@ -12,12 +12,11 @@ export class AuthController {
 
     public async login(req: Request, h:ResponseToolkit<ReqRefDefaults>): Promise<{message: string, token: string}>{
         const service: AuthService = Container.get(AuthService);
-        // @ts-ignore
-        const {email, password} = req.payload;
+        const {email, password} : any = req.payload;
         const result: tokens  = await service.validateLogin(email, password);
 
         // SET THE COOKIE WITH NECESSARY OPTIONS
-        h.state('jwt', result.refreshToken, {encoding:'none', isSecure: true, isHttpOnly: true, isSameSite: "None"})
+        h.state('refresh', result.refreshToken, {encoding:'none', isSecure: true, isHttpOnly: true, isSameSite: "None"})
 
         // RETURN THE ACCESS TOKEN ALONG WITH A MESSAGE
         return {
