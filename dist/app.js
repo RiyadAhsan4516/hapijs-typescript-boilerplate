@@ -60,12 +60,27 @@ const swaggerOptions = {
 const server = Hapi.server({
     port: process.env.PORT,
     host: process.env.LOCALHOST,
+    debug: false,
     routes: {
         files: {
             relativeTo: path.join(__dirname, 'public')
-        }
+        },
     }
 });
+// SET UP TRANSPORT FOR PINO LOGGER. MULTIPLE TARGETS CAN ALSO BE SET AT ONCE. IN THAT CASE THE TARGETS MUST BE AN ARRAY
+let transport;
+if (process.env.NODE_ENV === 'production') {
+    transport = {
+        target: "pino/file",
+        options: { destination: `${__dirname}/app.log` }
+    };
+}
+else {
+    transport = {
+        target: '@logtail/pino',
+        options: { sourceToken: process.env.LOGTAIL_TOKEN }
+    };
+}
 // ********************************************
 // *                                          *
 // *          SERVER INITIALIZER              *
@@ -89,17 +104,12 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
         {
             plugin: pino,
             options: {
-                transport: {
-                    target: 'pino-pretty',
-                    options: {
-                        colorize: true,
-                    }
-                },
-                level: 'debug'
+                transport,
+                level: 'error',
+                async: true,
             }
         }
     ]);
-    server.logger.info('');
     server.auth.strategy('jwt', 'jwt', {
         key: `${process.env.SECRET}`,
         validate: typedi_1.Container.get(authController_1.AuthController).isLoggedIn // the token will be decoded by the plugin automatically

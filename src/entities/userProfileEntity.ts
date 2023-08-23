@@ -31,7 +31,7 @@ export class UserProfile implements user_profile{
     @Column({length: 100})
     profile_photo: string;
 
-    @ManyToOne(()=>Roles, role=> role.userProfiles)
+    @ManyToOne(()=>Roles, role => role.userProfiles)
     role: Roles;
 
     @OneToOne(()=>User, (user : User)=>user.user_profile_id)

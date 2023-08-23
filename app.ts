@@ -20,6 +20,8 @@ const swaggerOptions : {} = {
 }
 
 
+
+
 // ********************************************
 // *                                          *
 // *         CREATE SERVER INSTANCE           *
@@ -29,13 +31,27 @@ const swaggerOptions : {} = {
 const server : Hapi.Server<Hapi.ServerApplicationState> = Hapi.server({
     port: process.env.PORT,
     host: process.env.LOCALHOST,
+    debug: false,
     routes: {
         files:{
             relativeTo: path.join(__dirname, 'public')
-        }
+        },
     }
 });
 
+// SET UP TRANSPORT FOR PINO LOGGER. MULTIPLE TARGETS CAN ALSO BE SET AT ONCE. IN THAT CASE THE TARGETS MUST BE AN ARRAY
+let transport : any;
+if(process.env.NODE_ENV === 'production') {
+    transport = {
+        target : "pino/file",
+        options: { destination: `${__dirname}/app.log`}
+    }
+} else {
+    transport = {
+        target : '@logtail/pino',
+        options: { sourceToken: process.env.LOGTAIL_TOKEN }
+    }
+}
 
 
 // ********************************************
@@ -62,18 +78,12 @@ const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
         {
             plugin: pino,    // request logger
             options: {
-                transport: {
-                    target: 'pino-pretty',
-                    options: {
-                        colorize: true,
-                    }
-                },
-                level: 'debug'
+                transport,
+                level: 'error',
+                async: true,
             }
         }
     ]);
-
-    server.logger.info('')
 
 
     server.auth.strategy('jwt', 'jwt', {        // inject the auth strategy as jwt into the server

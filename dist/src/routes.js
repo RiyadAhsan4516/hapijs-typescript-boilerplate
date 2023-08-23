@@ -8,21 +8,22 @@ const roleController_1 = require("./controllers/roleController");
 const userController_1 = require("./controllers/userController");
 const userProfileController_1 = require("./controllers/userProfileController");
 const authController_1 = require("./controllers/authController");
+const errorCatcher_1 = require("./helpers/errorCatcher");
 const typedi_1 = require("typedi");
 const boom_1 = require("@hapi/boom");
 const routes = [
     {
         method: "GET",
         path: "/api/v1/roles",
-        handler: typedi_1.Container.get(roleController_1.RoleController).getAllRoles,
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(roleController_1.RoleController).getAllRoles),
         options: {
             auth: "jwt"
-        }
+        },
     },
     {
         method: "GET",
         path: "/api/v1/users",
-        handler: typedi_1.Container.get(userController_1.UserController).getUsers,
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userController_1.UserController).getUsers),
         options: {
             auth: "jwt"
         }
@@ -35,9 +36,10 @@ const routes = [
                 params: joi_1.default.object({
                     id: joi_1.default.string().alphanum().required()
                 })
-            }
+            },
+            auth: "jwt"
         },
-        handler: typedi_1.Container.get(userController_1.UserController).getUser
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userController_1.UserController).getUser)
     },
     {
         method: "POST",
@@ -50,7 +52,7 @@ const routes = [
                 })
             }
         },
-        handler: typedi_1.Container.get(userController_1.UserController).CreateUser
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userController_1.UserController).CreateUser)
     },
     {
         method: "PUT",
@@ -66,7 +68,7 @@ const routes = [
                 })
             }
         },
-        handler: typedi_1.Container.get(userController_1.UserController).UpdateUser,
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userController_1.UserController).UpdateUser),
     },
     {
         method: "POST",
@@ -82,7 +84,7 @@ const routes = [
                 uploads: 'public/tmp',
             }
         },
-        handler: typedi_1.Container.get(userProfileController_1.UserProfileController).createProfile
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userProfileController_1.UserProfileController).createProfile)
     },
     {
         method: "POST",
@@ -95,7 +97,7 @@ const routes = [
                 })
             },
         },
-        handler: typedi_1.Container.get(authController_1.AuthController).login,
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authController_1.AuthController).login),
     }
 ];
 exports.default = routes;

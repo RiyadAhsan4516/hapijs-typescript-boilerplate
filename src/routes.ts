@@ -4,6 +4,7 @@ import {RoleController} from "./controllers/roleController";
 import {UserController} from "./controllers/userController";
 import {UserProfileController} from "./controllers/userProfileController";
 import {AuthController} from "./controllers/authController";
+import {errorCatcher} from "./helpers/errorCatcher";
 import {Container} from "typedi";
 import {Boom} from "@hapi/boom";
 
@@ -11,15 +12,15 @@ const routes : ServerRoute[] = [
     {
         method: "GET",
         path: "/api/v1/roles",
-        handler: Container.get(RoleController).getAllRoles,
+        handler: errorCatcher(Container.get(RoleController).getAllRoles),
         options:{
             auth: "jwt"
-        }
+        },
     },
     {
         method: "GET",
         path: "/api/v1/users",
-        handler: Container.get(UserController).getUsers,
+        handler: errorCatcher(Container.get(UserController).getUsers),
         options: {
             auth: "jwt"
         }
@@ -32,9 +33,10 @@ const routes : ServerRoute[] = [
                 params: Joi.object({
                     id: Joi.string().alphanum().required()
                 })
-            }
+            },
+            auth: "jwt"
         },
-        handler: Container.get(UserController).getUser
+        handler: errorCatcher(Container.get(UserController).getUser)
     },
     {
         method: "POST",
@@ -47,7 +49,7 @@ const routes : ServerRoute[] = [
                 })
             }
         },
-        handler: Container.get(UserController).CreateUser
+        handler: errorCatcher(Container.get(UserController).CreateUser)
     },
     {
         method: "PUT",
@@ -63,7 +65,7 @@ const routes : ServerRoute[] = [
                 })
             }
         },
-        handler: Container.get(UserController).UpdateUser,
+        handler: errorCatcher(Container.get(UserController).UpdateUser),
     },
     {
         method: "POST",
@@ -79,7 +81,7 @@ const routes : ServerRoute[] = [
                 uploads: 'public/tmp',
             }
         },
-        handler: Container.get(UserProfileController).createProfile
+        handler: errorCatcher(Container.get(UserProfileController).createProfile)
     },
     {
         method: "POST",
@@ -92,7 +94,7 @@ const routes : ServerRoute[] = [
                 })
             },
         },
-        handler: Container.get(AuthController).login,
+        handler: errorCatcher(Container.get(AuthController).login),
     }
 
 ]

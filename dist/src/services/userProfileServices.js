@@ -62,7 +62,7 @@ let UserProfileService = exports.UserProfileService = class UserProfileService {
                 const dest = `public${file.path.split("tmp")[1]}.${fileType}`;
                 fs.rename(file.path, dest, (err) => {
                     if (err)
-                        throw new boom_1.Boom("the file did not upload", { statusCode: 500 });
+                        throw new boom_1.Boom("the file did not upload", { statusCode: 400 });
                 });
                 inputs.profile_photo = dest.split("public")[1];
             }

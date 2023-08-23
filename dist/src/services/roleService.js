@@ -30,7 +30,7 @@ let RoleService = exports.RoleService = class RoleService {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield this._roleRepo.getAll();
             if (!result || result.length < 1)
-                throw new boom_1.Boom("no result found", { statusCode: 404 });
+                throw new boom_1.Boom("", { statusCode: 204 });
             return result;
         });
     }

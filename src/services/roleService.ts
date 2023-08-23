@@ -13,7 +13,7 @@ export class RoleService{
 
     public async getAllRoles(){
         const result: Roles[] =  await this._roleRepo.getAll();
-        if(!result || result.length<1) throw new Boom("no result found", {statusCode:404})
+        if(!result || result.length<1) throw new Boom("", {statusCode:204})
         return result;
     }
 }
