@@ -16,9 +16,9 @@ const routes = [
         method: "GET",
         path: "/api/v1/roles",
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(roleController_1.RoleController).getAllRoles),
-        options: {
-            auth: "jwt"
-        },
+        // options:{
+        //     auth: "jwt"
+        // },
     },
     {
         method: "GET",

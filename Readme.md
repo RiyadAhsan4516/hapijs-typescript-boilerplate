@@ -17,8 +17,7 @@ It's a simple role based authentication system project which is commonly require
 
 N.B: The project is still ongoing. The following features are yet to be integrated :
  * Casbin RBAC/ABAC
- * Password Reset (Through email/ OTP)  
- * Dependency injection using typedi/tsyringe
+ * Password Reset (Through email/ OTP)
 
  
 > ### Note: This boilerplate is written following the service-repository pattern
@@ -41,14 +40,17 @@ Set up a .env file in the root directory of the project containing the following
    * DB_USER=``your database username``
    * DB_PASSWORD=``your database password``
    * DB_LOCAL=``name of your database``
+   * SECRET=``a secret key for generating jwt``
+   * LOGTAIL_LINK=``link of your logtail team profile. (optional)``
+   * LOGTAIL_TOKEN=``access token of your logtail connection source (optional)``
 
 For development use the following command to run:
    
-    yarn start
+    yarn run dev
 
 For production use the following:
 
-    yarn run production
+    yarn run prod
 
 And voilà! you're good to go!  
 
