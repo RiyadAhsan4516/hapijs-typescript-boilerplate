@@ -13,9 +13,9 @@ const routes : ServerRoute[] = [
         method: "GET",
         path: "/api/v1/roles",
         handler: errorCatcher(Container.get(RoleController).getAllRoles),
-        // options:{
-        //     auth: "jwt"
-        // },
+        options:{
+            auth: "jwt"
+        },
     },
     {
         method: "GET",
