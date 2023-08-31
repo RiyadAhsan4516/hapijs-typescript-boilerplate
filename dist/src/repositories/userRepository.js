@@ -82,15 +82,6 @@ let UserRepository = exports.UserRepository = class UserRepository {
             return user.raw;
         });
     }
-    DeleteUser(input) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.userRepo.createQueryBuilder()
-                .delete()
-                .from(userEntity_1.User)
-                .where({ id: input })
-                .execute();
-        });
-    }
 };
 exports.UserRepository = UserRepository = __decorate([
     (0, typedi_1.Service)(),

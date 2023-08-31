@@ -17,7 +17,7 @@ function errorCatcher(fn) {
             return yield fn(req, h);
         }
         catch (err) {
-            throw new boom_1.Boom("internal server error", { statusCode: 500 });
+            throw new boom_1.Boom("something went wrong", { statusCode: 500 });
         }
     });
 }

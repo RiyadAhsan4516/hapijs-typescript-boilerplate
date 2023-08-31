@@ -7,7 +7,6 @@ export class UserProfileController{
 
     private service : UserProfileService
 
-
     async createProfile(req: Request, h:ResponseToolkit<ReqRefDefaults>){
         this.service = Container.get(UserProfileService);
         // @ts-ignore
@@ -25,7 +24,7 @@ export class UserProfileController{
     //         data: result
     //     })
     // }
-    //
+
     // async getAllProfiles(req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<void>{
     //     const result = await service.getProfiles();
     //     res.status(200).json({

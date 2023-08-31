@@ -38,6 +38,13 @@ let AuthController = exports.AuthController = class AuthController {
             return yield typedi_1.Container.get(authService_1.AuthService).validateTokenInfo(decoded);
         });
     }
+    staticTokenValidator(req, token, h) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let result;
+            token === process.env.STATIC ? result = { isValid: true, credentials: {} } : result = { isValid: false, credentials: {} };
+            return result;
+        });
+    }
 };
 exports.AuthController = AuthController = __decorate([
     (0, typedi_1.Service)()

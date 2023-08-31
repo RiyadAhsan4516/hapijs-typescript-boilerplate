@@ -835,6 +835,14 @@
   resolved "https://registry.yarnpkg.com/@types/bcryptjs/-/bcryptjs-2.4.2.tgz#e3530eac9dd136bfdfb0e43df2c4c5ce1f77dfae"
   integrity sha512-LiMQ6EOPob/4yUL66SZzu6Yh77cbzJFYll+ZfaPiPPFswtIlA/Fs1MzdKYA7JApHU49zQTbJGX3PDmCpIdDBRQ==
 
+"@types/hapi-auth-bearer-token@^6.1.4":
+  version "6.1.4"
+  resolved "https://registry.yarnpkg.com/@types/hapi-auth-bearer-token/-/hapi-auth-bearer-token-6.1.4.tgz#a3551319988d27726e2f8adcbe3a9b507705a3ae"
+  integrity sha512-u+mPyOth1C33321syW3v4+vig10MvEW5F0gXNY80EXnh1zVLw2EYnlui4JBYCsfYUqdZ1+3SkQ+za+Srl1MFBA==
+  dependencies:
+    "@hapi/hapi" "^21.1.0"
+    joi "^17.7.0"
+
 "@types/hapi__bell@^11.0.4":
   version "11.0.4"
   resolved "https://registry.yarnpkg.com/@types/hapi__bell/-/hapi__bell-11.0.4.tgz#041266bf5ea3feff249beb60713bbd7cba345387"
@@ -1659,6 +1667,13 @@ handlebars@4.x.x, handlebars@^4.7.7:
     wordwrap "^1.0.0"
   optionalDependencies:
     uglify-js "^3.1.4"
+
+hapi-auth-bearer-token@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/hapi-auth-bearer-token/-/hapi-auth-bearer-token-8.0.0.tgz#51c21311f95f5c7d5650ef1958107f4bc25e0032"
+  integrity sha512-1YeUlwhhky8tnNx9bOQPB/TvsEwbgcYwAZ6DAvHlK+tHRiMbXU+2HNE8qpRia+oj21W2K/omaxyZIB5dOzTPoA==
+  dependencies:
+    "@hapi/hoek" "^9.0.0"
 
 hapi-auth-jwt2@^10.4.0:
   version "10.4.0"

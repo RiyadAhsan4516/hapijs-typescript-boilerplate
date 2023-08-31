@@ -2,7 +2,6 @@ import { UserProfileRepository } from "../repositories/userProfileRepository";
 import {Service} from "typedi";
 import * as fs from "fs";
 import Joi from 'joi';
-import createError from "http-errors";
 import {Boom} from "@hapi/boom";
 
 @Service()
@@ -30,22 +29,21 @@ export class UserProfileService{
 
 
 
-
-    async getUserProfile(id:number){
-        const validation  = this.validateIdInput(id)
-        if(validation.error){
-            return {errno: 400, error: validation.error.details[0].message};
-        }
-        const result = await this.repository.getAUserProfile(id);
-        if(result.length>0) return result
-        else return {errno:404, error: "no result found"}
-    }
-
+    // async getUserProfile(id:number){
+    //     const validation  = this.validateIdInput(id)
+    //     if(validation.error){
+    //         return {errno: 400, error: validation.error.details[0].message};
+    //     }
+    //     const result = await this.repository.getAUserProfile(id);
+    //     if(result.length>0) return result
+    //     else return {errno:404, error: "no result found"}
+    // }
 
 
-    async getProfiles() {
-        return await this.repository.getAllProfiles();
-    }
+
+    // async getProfiles() {
+    //     return await this.repository.getAllProfiles();
+    // }
 
 
 
@@ -61,14 +59,14 @@ export class UserProfileService{
     }
 
 
-    validateCreateInput(input: object){
-        const schema = Joi.object({
-            email: Joi.string().email().messages({'string.base':"email should be of type string"}),
-            password: Joi.string().min(8),
-            userProfile_id: Joi.number().optional()
-        })
-
-        return schema.validate(input);
-    }
+    // validateCreateInput(input: object){
+    //     const schema = Joi.object({
+    //         email: Joi.string().email().messages({'string.base':"email should be of type string"}),
+    //         password: Joi.string().min(8),
+    //         userProfile_id: Joi.number().optional()
+    //     })
+    //
+    //     return schema.validate(input);
+    // }
 
 }

@@ -16,7 +16,7 @@ const routes = [
         method: "GET",
         path: "/api/v1/roles",
         options: {
-            auth: "jwt"
+            auth: "static"
         },
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(roleController_1.RoleController).getAllRoles),
     },
@@ -80,7 +80,7 @@ const routes = [
                 multipart: {
                     output: "file"
                 },
-                maxBytes: 1000 * 1000 * 5,
+                maxBytes: 1000 * 1000 * 2,
                 uploads: 'public/tmp',
             }
         },

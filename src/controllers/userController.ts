@@ -23,7 +23,6 @@ export class UserController{
         return result
     }
 
-
     public async CreateUser(req: Request, h:ResponseToolkit<ReqRefDefaults>){
         let service : UserService = Container.get(UserService);
         let inputs : object
@@ -36,8 +35,6 @@ export class UserController{
 
         return result;
     }
-
-
 
     public async UpdateUser(req: Request, h:ResponseToolkit<ReqRefDefaults>){
         let service : UserService = Container.get(UserService);

@@ -13,7 +13,7 @@ const routes : ServerRoute[] = [
         method: "GET",
         path: "/api/v1/roles",
         options:{
-            auth: "jwt"
+            auth: "static"
         },
         handler: errorCatcher(Container.get(RoleController).getAllRoles),
     },
@@ -77,7 +77,7 @@ const routes : ServerRoute[] = [
                 multipart: {
                     output: "file"
                 },
-                maxBytes: 1000 * 1000 * 5, // 5 Mb
+                maxBytes: 1000 * 1000 * 2, // 2 Mb
                 uploads: 'public/tmp',
             }
         },

@@ -25,8 +25,14 @@ export class AuthController {
         }
     }
 
-    public async isLoggedIn(decoded: any, req: Request, h:ResponseToolkit<ReqRefDefaults>){
+    public async isLoggedIn(decoded: any, req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<{isValid:boolean}>{
         return await Container.get(AuthService).validateTokenInfo(decoded);
+    }
+
+    public async staticTokenValidator(req:Request, token : string, h:ResponseToolkit<ReqRefDefaults>) : Promise<{isValid:boolean, credentials: {}}>{
+        let result : {isValid:boolean, credentials: {}}
+        token === process.env.STATIC ? result = {isValid : true, credentials: {}} : result = {isValid : false, credentials: {}}
+        return result;
     }
 
 }

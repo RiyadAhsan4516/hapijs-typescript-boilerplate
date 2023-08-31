@@ -8,6 +8,7 @@ import * as HapiJwt from "hapi-auth-jwt2";
 import * as HapiSwagger from "hapi-swagger";
 import * as vision from "@hapi/vision";
 import * as pino from "hapi-pino";
+import * as static_auth from 'hapi-auth-bearer-token';
 import {AuthController} from "./src/controllers/authController";
 import {Container} from "typedi";
 import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
@@ -18,8 +19,6 @@ const SwaggerFile = require("./assets/swagger.json")
 const swaggerOptions : {} = {
     customSwaggerFile : SwaggerFile
 }
-
-
 
 
 // ********************************************
@@ -69,6 +68,9 @@ const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
             plugin: HapiJwt // jwt plugin required for creating auth strategy. Look up authentication in hapi.js documentation
         },
         {
+            plugin: static_auth // static token authentication
+        },
+        {
             plugin: vision  // a plugin used for rendering templates
         },
         {
@@ -89,6 +91,10 @@ const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
     server.auth.strategy('jwt', 'jwt', {        // inject the auth strategy as jwt into the server
         key: `${process.env.SECRET}`,
         validate: Container.get(AuthController).isLoggedIn      // the token will be decoded by the plugin automatically
+    })
+
+    server.auth.strategy('static', 'bearer-access-token', {
+        validate: Container.get(AuthController).staticTokenValidator
     })
 
     server.route({

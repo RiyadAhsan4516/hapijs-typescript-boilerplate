@@ -6,7 +6,7 @@ export function  errorCatcher(fn : any) : any{
         try{
             return await fn(req, h)
         }catch(err: any){
-            throw new Boom("internal server error", {statusCode: 500});
+            throw new Boom("something went wrong", {statusCode: 500});
         }
     }
 }

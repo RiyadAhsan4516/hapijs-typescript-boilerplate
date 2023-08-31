@@ -56,11 +56,11 @@ export class UserRepository{
 
     }
 
-    async DeleteUser(input: number): Promise<void> {
-        await this.userRepo.createQueryBuilder()
-            .delete()
-            .from(User)
-            .where({id: input})
-            .execute()
-    }
+    // async DeleteUser(input: number): Promise<void> {
+    //     await this.userRepo.createQueryBuilder()
+    //         .delete()
+    //         .from(User)
+    //         .where({id: input})
+    //         .execute()
+    // }
 }

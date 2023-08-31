@@ -69,24 +69,18 @@ let UserProfileService = exports.UserProfileService = class UserProfileService {
             return yield this.repository.createUserProfile(inputs);
         });
     }
-    getUserProfile(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const validation = this.validateIdInput(id);
-            if (validation.error) {
-                return { errno: 400, error: validation.error.details[0].message };
-            }
-            const result = yield this.repository.getAUserProfile(id);
-            if (result.length > 0)
-                return result;
-            else
-                return { errno: 404, error: "no result found" };
-        });
-    }
-    getProfiles() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.repository.getAllProfiles();
-        });
-    }
+    // async getUserProfile(id:number){
+    //     const validation  = this.validateIdInput(id)
+    //     if(validation.error){
+    //         return {errno: 400, error: validation.error.details[0].message};
+    //     }
+    //     const result = await this.repository.getAUserProfile(id);
+    //     if(result.length>0) return result
+    //     else return {errno:404, error: "no result found"}
+    // }
+    // async getProfiles() {
+    //     return await this.repository.getAllProfiles();
+    // }
     validateIdInput(input) {
         const schema = joi_1.default.object({
             id: joi_1.default.number().required().messages({
@@ -95,14 +89,6 @@ let UserProfileService = exports.UserProfileService = class UserProfileService {
             })
         });
         return schema.validate({ id: input }, { abortEarly: false });
-    }
-    validateCreateInput(input) {
-        const schema = joi_1.default.object({
-            email: joi_1.default.string().email().messages({ 'string.base': "email should be of type string" }),
-            password: joi_1.default.string().min(8),
-            userProfile_id: joi_1.default.number().optional()
-        });
-        return schema.validate(input);
     }
 };
 exports.UserProfileService = UserProfileService = __decorate([

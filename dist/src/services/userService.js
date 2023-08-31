@@ -33,10 +33,6 @@ let UserService = exports.UserService = class UserService {
     }
     getOne(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            // const validation : Joi.ValidationResult<any> = this.validateIdInput(id)
-            // if(validation.error){
-            //     return {error: validation.error};
-            // }
             return yield this.repository.getOneUser(id);
         });
     }

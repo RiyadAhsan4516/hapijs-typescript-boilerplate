@@ -45,6 +45,7 @@ const HapiJwt = __importStar(require("hapi-auth-jwt2"));
 const HapiSwagger = __importStar(require("hapi-swagger"));
 const vision = __importStar(require("@hapi/vision"));
 const pino = __importStar(require("hapi-pino"));
+const static_auth = __importStar(require("hapi-auth-bearer-token"));
 const authController_1 = require("./src/controllers/authController");
 const typedi_1 = require("typedi");
 const routes_1 = __importDefault(require("./src/routes"));
@@ -95,6 +96,9 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
             plugin: HapiJwt // jwt plugin required for creating auth strategy. Look up authentication in hapi.js documentation
         },
         {
+            plugin: static_auth // static token authentication
+        },
+        {
             plugin: vision // a plugin used for rendering templates
         },
         {
@@ -113,6 +117,9 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     server.auth.strategy('jwt', 'jwt', {
         key: `${process.env.SECRET}`,
         validate: typedi_1.Container.get(authController_1.AuthController).isLoggedIn // the token will be decoded by the plugin automatically
+    });
+    server.auth.strategy('static', 'bearer-access-token', {
+        validate: typedi_1.Container.get(authController_1.AuthController).staticTokenValidator
     });
     server.route({
         method: 'GET',

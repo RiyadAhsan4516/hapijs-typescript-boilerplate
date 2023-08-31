@@ -6,7 +6,6 @@ import "reflect-metadata";
 import {init, start} from "./app";
 
 
-
 // ********************************************
 // *                                          *
 // *        INITIALIZE THE DATABASE           *
@@ -30,8 +29,6 @@ if(process.env.NODE_ENV==='development') {
 }
 
 
-
-
 // ********************************************
 // *                                          *
 // *      HANDLE UNHANDLED REJECTIONS         *
@@ -41,9 +38,6 @@ process.on('unhandledRejection', (err) => {
     console.log(err);
     process.exit(1);
 });
-
-
-
 
 
 // ********************************************
