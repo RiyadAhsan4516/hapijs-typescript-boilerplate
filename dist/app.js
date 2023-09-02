@@ -66,6 +66,11 @@ const server = Hapi.server({
         files: {
             relativeTo: path.join(__dirname, 'public')
         },
+        cors: {
+            origin: ["*"],
+            headers: ["Accept", "Content-Type"],
+            additionalHeaders: ["X-Requested-With"]
+        }
     }
 });
 // SET UP TRANSPORT FOR PINO LOGGER. MULTIPLE TARGETS CAN ALSO BE SET AT ONCE. IN THAT CASE THE TARGETS MUST BE AN ARRAY

@@ -35,6 +35,11 @@ const server : Hapi.Server<Hapi.ServerApplicationState> = Hapi.server({
         files:{
             relativeTo: path.join(__dirname, 'public')
         },
+        cors: {
+            origin: ["*"],
+            headers: ["Accept", "Content-Type"],
+            additionalHeaders: ["X-Requested-With"]
+        }
     }
 });
 

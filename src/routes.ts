@@ -4,9 +4,12 @@ import {RoleController} from "./controllers/roleController";
 import {UserController} from "./controllers/userController";
 import {UserProfileController} from "./controllers/userProfileController";
 import {AuthController} from "./controllers/authController";
+import {NotificationController} from "./controllers/notificationController"
 import {errorCatcher} from "./helpers/errorCatcher";
 import {Container} from "typedi";
 import {Boom} from "@hapi/boom";
+
+import {NotificationService} from "./services/notificationService"
 
 const routes : ServerRoute[] = [
     {
@@ -95,7 +98,39 @@ const routes : ServerRoute[] = [
             },
         },
         handler: errorCatcher(Container.get(AuthController).login),
-    }
+    },
+    {
+        method: "GET",
+        path: "/api/v1/notification",
+        handler : errorCatcher(Container.get(NotificationController).getNotification)
+    },
+    {
+        method: "POST",
+        path: "/api/v1/create_notification",
+        options: {
+            validate: {
+                payload: Joi.object({
+                    notification: Joi.string().required().error(new Boom("no notification provided or is not in string format", {statusCode: 422}))
+                })
+            }
+        },
+        handler: errorCatcher(Container.get(NotificationController).createNotification)
+    },
+    {
+        method: "PUT",
+        path: "/api/v1/notification_status/{id}",
+        options: {
+            validate: {
+                params: Joi.object({
+                    id: Joi.string().required().error(new Boom("id not provided in the parameters", {statusCode: 422}))
+                }),
+                payload: Joi.object({
+                    read_status: Joi.number().required().error(new Boom("read_status is either not provided or is not a number", {statusCode: 422}))
+                })
+            }
+        },
+        handler: errorCatcher(Container.get(NotificationController).changeReadStatus)
+    },
 
 ]
 

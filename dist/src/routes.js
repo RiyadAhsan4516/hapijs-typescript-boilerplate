@@ -8,6 +8,7 @@ const roleController_1 = require("./controllers/roleController");
 const userController_1 = require("./controllers/userController");
 const userProfileController_1 = require("./controllers/userProfileController");
 const authController_1 = require("./controllers/authController");
+const notificationController_1 = require("./controllers/notificationController");
 const errorCatcher_1 = require("./helpers/errorCatcher");
 const typedi_1 = require("typedi");
 const boom_1 = require("@hapi/boom");
@@ -98,6 +99,38 @@ const routes = [
             },
         },
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authController_1.AuthController).login),
-    }
+    },
+    {
+        method: "GET",
+        path: "/api/v1/notification",
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(notificationController_1.NotificationController).getNotification)
+    },
+    {
+        method: "POST",
+        path: "/api/v1/create_notification",
+        options: {
+            validate: {
+                payload: joi_1.default.object({
+                    notification: joi_1.default.string().required().error(new boom_1.Boom("no notification provided or is not in string format", { statusCode: 422 }))
+                })
+            }
+        },
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(notificationController_1.NotificationController).createNotification)
+    },
+    {
+        method: "PUT",
+        path: "/api/v1/notification_status/{id}",
+        options: {
+            validate: {
+                params: joi_1.default.object({
+                    id: joi_1.default.string().required().error(new boom_1.Boom("id not provided in the parameters", { statusCode: 422 }))
+                }),
+                payload: joi_1.default.object({
+                    read_status: joi_1.default.number().required().error(new boom_1.Boom("read_status is either not provided or is not a number", { statusCode: 422 }))
+                })
+            }
+        },
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(notificationController_1.NotificationController).changeReadStatus)
+    },
 ];
 exports.default = routes;

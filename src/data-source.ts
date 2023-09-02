@@ -6,8 +6,9 @@ import {PasswordEncryptionSubscriber} from "./helpers/passwordEncryptionSubscrib
 import {User} from "./entities/userEntity";
 import {UserProfile} from "./entities/userProfileEntity";
 import {Roles} from "./entities/roleEntity";
+import {Notification} from "./entities/notificationEntity";
 
-let entity_list : any  = [User, UserProfile, Roles]
+let entity_list : any  = [User, UserProfile, Roles, Notification]
 
 export const AppDataSource : DataSource = new DataSource({
     type: "mariadb",
