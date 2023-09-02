@@ -8,12 +8,13 @@
 
 ### Description : 
 
-This is a simple boilerplate for a rest api designed with hapi and typescript. This particular api example has 3 entities:  
+This is a simple boilerplate for a rest api designed with hapi and typescript. This particular api example has 4 entities:  
 1. User
 2. Role
 3. User Profile
+4. Notification
 
-It's a simple role based authentication system project which is commonly required in almost every software.  
+It's a simple role based authentication system project which is commonly required in almost every software. It also includes push notification using SSE 
 
 N.B: The project is still ongoing. The following features are yet to be integrated :
  * Casbin RBAC/ABAC
@@ -41,6 +42,7 @@ Set up a .env file in the root directory of the project containing the following
    * DB_PASSWORD=``your database password``
    * DB_LOCAL=``name of your database``
    * SECRET=``a secret key for generating jwt``
+   * STATIC=``a static token for public routes``
    * LOGTAIL_LINK=``link of your logtail team profile. (optional)``
    * LOGTAIL_TOKEN=``access token of your logtail connection source (optional)``
 
