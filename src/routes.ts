@@ -9,8 +9,6 @@ import {errorCatcher} from "./helpers/errorCatcher";
 import {Container} from "typedi";
 import {Boom} from "@hapi/boom";
 
-import {NotificationService} from "./services/notificationService"
-
 const routes : ServerRoute[] = [
     {
         method: "GET",
