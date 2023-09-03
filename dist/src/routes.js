@@ -17,7 +17,7 @@ const routes = [
         method: "GET",
         path: "/api/v1/roles",
         options: {
-            auth: "static"
+            auth: "jwt"
         },
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(roleController_1.RoleController).getAllRoles),
     },
@@ -91,6 +91,11 @@ const routes = [
         method: "POST",
         path: "/api/v1/login",
         options: {
+            cors: {
+                origin: ['*'],
+                headers: ["Accept", "Content-Type"],
+                additionalHeaders: ["X-Requested-With"]
+            },
             validate: {
                 payload: joi_1.default.object({
                     email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(new boom_1.Boom("email input validation failed", { statusCode: 422 })),
@@ -131,6 +136,6 @@ const routes = [
             }
         },
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(notificationController_1.NotificationController).changeReadStatus)
-    },
+    }
 ];
 exports.default = routes;

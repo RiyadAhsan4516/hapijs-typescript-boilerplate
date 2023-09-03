@@ -89,7 +89,7 @@ const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
                 level: 'error',
                 async: true,
             }
-        }
+        },
     ]);
 
 
