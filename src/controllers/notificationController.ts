@@ -7,8 +7,18 @@ import {Notification} from "../entities/notificationEntity"
 
 @Service()
 export class NotificationController{
+    // POST A NOTIFICATION. INITIALLY WITH THE STATUS 0
+    public async createNotification(req: Request, h:ResponseToolkit<ReqRefDefaults>){
+        //@ts-ignore
+        let notification : string = req.payload["notification"];
+        let result : Notification[] =  await Container.get(NotificationService).createNotification(notification);
+        if(result.length<1) throw new Boom("no notification was created", {statusCode: 400});
+        return result;
+    }
 
+    // SERVE NOTIFICATION USING SSE CONNECTION. SET STATUS TO 1 AFTER BEING SENT
     public async getNotification(req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<ResponseObject>{
+        // noinspection JSUnusedGlobalSymbols
         class ResponseStream extends Stream.PassThrough {
             setCompressor(compressor: any) : void {
                 // @ts-ignore
@@ -42,16 +52,7 @@ export class NotificationController{
         return h.response(stream).type('text/event-stream')
     }
 
-    public async createNotification(req: Request, h:ResponseToolkit<ReqRefDefaults>){
-        //@ts-ignore
-        let notification : string = req.payload["notification"];
-        let result : Notification[] =  await Container.get(NotificationService).createNotification(notification);
-        if(result.length<1) throw new Boom("no notification was created", {statusCode: 400});
-        return result;
-    }
-
-
-    // CHANGE NOTIFICATION STATUS TO 2
+    // CHANGE NOTIFICATION STATUS TO 2 WHEN IT IS READ
     public async changeReadStatus(req: Request, h:ResponseToolkit<ReqRefDefaults>){
         let id : number = +req.params["id"];
         console.log(id);

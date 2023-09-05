@@ -74,12 +74,12 @@ process.on('unhandledRejection', (err) => {
 function launch() {
     return __awaiter(this, void 0, void 0, function* () {
         if (process.env.NODE_ENV === 'development') {
-            yield (0, app_1.init)();
-            yield (0, app_1.start)();
+            let server = yield (0, app_1.init)();
+            yield (0, app_1.start)(server);
         }
         else {
-            yield (0, app_1.init)();
-            yield (0, app_1.start)();
+            let server = yield (0, app_1.init)();
+            yield (0, app_1.start)(server);
         }
     });
 }

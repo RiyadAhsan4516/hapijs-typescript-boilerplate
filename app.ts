@@ -9,16 +9,40 @@ import * as HapiSwagger from "hapi-swagger";
 import * as vision from "@hapi/vision";
 import * as pino from "hapi-pino";
 import * as static_auth from 'hapi-auth-bearer-token';
-import {AuthController} from "./src/controllers/authController";
+import * as redis from "redis";
+
 import {Container} from "typedi";
 import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
+
+import {AuthController} from "./src/controllers/authController";
 import routes from "./src/routes";
 
-const SwaggerFile = require("./assets/swagger.json")
 
+// ********************************************
+// *                                          *
+// *       OPTIONAL: SET UP SWAGGER           *
+// *                                          *
+// ********************************************
+const SwaggerFile = require("./assets/swagger.json")
 const swaggerOptions : {} = {
     customSwaggerFile : SwaggerFile
 }
+
+
+
+// ********************************************
+// *                                          *
+// *         CREATE REDIS CONNECTION          *
+// *                                          *
+// ********************************************
+const client : any = redis.createClient({url: 'redis://127.0.0.1:6379/3'});
+try{
+    client.connect().then(()=>console.log("redis connected"));
+}catch(err){
+    console.log(err);
+}
+
+
 
 
 // ********************************************
@@ -43,7 +67,14 @@ const server : Hapi.Server<Hapi.ServerApplicationState> = Hapi.server({
     }
 });
 
-// SET UP TRANSPORT FOR PINO LOGGER. MULTIPLE TARGETS CAN ALSO BE SET AT ONCE. IN THAT CASE THE TARGETS MUST BE AN ARRAY
+
+// ********************************************
+// *                                          *
+// *          SET UP PINO LOGGER              *
+// *                                          *
+// ********************************************
+
+// MULTIPLE TARGETS CAN ALSO BE SET AT ONCE. IN THAT CASE THE TARGETS MUST BE AN ARRAY
 let transport : any;
 if(process.env.NODE_ENV === 'production') {
     transport = {
@@ -58,6 +89,7 @@ if(process.env.NODE_ENV === 'production') {
 }
 
 
+
 // ********************************************
 // *                                          *
 // *          SERVER INITIALIZER              *
@@ -65,6 +97,7 @@ if(process.env.NODE_ENV === 'production') {
 // ********************************************
 
 const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
+
     await server.register([
         {
             plugin: inert   // inert is a plugin used for serving static files
@@ -123,9 +156,9 @@ const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
 // *                                          *
 // ********************************************
 
-const start = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> =>{
+const start = async (server:Hapi.Server<Hapi.ServerApplicationState>) : Promise<Hapi.Server<Hapi.ServerApplicationState>> =>{
     await server.start();
     return server
 }
 
-export {init, start}
+export {init, start, client}

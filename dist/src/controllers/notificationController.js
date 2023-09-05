@@ -44,8 +44,21 @@ const Stream = __importStar(require("stream"));
 const boom_1 = require("@hapi/boom");
 const notificationService_1 = require("../services/notificationService");
 let NotificationController = exports.NotificationController = class NotificationController {
+    // POST A NOTIFICATION. INITIALLY WITH THE STATUS 0
+    createNotification(req, h) {
+        return __awaiter(this, void 0, void 0, function* () {
+            //@ts-ignore
+            let notification = req.payload["notification"];
+            let result = yield typedi_1.Container.get(notificationService_1.NotificationService).createNotification(notification);
+            if (result.length < 1)
+                throw new boom_1.Boom("no notification was created", { statusCode: 400 });
+            return result;
+        });
+    }
+    // SERVE NOTIFICATION USING SSE CONNECTION. SET STATUS TO 1 AFTER BEING SENT
     getNotification(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
+            // noinspection JSUnusedGlobalSymbols
             class ResponseStream extends Stream.PassThrough {
                 setCompressor(compressor) {
                     // @ts-ignore
@@ -74,17 +87,7 @@ let NotificationController = exports.NotificationController = class Notification
             return h.response(stream).type('text/event-stream');
         });
     }
-    createNotification(req, h) {
-        return __awaiter(this, void 0, void 0, function* () {
-            //@ts-ignore
-            let notification = req.payload["notification"];
-            let result = yield typedi_1.Container.get(notificationService_1.NotificationService).createNotification(notification);
-            if (result.length < 1)
-                throw new boom_1.Boom("no notification was created", { statusCode: 400 });
-            return result;
-        });
-    }
-    // CHANGE NOTIFICATION STATUS TO 2
+    // CHANGE NOTIFICATION STATUS TO 2 WHEN IT IS READ
     changeReadStatus(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
             let id = +req.params["id"];

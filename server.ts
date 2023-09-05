@@ -4,6 +4,7 @@ dotenv.config();
 import {AppDataSource} from "./src/data-source";
 import "reflect-metadata";
 import {init, start} from "./app";
+import * as Hapi from "@hapi/hapi";
 
 
 // ********************************************
@@ -40,6 +41,7 @@ process.on('unhandledRejection', (err) => {
 });
 
 
+
 // ********************************************
 // *                                          *
 // *    INITIALIZE AND START THE SERVER       *
@@ -48,15 +50,15 @@ process.on('unhandledRejection', (err) => {
 
 async function launch(){
     if(process.env.NODE_ENV === 'development') {
-        await init();
-        await start()
+        let server : Hapi.Server<Hapi.ServerApplicationState> =   await init();
+        await start(server);
     } else {
-        await init();
-        await start()
+        let server : Hapi.Server<Hapi.ServerApplicationState> =   await init();
+        await start(server);
     }
 }
 
-launch().then(()=>{}).catch(err=>{
+launch().then(() : void=>{}).catch(err=>{
     console.log(err);
     console.log("THERE WAS AN ERROR LAUNCHING THE SERVER")
 })

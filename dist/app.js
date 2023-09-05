@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.start = exports.init = void 0;
+exports.client = exports.start = exports.init = void 0;
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const Hapi = __importStar(require("@hapi/hapi"));
@@ -46,13 +46,32 @@ const HapiSwagger = __importStar(require("hapi-swagger"));
 const vision = __importStar(require("@hapi/vision"));
 const pino = __importStar(require("hapi-pino"));
 const static_auth = __importStar(require("hapi-auth-bearer-token"));
-const authController_1 = require("./src/controllers/authController");
+const redis = __importStar(require("redis"));
 const typedi_1 = require("typedi");
+const authController_1 = require("./src/controllers/authController");
 const routes_1 = __importDefault(require("./src/routes"));
+// ********************************************
+// *                                          *
+// *       OPTIONAL: SET UP SWAGGER           *
+// *                                          *
+// ********************************************
 const SwaggerFile = require("./assets/swagger.json");
 const swaggerOptions = {
     customSwaggerFile: SwaggerFile
 };
+// ********************************************
+// *                                          *
+// *         CREATE REDIS CONNECTION          *
+// *                                          *
+// ********************************************
+const client = redis.createClient({ url: 'redis://127.0.0.1:6379/3' });
+exports.client = client;
+try {
+    client.connect().then(() => console.log("redis connected"));
+}
+catch (err) {
+    console.log(err);
+}
 // ********************************************
 // *                                          *
 // *         CREATE SERVER INSTANCE           *
@@ -73,7 +92,12 @@ const server = Hapi.server({
         }
     }
 });
-// SET UP TRANSPORT FOR PINO LOGGER. MULTIPLE TARGETS CAN ALSO BE SET AT ONCE. IN THAT CASE THE TARGETS MUST BE AN ARRAY
+// ********************************************
+// *                                          *
+// *          SET UP PINO LOGGER              *
+// *                                          *
+// ********************************************
+// MULTIPLE TARGETS CAN ALSO BE SET AT ONCE. IN THAT CASE THE TARGETS MUST BE AN ARRAY
 let transport;
 if (process.env.NODE_ENV === 'production') {
     transport = {
@@ -142,7 +166,7 @@ exports.init = init;
 // *         SERVER START FUNCTION            *
 // *                                          *
 // ********************************************
-const start = () => __awaiter(void 0, void 0, void 0, function* () {
+const start = (server) => __awaiter(void 0, void 0, void 0, function* () {
     yield server.start();
     return server;
 });
