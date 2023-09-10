@@ -139,7 +139,6 @@ const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
         method: 'GET',
         path: '/{picture}',
         handler: function (req :Request , h: ResponseToolkit<ReqRefDefaults>) {
-
             return h.file(`${req.params.picture}`);
         }
     });
