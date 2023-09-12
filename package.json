@@ -8,7 +8,8 @@
   "scripts": {
     "prod": "NODE_ENV=production pm2 start ./dist/server.js -i 0 --name HapiScript --watch",
     "dist": "tsc",
-    "dev": "ts-node-dev --respawn server.ts"
+    "dev": "ts-node-dev --respawn server.ts",
+    "test" : "yarn run dist && pm2 start ./dist/app.js -i 1 --name HapiScript --watch"
   },
   "dependencies": {
     "@hapi/bell": "^13.0.1",

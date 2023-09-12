@@ -119,10 +119,10 @@ const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
             plugin: pino,    // request logger
             options: {
                 transport,
-                level: 'error',
+                level: 'info',
                 async: true,
             }
-        },
+        }, /// test
     ]);
 
 
