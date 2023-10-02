@@ -40,7 +40,7 @@ export class UserProfileRepository{
     }
 
 
-    async getAllProfiles () : Promise<UserProfile[] | {error: string}>  {
+    async getAllProfiles () : Promise<UserProfile[] | {error: string}>{
         try{
             return await this.userProfileRepo.find({
                 relations:{

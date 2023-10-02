@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -12,10 +21,11 @@ const notificationController_1 = require("./controllers/notificationController")
 const errorCatcher_1 = require("./helpers/errorCatcher");
 const typedi_1 = require("typedi");
 const boom_1 = require("@hapi/boom");
+const prefix = "/api/v1";
 const routes = [
     {
         method: "GET",
-        path: "/api/v1/roles",
+        path: `${prefix}/roles`,
         options: {
             auth: "jwt"
         },
@@ -23,7 +33,7 @@ const routes = [
     },
     {
         method: "GET",
-        path: "/api/v1/users",
+        path: `${prefix}/users`,
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userController_1.UserController).getUsers),
         options: {
             auth: "jwt"
@@ -31,7 +41,7 @@ const routes = [
     },
     {
         method: "GET",
-        path: "/api/v1/users/getOne/{id}",
+        path: `${prefix}/users/getOne/{id}`,
         options: {
             validate: {
                 params: joi_1.default.object({
@@ -44,7 +54,7 @@ const routes = [
     },
     {
         method: "POST",
-        path: "/api/v1/users/create",
+        path: `${prefix}/users/create`,
         options: {
             validate: {
                 payload: joi_1.default.object({
@@ -57,7 +67,7 @@ const routes = [
     },
     {
         method: "PUT",
-        path: "/api/v1/users/update/{id}",
+        path: `${prefix}/users/update/{id}`,
         options: {
             validate: {
                 payload: joi_1.default.object({
@@ -73,7 +83,7 @@ const routes = [
     },
     {
         method: "POST",
-        path: "/api/v1/userProfile/create",
+        path: `${prefix}/userProfile/create`,
         options: {
             payload: {
                 allow: "multipart/form-data",
@@ -89,7 +99,7 @@ const routes = [
     },
     {
         method: "POST",
-        path: "/api/v1/login",
+        path: `${prefix}/login`,
         options: {
             cors: {
                 origin: ['*'],
@@ -107,12 +117,12 @@ const routes = [
     },
     {
         method: "GET",
-        path: "/api/v1/notification",
+        path: `${prefix}/notification`,
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(notificationController_1.NotificationController).getNotification)
     },
     {
         method: "POST",
-        path: "/api/v1/create_notification",
+        path: `${prefix}/create_notification`,
         options: {
             validate: {
                 payload: joi_1.default.object({
@@ -124,7 +134,7 @@ const routes = [
     },
     {
         method: "PUT",
-        path: "/api/v1/notification_status/{id}",
+        path: `${prefix}/notification_status/{id}`,
         options: {
             validate: {
                 params: joi_1.default.object({
@@ -136,6 +146,27 @@ const routes = [
             }
         },
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(notificationController_1.NotificationController).changeReadStatus)
+    },
+    {
+        method: "POST",
+        path: `${prefix}/test`,
+        options: {
+            payload: {
+                allow: "multipart/form-data",
+                parse: true,
+                multipart: {
+                    output: "stream"
+                },
+                maxBytes: 1000 * 1000 * 2,
+                uploads: 'public/tmp',
+            }
+        },
+        handler: (0, errorCatcher_1.errorCatcher)(function (req, h) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const { payload } = req;
+                return payload;
+            });
+        })
     }
 ];
 exports.default = routes;

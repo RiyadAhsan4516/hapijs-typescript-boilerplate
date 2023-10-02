@@ -141,7 +141,7 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
                 level: 'info',
                 async: true,
             }
-        }, /// test
+        },
     ]);
     server.auth.strategy('jwt', 'jwt', {
         key: `${process.env.SECRET}`,

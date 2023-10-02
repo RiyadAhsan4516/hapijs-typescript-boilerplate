@@ -1,5 +1,5 @@
 import Joi from "joi";
-import {ServerRoute} from "@hapi/hapi";
+import {ReqRefDefaults, ResponseToolkit, ServerRoute} from "@hapi/hapi";
 import {RoleController} from "./controllers/roleController";
 import {UserController} from "./controllers/userController";
 import {UserProfileController} from "./controllers/userProfileController";
@@ -9,18 +9,20 @@ import {errorCatcher} from "./helpers/errorCatcher";
 import {Container} from "typedi";
 import {Boom} from "@hapi/boom";
 
+const prefix : string = "/api/v1"
+
 const routes : ServerRoute[] = [
     {
         method: "GET",
-        path: "/api/v1/roles",
+        path: `${prefix}/roles`,
         options:{
-            auth: "jwt"
+            auth: "static"
         },
         handler: errorCatcher(Container.get(RoleController).getAllRoles),
     },
     {
         method: "GET",
-        path: "/api/v1/users",
+        path: `${prefix}/users/allUsers`,
         handler: errorCatcher(Container.get(UserController).getUsers),
         options: {
             auth: "jwt"
@@ -28,7 +30,7 @@ const routes : ServerRoute[] = [
     },
     {
         method: "GET",
-        path: "/api/v1/users/getOne/{id}",
+        path: `${prefix}/users/getOne/{id}`,
         options:{
             validate:{
                 params: Joi.object({
@@ -41,7 +43,7 @@ const routes : ServerRoute[] = [
     },
     {
         method: "POST",
-        path: "/api/v1/users/create",
+        path: `${prefix}/users/createNew`,
         options:{
             validate: {
                 payload: Joi.object({
@@ -54,7 +56,7 @@ const routes : ServerRoute[] = [
     },
     {
         method: "PUT",
-        path: "/api/v1/users/update/{id}",
+        path: `${prefix}/users/updateInfo/{id}`,
         options: {
             validate: {
                 payload: Joi.object({
@@ -70,7 +72,7 @@ const routes : ServerRoute[] = [
     },
     {
         method: "POST",
-        path: "/api/v1/userProfile/create",
+        path: `${prefix}/userProfile/createNew`,
         options:  {
             payload: {
                 allow: "multipart/form-data",
@@ -86,7 +88,7 @@ const routes : ServerRoute[] = [
     },
     {
         method: "POST",
-        path: "/api/v1/login",
+        path: `${prefix}/login`,
         options: {
             cors: {
                 origin: ['*'], // Allow all origins
@@ -104,12 +106,12 @@ const routes : ServerRoute[] = [
     },
     {
         method: "GET",
-        path: "/api/v1/notification",
+        path: `${prefix}/notification`,
         handler : errorCatcher(Container.get(NotificationController).getNotification)
     },
     {
         method: "POST",
-        path: "/api/v1/create_notification",
+        path: `${prefix}/create_notification`,
         options: {
             validate: {
                 payload: Joi.object({
@@ -121,7 +123,7 @@ const routes : ServerRoute[] = [
     },
     {
         method: "PUT",
-        path: "/api/v1/notification_status/{id}",
+        path: `${prefix}/notification_status/{id}`,
         options: {
             validate: {
                 params: Joi.object({
@@ -133,6 +135,25 @@ const routes : ServerRoute[] = [
             }
         },
         handler: errorCatcher(Container.get(NotificationController).changeReadStatus)
+    },
+    {
+        method: "POST",
+        path: `${prefix}/test`,
+        options: {
+          payload: {
+              allow: "multipart/form-data",
+              parse: true,
+              multipart: {
+                  output: "stream"
+              },
+              maxBytes: 1000 * 1000 * 2, // 2 Mb
+              uploads: 'public/tmp',
+          }
+        },
+        handler: errorCatcher(async function(req: any, h:ResponseToolkit<ReqRefDefaults>){
+            const {payload} = req
+            return payload;
+        })
     }
 
 ]

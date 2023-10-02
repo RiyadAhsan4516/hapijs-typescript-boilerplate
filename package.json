@@ -7,9 +7,10 @@
   "license": "MIT",
   "scripts": {
     "prod": "NODE_ENV=production pm2 start ./dist/server.js -i 0 --name HapiScript --watch",
-    "dist": "tsc",
+    "dist": "tsc && yarn run copy-assets",
     "dev": "ts-node-dev --respawn server.ts",
-    "test" : "yarn run dist && pm2 start ./dist/app.js -i 1 --name HapiScript --watch"
+    "test": "yarn run dist && pm2 start ./dist/app.js -i 1 --name HapiScript --watch",
+    "copy-assets" : "cp -r assets dist"
   },
   "dependencies": {
     "@hapi/bell": "^13.0.1",
@@ -18,6 +19,7 @@
     "@types/hapi__bell": "^11.0.4",
     "@types/node": "^20.3.1",
     "bcryptjs": "^2.4.3",
+    "casbin": "^5.27.0",
     "dotenv": "^16.3.0",
     "hapi-auth-bearer-token": "^8.0.0",
     "http-errors": "^2.0.0",

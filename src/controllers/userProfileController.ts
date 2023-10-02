@@ -16,7 +16,7 @@ export class UserProfileController{
 
     // async getProfile(req: Request, h:ResponseToolkit<ReqRefDefaults>): Promise<void>{
     //     let id = +req.params.id;
-    //     let result = await service.getUserProfile(id);
+    //     let result = await this.service.getUserProfile(id);
     //     if(result.errno || result.error){
     //         return next(result)
     //     }
@@ -26,7 +26,7 @@ export class UserProfileController{
     // }
 
     // async getAllProfiles(req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<void>{
-    //     const result = await service.getProfiles();
+    //     const result = await this.service.getProfiles();
     //     res.status(200).json({
     //         data : result
     //     })

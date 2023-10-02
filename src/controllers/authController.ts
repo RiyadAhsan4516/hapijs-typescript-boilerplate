@@ -26,6 +26,7 @@ export class AuthController {
     }
 
     public async isLoggedIn(decoded: any, req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<{isValid:boolean}>{
+        // TODO: TAKE THE CREDENTIALS IN VALIDATE TOKEN INFO HANDLER AND THEN SET THE ROLE AND OTHER NECESSARY INFORMATION IN THE REQUEST OBJECT.
         return await Container.get(AuthService).validateTokenInfo(decoded);
     }
 
