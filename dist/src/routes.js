@@ -27,13 +27,13 @@ const routes = [
         method: "GET",
         path: `${prefix}/roles`,
         options: {
-            auth: "jwt"
+            auth: "static"
         },
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(roleController_1.RoleController).getAllRoles),
     },
     {
         method: "GET",
-        path: `${prefix}/users`,
+        path: `${prefix}/users/allUsers`,
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userController_1.UserController).getUsers),
         options: {
             auth: "jwt"
@@ -54,7 +54,7 @@ const routes = [
     },
     {
         method: "POST",
-        path: `${prefix}/users/create`,
+        path: `${prefix}/users/createNew`,
         options: {
             validate: {
                 payload: joi_1.default.object({
@@ -67,7 +67,7 @@ const routes = [
     },
     {
         method: "PUT",
-        path: `${prefix}/users/update/{id}`,
+        path: `${prefix}/users/updateInfo/{id}`,
         options: {
             validate: {
                 payload: joi_1.default.object({
@@ -83,7 +83,7 @@ const routes = [
     },
     {
         method: "POST",
-        path: `${prefix}/userProfile/create`,
+        path: `${prefix}/userProfile/createNew`,
         options: {
             payload: {
                 allow: "multipart/form-data",

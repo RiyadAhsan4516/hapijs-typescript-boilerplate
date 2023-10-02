@@ -32,7 +32,8 @@ const userEntity_1 = require("./entities/userEntity");
 const userProfileEntity_1 = require("./entities/userProfileEntity");
 const roleEntity_1 = require("./entities/roleEntity");
 const notificationEntity_1 = require("./entities/notificationEntity");
-let entity_list = [userEntity_1.User, userProfileEntity_1.UserProfile, roleEntity_1.Roles, notificationEntity_1.Notification];
+const policyEntity_1 = require("./entities/policyEntity");
+let entity_list = [userEntity_1.User, userProfileEntity_1.UserProfile, roleEntity_1.Roles, notificationEntity_1.Notification, policyEntity_1.PolicyReadStatus];
 exports.AppDataSource = new typeorm_1.DataSource({
     type: "mariadb",
     host: "localhost",
@@ -41,7 +42,7 @@ exports.AppDataSource = new typeorm_1.DataSource({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_LOCAL,
     synchronize: true,
-    logging: false,
+    logging: ["error"],
     poolSize: 1,
     entities: entity_list,
     subscribers: [passwordEncryptionSubscriber_1.PasswordEncryptionSubscriber],

@@ -35,6 +35,7 @@ let AuthController = exports.AuthController = class AuthController {
     }
     isLoggedIn(decoded, req, h) {
         return __awaiter(this, void 0, void 0, function* () {
+            // TODO: TAKE THE CREDENTIALS IN VALIDATE TOKEN INFO HANDLER AND THEN SET THE ROLE AND OTHER NECESSARY INFORMATION IN THE REQUEST OBJECT.
             return yield typedi_1.Container.get(authService_1.AuthService).validateTokenInfo(decoded);
         });
     }
