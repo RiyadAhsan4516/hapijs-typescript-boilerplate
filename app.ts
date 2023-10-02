@@ -11,6 +11,9 @@ import * as pino from "hapi-pino";
 import * as static_auth from 'hapi-auth-bearer-token';
 import * as redis from "redis";
 
+// @ts-ignore
+import * as hapi_rate_limiter from "hapi-rate-limit";
+
 import {Container} from "typedi";
 import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
 
@@ -123,6 +126,13 @@ const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
                 async: true,
             }
         },
+        {
+            plugin: hapi_rate_limiter,
+            options:{
+                enabled: true,
+                userLimit: 100,
+            }
+        }
     ]);
 
 

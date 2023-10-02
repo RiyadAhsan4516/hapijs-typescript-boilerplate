@@ -47,6 +47,8 @@ const vision = __importStar(require("@hapi/vision"));
 const pino = __importStar(require("hapi-pino"));
 const static_auth = __importStar(require("hapi-auth-bearer-token"));
 const redis = __importStar(require("redis"));
+// @ts-ignore
+const hapi_rate_limiter = __importStar(require("hapi-rate-limit"));
 const typedi_1 = require("typedi");
 const authController_1 = require("./src/controllers/authController");
 const routes_1 = __importDefault(require("./src/routes"));
@@ -142,6 +144,13 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
                 async: true,
             }
         },
+        {
+            plugin: hapi_rate_limiter,
+            options: {
+                enabled: true,
+                userLimit: 100,
+            }
+        }
     ]);
     server.auth.strategy('jwt', 'jwt', {
         key: `${process.env.SECRET}`,

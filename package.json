@@ -10,7 +10,7 @@
     "dist": "tsc && yarn run copy-assets",
     "dev": "ts-node-dev --respawn server.ts",
     "test": "yarn run dist && pm2 start ./dist/app.js -i 1 --name HapiScript --watch",
-    "copy-assets" : "cp -r assets dist"
+    "copy-assets": "cp -r assets dist"
   },
   "dependencies": {
     "@hapi/bell": "^13.0.1",
@@ -22,6 +22,7 @@
     "casbin": "^5.27.0",
     "dotenv": "^16.3.0",
     "hapi-auth-bearer-token": "^8.0.0",
+    "hapi-rate-limit": "^7.1.0",
     "http-errors": "^2.0.0",
     "jsonwebtoken": "^9.0.0",
     "mysql2": "^3.3.5",
