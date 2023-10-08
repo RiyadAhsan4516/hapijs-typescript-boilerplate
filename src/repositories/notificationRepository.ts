@@ -20,7 +20,7 @@ export class NotificationRepository{
                 .getMany();
         }catch(err){
             console.log(err);
-            throw new Boom("getNotification query failed", {statusCode: 500})
+            throw new Boom("getNotification query failed", {statusCode: 422})
         }
     }
 
@@ -35,7 +35,7 @@ export class NotificationRepository{
 
             return notification.raw
         }catch(err){
-            throw new Boom("could not create a new notification", {statusCode: 500})
+            throw new Boom("could not create a new notification", {statusCode: 422})
         }
     }
 
@@ -51,7 +51,7 @@ export class NotificationRepository{
             return true;
         }catch(err){
             console.log(err)
-            throw new Boom("updateReadStatus failed", {statusCode: 500})
+            throw new Boom("updateReadStatus failed", {statusCode: 422})
         }
 
     }

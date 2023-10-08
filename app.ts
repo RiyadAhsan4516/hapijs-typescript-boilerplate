@@ -65,7 +65,7 @@ const server : Hapi.Server<Hapi.ServerApplicationState> = Hapi.server({
         cors: {
             origin: ["*"],
             headers: ["Accept", "Content-Type"],
-            additionalHeaders: ["X-Requested-With"]
+            credentials: true,
         }
     }
 });
@@ -144,6 +144,11 @@ const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
     server.auth.strategy('static', 'bearer-access-token', {
         validate: Container.get(AuthController).staticTokenValidator
     })
+
+    // DELETE THE FILES FROM TEMP FOLDER USING THIS EVENT
+    server.events.on('response', (request) => {
+        console.log(`Response sent for request: ${request.info.id}`);
+    });
 
     server.route({
         method: 'GET',

@@ -1,5 +1,5 @@
 import {Service, Container} from "typedi";
-import {Boom} from "@hapi/boom";
+import * as Boom from "@hapi/boom";
 import bcrypt from "bcryptjs";
 import {UserRepository} from "../repositories/userRepository";
 import {GenerateTokens} from "../helpers/generateTokens";
@@ -19,7 +19,7 @@ export class AuthService{
 
         // THROW ERROR IF NO USER IS FOUND
         if (!user || !(await bcrypt.compare(password, user.password))) {
-            throw new Boom("email or password invalid", {statusCode:401});
+            throw Boom.unauthorized("email or password invalid")
         }
 
         // GENERATE AN ACCESS TOKEN WITH TYPE 'ACCESS'
