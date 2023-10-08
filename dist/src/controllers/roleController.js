@@ -41,10 +41,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoleController = void 0;
 const roleService_1 = require("../services/roleService");
 const typedi_1 = require("typedi");
+const errorChecker_1 = require("../helpers/errorChecker");
 const zlib = __importStar(require("zlib"));
 let RoleController = exports.RoleController = class RoleController {
     getAllRoles(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
+            // CHECK REQUEST METHOD
+            (0, errorChecker_1.methodTypeCheck)(req.method, 'get');
             const service = typedi_1.Container.get(roleService_1.RoleService);
             const compressedData = zlib.gzipSync(JSON.stringify(yield service.getAllRoles())); // Compress data using zlib
             return h.response(compressedData).header('Content-Encoding', 'gzip').type("application/json");

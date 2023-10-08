@@ -22,28 +22,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.errorCatcher = void 0;
+exports.methodTypeCheck = void 0;
 const Boom = __importStar(require("@hapi/boom"));
-function errorCatcher(fn) {
-    return (req, h) => __awaiter(this, void 0, void 0, function* () {
-        try {
-            return yield fn(req, h);
-        }
-        catch (err) {
-            if (err.isBoom)
-                return h.response(err.output.payload).code(err.output.statusCode);
-            throw Boom.teapot();
-        }
-    });
+function methodTypeCheck(req_type, expected_type) {
+    if (req_type !== expected_type)
+        throw Boom.methodNotAllowed(`${req_type} method not allowed on this route`);
 }
-exports.errorCatcher = errorCatcher;
+exports.methodTypeCheck = methodTypeCheck;

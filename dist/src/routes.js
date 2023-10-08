@@ -24,7 +24,7 @@ const boom_1 = require("@hapi/boom");
 const prefix = "/api/v1";
 const routes = [
     {
-        method: "GET",
+        method: "*",
         path: `${prefix}/roles`,
         options: {
             auth: "static"
@@ -92,6 +92,7 @@ const routes = [
                     output: "file"
                 },
                 maxBytes: 1000 * 1000 * 2,
+                timeout: 60000,
                 uploads: 'public/tmp',
             }
         },
@@ -155,7 +156,7 @@ const routes = [
                 allow: "multipart/form-data",
                 parse: true,
                 multipart: {
-                    output: "stream"
+                    output: "file", // use file to allow multiple files
                 },
                 maxBytes: 1000 * 1000 * 2,
                 uploads: 'public/tmp',

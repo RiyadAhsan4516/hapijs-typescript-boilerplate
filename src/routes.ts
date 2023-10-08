@@ -147,7 +147,7 @@ const routes : ServerRoute[] = [
               multipart: {
                   output: "file",    // use file to allow multiple files
               },
-              maxBytes: 1000 * 1000 * 10, // 500 kb
+              maxBytes: 1000 * 1000 * 2, // 2 Mb
               uploads: 'public/tmp',
           }
         },

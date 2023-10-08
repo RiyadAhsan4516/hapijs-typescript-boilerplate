@@ -36,7 +36,7 @@ let NotificationRepository = exports.NotificationRepository = class Notification
             }
             catch (err) {
                 console.log(err);
-                throw new boom_1.Boom("getNotification query failed", { statusCode: 500 });
+                throw new boom_1.Boom("getNotification query failed", { statusCode: 422 });
             }
         });
     }
@@ -51,7 +51,7 @@ let NotificationRepository = exports.NotificationRepository = class Notification
                 return notification.raw;
             }
             catch (err) {
-                throw new boom_1.Boom("could not create a new notification", { statusCode: 500 });
+                throw new boom_1.Boom("could not create a new notification", { statusCode: 422 });
             }
         });
     }
@@ -68,7 +68,7 @@ let NotificationRepository = exports.NotificationRepository = class Notification
             }
             catch (err) {
                 console.log(err);
-                throw new boom_1.Boom("updateReadStatus failed", { statusCode: 500 });
+                throw new boom_1.Boom("updateReadStatus failed", { statusCode: 422 });
             }
         });
     }

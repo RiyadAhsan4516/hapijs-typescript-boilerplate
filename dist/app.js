@@ -90,7 +90,7 @@ const server = Hapi.server({
         cors: {
             origin: ["*"],
             headers: ["Accept", "Content-Type"],
-            additionalHeaders: ["X-Requested-With"]
+            credentials: true,
         }
     }
 });
@@ -158,6 +158,10 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     });
     server.auth.strategy('static', 'bearer-access-token', {
         validate: typedi_1.Container.get(authController_1.AuthController).staticTokenValidator
+    });
+    // DELETE THE FILES FROM TEMP FOLDER USING THIS EVENT
+    server.events.on('response', (request) => {
+        console.log(`Response sent for request: ${request.info.id}`);
     });
     server.route({
         method: 'GET',
