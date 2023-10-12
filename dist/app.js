@@ -66,7 +66,7 @@ const swaggerOptions = {
 // *         CREATE REDIS CONNECTION          *
 // *                                          *
 // ********************************************
-const client = redis.createClient({ url: 'redis://127.0.0.1:6379/3' });
+const client = redis.createClient({ url: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/3` });
 exports.client = client;
 try {
     client.connect().then(() => console.log("redis connected"));
@@ -92,7 +92,7 @@ const server = Hapi.server({
             headers: ["Accept", "Content-Type"],
             credentials: true,
         }
-    }
+    },
 });
 // ********************************************
 // *                                          *

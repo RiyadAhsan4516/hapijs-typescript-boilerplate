@@ -60,13 +60,13 @@ export class UserProfileService{
 
 
     // validateCreateInput(input: object){
-    //     const schema = Joi.object({
+    //     const redisSchemas = Joi.object({
     //         email: Joi.string().email().messages({'string.base':"email should be of type string"}),
     //         password: Joi.string().min(8),
     //         userProfile_id: Joi.number().optional()
     //     })
     //
-    //     return schema.validate(input);
+    //     return redisSchemas.validate(input);
     // }
 
 }

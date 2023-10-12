@@ -53,6 +53,14 @@ let RoleController = exports.RoleController = class RoleController {
             return h.response(compressedData).header('Content-Encoding', 'gzip').type("application/json");
         });
     }
+    // FINISH SETTING UP REDIS OBJECT UPON CREATE
+    createRoles(req, h) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const payload = req.payload;
+            let result = typedi_1.Container.get(roleService_1.RoleService).createRoles(payload);
+            console.log(result);
+        });
+    }
 };
 exports.RoleController = RoleController = __decorate([
     (0, typedi_1.Service)()

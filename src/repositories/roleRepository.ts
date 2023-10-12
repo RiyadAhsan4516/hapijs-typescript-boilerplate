@@ -14,4 +14,9 @@ export class RoleRepository{
     async getAll() : Promise<Roles[]>{
         return await this._roleRepo.find()
     }
+
+    async create(payload: any) : Promise<Roles[]>{
+        let result : Roles[] = this._roleRepo.create(payload)
+        return await this._roleRepo.save(result);
+    }
 }

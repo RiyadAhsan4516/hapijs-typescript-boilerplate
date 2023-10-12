@@ -11,8 +11,10 @@ import * as pino from "hapi-pino";
 import * as static_auth from 'hapi-auth-bearer-token';
 import * as redis from "redis";
 
+
 // @ts-ignore
 import * as hapi_rate_limiter from "hapi-rate-limit";
+
 
 import {Container} from "typedi";
 import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
@@ -38,7 +40,7 @@ const swaggerOptions : {} = {
 // *         CREATE REDIS CONNECTION          *
 // *                                          *
 // ********************************************
-const client : any = redis.createClient({url: 'redis://127.0.0.1:6379/3'});
+const client : any = redis.createClient({url: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/3`});
 try{
     client.connect().then(()=>console.log("redis connected"));
 }catch(err){
@@ -67,7 +69,7 @@ const server : Hapi.Server<Hapi.ServerApplicationState> = Hapi.server({
             headers: ["Accept", "Content-Type"],
             credentials: true,
         }
-    }
+    },
 });
 
 

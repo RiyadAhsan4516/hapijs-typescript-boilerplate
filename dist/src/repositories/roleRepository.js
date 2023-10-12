@@ -31,6 +31,12 @@ let RoleRepository = exports.RoleRepository = class RoleRepository {
             return yield this._roleRepo.find();
         });
     }
+    create(payload) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let result = this._roleRepo.create(payload);
+            return yield this._roleRepo.save(result);
+        });
+    }
 };
 exports.RoleRepository = RoleRepository = __decorate([
     (0, typedi_1.Service)(),
