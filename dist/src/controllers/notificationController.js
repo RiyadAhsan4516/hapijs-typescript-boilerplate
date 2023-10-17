@@ -41,7 +41,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationController = void 0;
 const typedi_1 = require("typedi");
 const Stream = __importStar(require("stream"));
-const boom_1 = require("@hapi/boom");
+const Boom = __importStar(require("@hapi/boom"));
 const notificationService_1 = require("../services/notificationService");
 let NotificationController = exports.NotificationController = class NotificationController {
     // POST A NOTIFICATION. INITIALLY WITH THE STATUS 0
@@ -51,7 +51,7 @@ let NotificationController = exports.NotificationController = class Notification
             let notification = req.payload["notification"];
             let result = yield typedi_1.Container.get(notificationService_1.NotificationService).createNotification(notification);
             if (result.length < 1)
-                throw new boom_1.Boom("no notification was created", { statusCode: 400 });
+                throw Boom.badRequest("no notification was created");
             return result;
         });
     }
@@ -91,7 +91,6 @@ let NotificationController = exports.NotificationController = class Notification
     changeReadStatus(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
             let id = +req.params["id"];
-            console.log(id);
             return yield typedi_1.Container.get(notificationService_1.NotificationService).changeStatus(+id, 2);
         });
     }

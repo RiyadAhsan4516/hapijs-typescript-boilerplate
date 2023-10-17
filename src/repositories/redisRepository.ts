@@ -7,4 +7,6 @@ import {roleSchema} from "../redisSchemas/roleSchema";
 
 const roleRepo = new Repository(roleSchema, client);
 
+
+// EXPORT ALL THE REPO INSTANCES CREATED SO FAR
 export {roleRepo}

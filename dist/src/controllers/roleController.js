@@ -42,6 +42,7 @@ exports.RoleController = void 0;
 const roleService_1 = require("../services/roleService");
 const typedi_1 = require("typedi");
 const errorChecker_1 = require("../helpers/errorChecker");
+// import {roleRepo} from "../repositories/redisRepository";
 const zlib = __importStar(require("zlib"));
 let RoleController = exports.RoleController = class RoleController {
     getAllRoles(req, h) {

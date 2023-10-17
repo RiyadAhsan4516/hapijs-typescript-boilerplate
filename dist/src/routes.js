@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -20,7 +43,7 @@ const authController_1 = require("./controllers/authController");
 const notificationController_1 = require("./controllers/notificationController");
 const errorCatcher_1 = require("./helpers/errorCatcher");
 const typedi_1 = require("typedi");
-const boom_1 = require("@hapi/boom");
+const Boom = __importStar(require("@hapi/boom"));
 const prefix = "/api/v1";
 const routes = [
     {
@@ -58,8 +81,8 @@ const routes = [
         options: {
             validate: {
                 payload: joi_1.default.object({
-                    email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(new boom_1.Boom("email input validation failed", { statusCode: 422 })),
-                    password: joi_1.default.string().min(8).error(new boom_1.Boom("password input validation failed", { statusCode: 422 }))
+                    email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(Boom.badData("email input validation failed")),
+                    password: joi_1.default.string().min(8).error(Boom.badData("password input validation failed"))
                 })
             }
         },
@@ -71,8 +94,8 @@ const routes = [
         options: {
             validate: {
                 payload: joi_1.default.object({
-                    email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).error(new boom_1.Boom("email input validation failed", { statusCode: 422 })),
-                    password: joi_1.default.string().min(8).error(new boom_1.Boom("password input validation failed", { statusCode: 422 }))
+                    email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).error(Boom.badData("email input validation failed")),
+                    password: joi_1.default.string().min(8).error(Boom.badData("password input validation failed"))
                 }),
                 params: joi_1.default.object({
                     id: joi_1.default.string().alphanum().required()
@@ -109,8 +132,8 @@ const routes = [
             },
             validate: {
                 payload: joi_1.default.object({
-                    email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(new boom_1.Boom("email input validation failed", { statusCode: 422 })),
-                    password: joi_1.default.string().min(8).required().error(new boom_1.Boom("password input validation failed", { statusCode: 422 }))
+                    email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(Boom.badData("email input validation failed")),
+                    password: joi_1.default.string().min(8).required().error(Boom.badData("password input validation failed"))
                 })
             },
         },
@@ -127,7 +150,7 @@ const routes = [
         options: {
             validate: {
                 payload: joi_1.default.object({
-                    notification: joi_1.default.string().required().error(new boom_1.Boom("no notification provided or is not in string format", { statusCode: 422 }))
+                    notification: joi_1.default.string().required().error(Boom.badData("no notification was provided in string format"))
                 })
             }
         },
@@ -139,10 +162,10 @@ const routes = [
         options: {
             validate: {
                 params: joi_1.default.object({
-                    id: joi_1.default.string().required().error(new boom_1.Boom("id not provided in the parameters", { statusCode: 422 }))
+                    id: joi_1.default.string().required().error(Boom.badData("Please provide id as a request parameter"))
                 }),
                 payload: joi_1.default.object({
-                    read_status: joi_1.default.number().required().error(new boom_1.Boom("read_status is either not provided or is not a number", { statusCode: 422 }))
+                    read_status: joi_1.default.number().required().error(Boom.badData("Please provide the read_status. It must be in number format"))
                 })
             }
         },

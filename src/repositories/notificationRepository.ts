@@ -2,7 +2,7 @@ import {Repository, UpdateResult} from "typeorm";
 import { Notification } from "../entities/notificationEntity";
 import { AppDataSource } from "../data-source";
 import {Service} from "typedi";
-import {Boom} from "@hapi/boom";
+import * as Boom from "@hapi/boom"
 
 @Service()
 export class NotificationRepository{
@@ -20,7 +20,7 @@ export class NotificationRepository{
                 .getMany();
         }catch(err){
             console.log(err);
-            throw new Boom("getNotification query failed", {statusCode: 422})
+            throw Boom.badData("getNotification query failed")
         }
     }
 
@@ -35,7 +35,7 @@ export class NotificationRepository{
 
             return notification.raw
         }catch(err){
-            throw new Boom("could not create a new notification", {statusCode: 422})
+            throw Boom.badData("could not create a new notification")
         }
     }
 
@@ -51,7 +51,7 @@ export class NotificationRepository{
             return true;
         }catch(err){
             console.log(err)
-            throw new Boom("updateReadStatus failed", {statusCode: 422})
+            throw Boom.badData("updateReadStatus failed")
         }
 
     }

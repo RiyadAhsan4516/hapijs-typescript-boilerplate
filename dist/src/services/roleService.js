@@ -37,6 +37,8 @@ let RoleService = exports.RoleService = class RoleService {
     createRoles(payload) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield this._roleRepo.create(payload);
+            if (!result || result.length < 1)
+                throw new boom_1.Boom("query failed", { statusCode: 418 });
             return result;
         });
     }

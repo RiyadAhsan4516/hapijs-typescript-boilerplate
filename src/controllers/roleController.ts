@@ -2,7 +2,7 @@ import type {ReqRefDefaults, Request, ResponseObject, ResponseToolkit} from '@ha
 import {RoleService} from "../services/roleService";
 import {Container, Service} from "typedi";
 import {methodTypeCheck} from "../helpers/errorChecker";
-import {roleRepo} from "../repositories/redisRepository";
+// import {roleRepo} from "../repositories/redisRepository";
 import * as zlib from "zlib";
 
 @Service()

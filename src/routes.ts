@@ -7,7 +7,7 @@ import {AuthController} from "./controllers/authController";
 import {NotificationController} from "./controllers/notificationController"
 import {errorCatcher} from "./helpers/errorCatcher";
 import {Container} from "typedi";
-import {Boom} from "@hapi/boom";
+import * as Boom from "@hapi/boom";
 
 const prefix : string = "/api/v1"
 
@@ -47,8 +47,8 @@ const routes : ServerRoute[] = [
         options:{
             validate: {
                 payload: Joi.object({
-                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(new Boom("email input validation failed", {statusCode:422})),
-                    password: Joi.string().min(8).error(new Boom("password input validation failed", {statusCode:422}))
+                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(Boom.badData("email input validation failed")),
+                    password: Joi.string().min(8).error(Boom.badData("password input validation failed"))
                 })
             }
         },
@@ -60,8 +60,8 @@ const routes : ServerRoute[] = [
         options: {
             validate: {
                 payload: Joi.object({
-                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).error(new Boom("email input validation failed", {statusCode:422})),
-                    password: Joi.string().min(8).error(new Boom("password input validation failed", {statusCode:422}))
+                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).error(Boom.badData("email input validation failed")),
+                    password: Joi.string().min(8).error(Boom.badData("password input validation failed"))
                 }),
                 params: Joi.object({
                     id: Joi.string().alphanum().required()
@@ -98,8 +98,8 @@ const routes : ServerRoute[] = [
             },
             validate: {
                 payload: Joi.object({
-                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(new Boom("email input validation failed", {statusCode:422})),
-                    password: Joi.string().min(8).required().error(new Boom("password input validation failed", {statusCode:422}))
+                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(Boom.badData("email input validation failed")),
+                    password: Joi.string().min(8).required().error(Boom.badData("password input validation failed"))
                 })
             },
         },
@@ -116,7 +116,7 @@ const routes : ServerRoute[] = [
         options: {
             validate: {
                 payload: Joi.object({
-                    notification: Joi.string().required().error(new Boom("no notification provided or is not in string format", {statusCode: 422}))
+                    notification: Joi.string().required().error(Boom.badData("no notification was provided in string format"))
                 })
             }
         },
@@ -128,10 +128,10 @@ const routes : ServerRoute[] = [
         options: {
             validate: {
                 params: Joi.object({
-                    id: Joi.string().required().error(new Boom("id not provided in the parameters", {statusCode: 422}))
+                    id: Joi.string().required().error(Boom.badData("Please provide id as a request parameter"))
                 }),
                 payload: Joi.object({
-                    read_status: Joi.number().required().error(new Boom("read_status is either not provided or is not a number", {statusCode: 422}))
+                    read_status: Joi.number().required().error(Boom.badData("Please provide the read_status. It must be in number format"))
                 })
             }
         },

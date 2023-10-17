@@ -1,7 +1,7 @@
 import type {ReqRefDefaults, Request, ResponseObject, ResponseToolkit} from '@hapi/hapi';
 import {Container, Service} from "typedi";
 import * as Stream from "stream";
-import {Boom} from "@hapi/boom";
+import * as Boom from "@hapi/boom";
 import {NotificationService} from "../services/notificationService";
 import {Notification} from "../entities/notificationEntity"
 
@@ -12,7 +12,7 @@ export class NotificationController{
         //@ts-ignore
         let notification : string = req.payload["notification"];
         let result : Notification[] =  await Container.get(NotificationService).createNotification(notification);
-        if(result.length<1) throw new Boom("no notification was created", {statusCode: 400});
+        if(result.length<1) throw Boom.badRequest("no notification was created");
         return result;
     }
 
@@ -55,7 +55,6 @@ export class NotificationController{
     // CHANGE NOTIFICATION STATUS TO 2 WHEN IT IS READ
     public async changeReadStatus(req: Request, h:ResponseToolkit<ReqRefDefaults>){
         let id : number = +req.params["id"];
-        console.log(id);
         return await Container.get(NotificationService).changeStatus(+id, 2);
     }
 

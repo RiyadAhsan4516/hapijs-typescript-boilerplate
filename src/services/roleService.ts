@@ -18,8 +18,9 @@ export class RoleService{
     }
 
     public async createRoles(payload: any) : Promise<Roles[]>{
-        const result: Roles[] = await this._roleRepo.create(payload)
-        return result
+        const result : Roles[] = await this._roleRepo.create(payload)
+        if(!result || result.length<1) throw new Boom("query failed", {statusCode: 418})
+        return result;
     }
 
 }
