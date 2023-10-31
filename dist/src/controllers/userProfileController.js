@@ -18,13 +18,33 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserProfileController = void 0;
 const userProfileServices_1 = require("../services/userProfileServices");
 const typedi_1 = require("typedi");
+const errorChecker_1 = require("../helpers/errorChecker");
 let UserProfileController = exports.UserProfileController = class UserProfileController {
     createProfile(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.service = typedi_1.Container.get(userProfileServices_1.UserProfileService);
+            let service = typedi_1.Container.get(userProfileServices_1.UserProfileService);
             // @ts-ignore
             const attributes = Object.assign({}, req.payload);
             return yield this.service.createUserProfile(attributes);
+        });
+    }
+    // async getProfile(req: Request, h:ResponseToolkit<ReqRefDefaults>): Promise<void>{
+    //     let id = +req.params.id;
+    //     let result = await this.service.getUserProfile(id);
+    //     if(result.errno || result.error){
+    //         return next(result)
+    //     }
+    //     res.status(200).json({
+    //         data: result
+    //     })
+    // }
+    getAllProfiles(req, h) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // CHECK REQUEST METHOD TYPE
+            (0, errorChecker_1.methodTypeCheck)(req.method, 'get');
+            let service = typedi_1.Container.get(userProfileServices_1.UserProfileService);
+            let result = yield service.getProfiles();
+            return h.response(result).code(200);
         });
     }
 };

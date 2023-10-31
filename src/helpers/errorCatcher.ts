@@ -7,6 +7,7 @@ export function  errorCatcher(fn : any) : any{
             return await fn(req, h)
         }catch(err: any){
             if(err.isBoom) return h.response(err.output.payload).code(err.output.statusCode)
+            console.log(err);
             throw Boom.teapot()
         }
     }

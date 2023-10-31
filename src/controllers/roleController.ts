@@ -1,9 +1,13 @@
+// THIRD PARTY IMPORTS
 import type {ReqRefDefaults, Request, ResponseObject, ResponseToolkit} from '@hapi/hapi';
-import {RoleService} from "../services/roleService";
 import {Container, Service} from "typedi";
+import {gzip} from "zlib";
+
+// LOCAL IMPORTS
 import {methodTypeCheck} from "../helpers/errorChecker";
-// import {roleRepo} from "../repositories/redisRepository";
-import * as zlib from "zlib";
+import {RoleService} from "../services/roleService";
+import {Roles} from "../entities/roleEntity";
+import {payloadCompressor} from "../helpers/payloadCompressor";
 
 @Service()
 export class RoleController {
@@ -12,7 +16,8 @@ export class RoleController {
         // CHECK REQUEST METHOD
         methodTypeCheck(req.method, 'get')
         const service: RoleService = Container.get(RoleService);
-        const compressedData : Buffer = zlib.gzipSync(JSON.stringify(await service.getAllRoles()));   // Compress data using zlib
+        let data : Roles[] = await service.getAllRoles();
+        let compressedData : Buffer = await payloadCompressor(data)
         return h.response(compressedData).header('Content-Encoding', 'gzip').type("application/json");
     }
 

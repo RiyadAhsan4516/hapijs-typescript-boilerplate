@@ -1,25 +1,25 @@
+// Third party imports
 import * as dotenv from "dotenv"
 dotenv.config();
-
-import * as Hapi from "@hapi/hapi"
-import * as path from "path";
+import {Server, ServerApplicationState} from "@hapi/hapi"
+import {join} from "path";
 import * as inert from "@hapi/inert";
 import * as HapiJwt from "hapi-auth-jwt2";
 import * as HapiSwagger from "hapi-swagger";
 import * as vision from "@hapi/vision";
 import * as pino from "hapi-pino";
 import * as static_auth from 'hapi-auth-bearer-token';
-import * as redis from "redis";
-
-
+import {createClient} from "redis";
+import {Container} from "typedi";
+import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
 // @ts-ignore
 import * as hapi_rate_limiter from "hapi-rate-limit";
 
-
-import {Container} from "typedi";
-import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
-
+// Local module imports
 import {AuthController} from "./src/controllers/authController";
+import {eventHandlerPlugin} from "./src/helpers/customPlugins";
+
+// Local routes imports
 import routes from "./src/routes";
 
 
@@ -40,7 +40,7 @@ const swaggerOptions : {} = {
 // *         CREATE REDIS CONNECTION          *
 // *                                          *
 // ********************************************
-const client : any = redis.createClient({url: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/3`});
+const client : any = createClient({url: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/3`});
 try{
     client.connect().then(()=>console.log("redis connected"));
 }catch(err){
@@ -56,13 +56,13 @@ try{
 // *                                          *
 // ********************************************
 
-const server : Hapi.Server<Hapi.ServerApplicationState> = Hapi.server({
+const server : Server<ServerApplicationState> = new Server({
     port: process.env.PORT,
     host: process.env.LOCALHOST,
     debug: false,
     routes: {
         files:{
-            relativeTo: path.join(__dirname, 'public')
+            relativeTo: join(__dirname, 'public')
         },
         cors: {
             origin: ["*"],
@@ -101,8 +101,13 @@ if(process.env.NODE_ENV === 'production') {
 // *                                          *
 // ********************************************
 
-const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
+const init = async () : Promise<Server<ServerApplicationState>> => {
 
+    // CREATE CUSTOM EVENTS
+    server.event("empty_temp")
+
+
+    // REGISTER PLUGINS
     await server.register([
         {
             plugin: inert   // inert is a plugin used for serving static files
@@ -129,10 +134,16 @@ const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
             }
         },
         {
-            plugin: hapi_rate_limiter,
+            plugin: hapi_rate_limiter,  // rate limiter for routes
             options:{
                 enabled: true,
                 userLimit: 100,
+            }
+        },
+        {
+            plugin: eventHandlerPlugin,     // custom plugin for handling "empty_temp" event
+            options:{
+                Server : server
             }
         }
     ]);
@@ -143,14 +154,11 @@ const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
         validate: Container.get(AuthController).isLoggedIn      // the token will be decoded by the plugin automatically
     })
 
+
     server.auth.strategy('static', 'bearer-access-token', {
         validate: Container.get(AuthController).staticTokenValidator
     })
 
-    // DELETE THE FILES FROM TEMP FOLDER USING THIS EVENT
-    server.events.on('response', (request) => {
-        console.log(`Response sent for request: ${request.info.id}`);
-    });
 
     server.route({
         method: 'GET',
@@ -172,7 +180,7 @@ const init = async () : Promise<Hapi.Server<Hapi.ServerApplicationState>> => {
 // *                                          *
 // ********************************************
 
-const start = async (server:Hapi.Server<Hapi.ServerApplicationState>) : Promise<Hapi.Server<Hapi.ServerApplicationState>> =>{
+const start = async (server:Server<ServerApplicationState>) : Promise<Server<ServerApplicationState>> =>{
     await server.start();
     return server
 }

@@ -42,6 +42,7 @@ function errorCatcher(fn) {
         catch (err) {
             if (err.isBoom)
                 return h.response(err.output.payload).code(err.output.statusCode);
+            console.log(err);
             throw Boom.teapot();
         }
     });

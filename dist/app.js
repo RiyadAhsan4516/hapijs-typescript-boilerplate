@@ -36,21 +36,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.client = exports.start = exports.init = void 0;
+// Third party imports
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
-const Hapi = __importStar(require("@hapi/hapi"));
-const path = __importStar(require("path"));
+const hapi_1 = require("@hapi/hapi");
+const path_1 = require("path");
 const inert = __importStar(require("@hapi/inert"));
 const HapiJwt = __importStar(require("hapi-auth-jwt2"));
 const HapiSwagger = __importStar(require("hapi-swagger"));
 const vision = __importStar(require("@hapi/vision"));
 const pino = __importStar(require("hapi-pino"));
 const static_auth = __importStar(require("hapi-auth-bearer-token"));
-const redis = __importStar(require("redis"));
+const redis_1 = require("redis");
+const typedi_1 = require("typedi");
 // @ts-ignore
 const hapi_rate_limiter = __importStar(require("hapi-rate-limit"));
-const typedi_1 = require("typedi");
+// Local module imports
 const authController_1 = require("./src/controllers/authController");
+const customPlugins_1 = require("./src/helpers/customPlugins");
+// Local routes imports
 const routes_1 = __importDefault(require("./src/routes"));
 // ********************************************
 // *                                          *
@@ -66,7 +70,7 @@ const swaggerOptions = {
 // *         CREATE REDIS CONNECTION          *
 // *                                          *
 // ********************************************
-const client = redis.createClient({ url: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/3` });
+const client = (0, redis_1.createClient)({ url: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/3` });
 exports.client = client;
 try {
     client.connect().then(() => console.log("redis connected"));
@@ -79,13 +83,13 @@ catch (err) {
 // *         CREATE SERVER INSTANCE           *
 // *                                          *
 // ********************************************
-const server = Hapi.server({
+const server = new hapi_1.Server({
     port: process.env.PORT,
     host: process.env.LOCALHOST,
     debug: false,
     routes: {
         files: {
-            relativeTo: path.join(__dirname, 'public')
+            relativeTo: (0, path_1.join)(__dirname, 'public')
         },
         cors: {
             origin: ["*"],
@@ -119,6 +123,9 @@ else {
 // *                                          *
 // ********************************************
 const init = () => __awaiter(void 0, void 0, void 0, function* () {
+    // CREATE CUSTOM EVENTS
+    server.event("empty_temp");
+    // REGISTER PLUGINS
     yield server.register([
         {
             plugin: inert // inert is a plugin used for serving static files
@@ -150,6 +157,12 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
                 enabled: true,
                 userLimit: 100,
             }
+        },
+        {
+            plugin: customPlugins_1.eventHandlerPlugin,
+            options: {
+                Server: server
+            }
         }
     ]);
     server.auth.strategy('jwt', 'jwt', {
@@ -158,10 +171,6 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     });
     server.auth.strategy('static', 'bearer-access-token', {
         validate: typedi_1.Container.get(authController_1.AuthController).staticTokenValidator
-    });
-    // DELETE THE FILES FROM TEMP FOLDER USING THIS EVENT
-    server.events.on('response', (request) => {
-        console.log(`Response sent for request: ${request.info.id}`);
     });
     server.route({
         method: 'GET',

@@ -1,6 +1,7 @@
 import {UserProfileService} from "../services/userProfileServices";
 import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
 import {Container, Service} from "typedi";
+import {methodTypeCheck} from "../helpers/errorChecker";
 
 @Service()
 export class UserProfileController{
@@ -8,7 +9,7 @@ export class UserProfileController{
     private service : UserProfileService
 
     async createProfile(req: Request, h:ResponseToolkit<ReqRefDefaults>){
-        this.service = Container.get(UserProfileService);
+        let service : UserProfileService = Container.get(UserProfileService);
         // @ts-ignore
         const attributes : any = {...req.payload};
         return await this.service.createUserProfile(attributes)
@@ -25,10 +26,12 @@ export class UserProfileController{
     //     })
     // }
 
-    // async getAllProfiles(req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<void>{
-    //     const result = await this.service.getProfiles();
-    //     res.status(200).json({
-    //         data : result
-    //     })
-    // }
+    async getAllProfiles(req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<any>{
+        // CHECK REQUEST METHOD TYPE
+        methodTypeCheck(req.method, 'get')
+
+        let service : UserProfileService = Container.get(UserProfileService);
+        let result = await service.getProfiles();
+        return h.response(result).code(200);
+    }
 }

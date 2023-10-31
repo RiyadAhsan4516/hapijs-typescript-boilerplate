@@ -1,7 +1,9 @@
 import { Repository } from "typeorm";
 import { UserProfile } from "../entities/userProfileEntity";
 import { AppDataSource } from "../data-source";
+import {Service} from "typedi";
 
+@Service()
 export class UserProfileRepository{
 
     private readonly userProfileRepo : Repository<UserProfile>
