@@ -27,12 +27,15 @@ let RoleController = exports.RoleController = class RoleController {
             // CHECK REQUEST METHOD
             (0, errorChecker_1.methodTypeCheck)(req.method, 'get');
             const service = typedi_1.Container.get(roleService_1.RoleService);
+            //FETCH DATA FROM REPOSITORY
             let data = yield service.getAllRoles();
+            //COMPRESS THE FETCHED DATA USING ZLIB GZIP FUNCTION
             let compressedData = yield (0, payloadCompressor_1.payloadCompressor)(data);
+            // RETURN THE COMPRESSED DATA ALONG WITH CUSTOMIZED HEADER
             return h.response(compressedData).header('Content-Encoding', 'gzip').type("application/json");
         });
     }
-    // FINISH SETTING UP REDIS OBJECT UPON CREATE
+    // FINISH SETTING UP REDIS OBJECT UPON CREATION
     createRoles(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
             const payload = req.payload;

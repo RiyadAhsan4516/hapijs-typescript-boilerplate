@@ -16,12 +16,18 @@ export class RoleController {
         // CHECK REQUEST METHOD
         methodTypeCheck(req.method, 'get')
         const service: RoleService = Container.get(RoleService);
+
+        //FETCH DATA FROM REPOSITORY
         let data : Roles[] = await service.getAllRoles();
+
+        //COMPRESS THE FETCHED DATA USING ZLIB GZIP FUNCTION
         let compressedData : Buffer = await payloadCompressor(data)
+
+        // RETURN THE COMPRESSED DATA ALONG WITH CUSTOMIZED HEADER
         return h.response(compressedData).header('Content-Encoding', 'gzip').type("application/json");
     }
 
-    // FINISH SETTING UP REDIS OBJECT UPON CREATE
+    // FINISH SETTING UP REDIS OBJECT UPON CREATION
     public async createRoles(req:Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<any> {
         const payload : any = req.payload;
         let result : any = Container.get(RoleService).createRoles(payload)
