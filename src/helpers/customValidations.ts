@@ -18,7 +18,7 @@ namespace type_validation{
     }
 
     export class loginInfoJoiValidation {
-        public async check(obj: loginInfo) : Promise<any>{
+        public async check(obj: any) : Promise<any>{
             const schema : ObjectSchema = object({
                 email: string()
                     .required()
