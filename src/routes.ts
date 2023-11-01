@@ -91,6 +91,18 @@ const routes : ServerRoute[] = [
         handler: errorCatcher(Container.get(UserProfileController).createProfile)
     },
     {
+        method: "*",
+        path : `${prefix}/get_salt/{key}`,
+        options: {
+            validate : {
+                params: Joi.object({
+                    key : Joi.string().required().valid('1','2').error(badData("parameter 'key' must be provided as either 1 or 2"))
+                })
+            }
+        },
+        handler : errorCatcher(Container.get(AuthController).provideSaltKey)
+    },
+    {
         method: "POST",
         path: `${prefix}/login`,
         options: {
@@ -98,15 +110,9 @@ const routes : ServerRoute[] = [
                 origin: ['*'], // Allow all origins
                 headers: ["Accept", "Content-Type"],
                 additionalHeaders: ["X-Requested-With"]
-            },
-            validate: {
-                payload: Joi.object({
-                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(badData("email input validation failed")),
-                    password: Joi.string().min(8).required().error(badData("password input validation failed"))
-                })
-            },
+            }
         },
-        handler: errorCatcher(Container.get(AuthController).login),
+        handler: errorCatcher(Container.get(AuthController).saltLogin),
     },
     {
         method: "GET",

@@ -101,6 +101,18 @@ const routes = [
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userProfileController_1.UserProfileController).createProfile)
     },
     {
+        method: "*",
+        path: `${prefix}/get_salt/{key}`,
+        options: {
+            validate: {
+                params: joi_1.default.object({
+                    key: joi_1.default.string().required().valid('1', '2').error((0, boom_1.badData)("parameter 'key' must be provided as either 1 or 2"))
+                })
+            }
+        },
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authController_1.AuthController).provideSaltKey)
+    },
+    {
         method: "POST",
         path: `${prefix}/login`,
         options: {
@@ -108,15 +120,9 @@ const routes = [
                 origin: ['*'],
                 headers: ["Accept", "Content-Type"],
                 additionalHeaders: ["X-Requested-With"]
-            },
-            validate: {
-                payload: joi_1.default.object({
-                    email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error((0, boom_1.badData)("email input validation failed")),
-                    password: joi_1.default.string().min(8).required().error((0, boom_1.badData)("password input validation failed"))
-                })
-            },
+            }
         },
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authController_1.AuthController).login),
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authController_1.AuthController).saltLogin),
     },
     {
         method: "GET",

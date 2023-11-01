@@ -29,6 +29,9 @@ let RoleController = exports.RoleController = class RoleController {
             const service = typedi_1.Container.get(roleService_1.RoleService);
             //FETCH DATA FROM REPOSITORY
             let data = yield service.getAllRoles();
+            // CHECK THE LENGTH OF DATA ARRAY
+            if (data.length < 1)
+                return h.response("no data found").code(204);
             //COMPRESS THE FETCHED DATA USING ZLIB GZIP FUNCTION
             let compressedData = yield (0, payloadCompressor_1.payloadCompressor)(data);
             // RETURN THE COMPRESSED DATA ALONG WITH CUSTOMIZED HEADER

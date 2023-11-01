@@ -20,6 +20,9 @@ export class RoleController {
         //FETCH DATA FROM REPOSITORY
         let data : Roles[] = await service.getAllRoles();
 
+        // CHECK THE LENGTH OF DATA ARRAY
+        if(data.length<1) return h.response("no data found").code(204)
+
         //COMPRESS THE FETCHED DATA USING ZLIB GZIP FUNCTION
         let compressedData : Buffer = await payloadCompressor(data)
 
