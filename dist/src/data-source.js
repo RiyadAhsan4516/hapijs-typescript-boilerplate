@@ -27,13 +27,11 @@ exports.AppDataSource = void 0;
 const typeorm_1 = require("typeorm");
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
-const passwordEncryptionSubscriber_1 = require("./helpers/passwordEncryptionSubscriber");
-const userEntity_1 = require("./entities/userEntity");
-const userProfileEntity_1 = require("./entities/userProfileEntity");
-const roleEntity_1 = require("./entities/roleEntity");
-const notificationEntity_1 = require("./entities/notificationEntity");
-const policyEntity_1 = require("./entities/policyEntity");
-let entity_list = [userEntity_1.User, userProfileEntity_1.UserProfile, roleEntity_1.Roles, notificationEntity_1.Notification, policyEntity_1.PolicyReadStatus];
+const userAccount_entity_1 = require("./userAccount/userAccount.entity");
+const userProfile_entity_1 = require("./userProfile/userProfile.entity");
+const roles_entity_1 = require("./roles/roles.entity");
+const notification_entity_1 = require("./notification/notification.entity");
+let entity_list = [userAccount_entity_1.User, userProfile_entity_1.UserProfile, roles_entity_1.Roles, notification_entity_1.Notification];
 exports.AppDataSource = new typeorm_1.DataSource({
     type: "mariadb",
     host: "localhost",
@@ -45,6 +43,6 @@ exports.AppDataSource = new typeorm_1.DataSource({
     logging: ["error"],
     poolSize: 1,
     entities: entity_list,
-    subscribers: [passwordEncryptionSubscriber_1.PasswordEncryptionSubscriber],
+    subscribers: ["./helpers/passwordEncryptionSubscriber"],
     migrationsRun: true
 });

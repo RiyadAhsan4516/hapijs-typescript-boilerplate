@@ -17,11 +17,11 @@ const joi_1 = __importDefault(require("joi"));
 const typedi_1 = require("typedi");
 const boom_1 = require("@hapi/boom");
 // LOCAL MODULE IMPORTS
-const roleController_1 = require("./controllers/roleController");
-const userController_1 = require("./controllers/userController");
-const userProfileController_1 = require("./controllers/userProfileController");
-const authController_1 = require("./controllers/authController");
-const notificationController_1 = require("./controllers/notificationController");
+const roles_controller_1 = require("./roles/roles.controller");
+const userAccount_controller_1 = require("./userAccount/userAccount.controller");
+const userProfile_controller_1 = require("./userProfile/userProfile.controller");
+const authentication_controller_1 = require("./authentication/authentication.controller");
+const notification_controller_1 = require("./notification/notification.controller");
 const errorCatcher_1 = require("./helpers/errorCatcher");
 const prefix = "/api/v1";
 const routes = [
@@ -31,12 +31,12 @@ const routes = [
         options: {
             auth: "static"
         },
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(roleController_1.RoleController).getAllRoles),
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(roles_controller_1.RoleController).getAllRoles),
     },
     {
         method: "GET",
         path: `${prefix}/users/allUsers`,
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userController_1.UserController).getUsers),
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userAccount_controller_1.UserController).getUsers),
         options: {
             auth: "jwt"
         }
@@ -52,7 +52,7 @@ const routes = [
             },
             auth: "jwt"
         },
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userController_1.UserController).getUser)
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userAccount_controller_1.UserController).getUser)
     },
     {
         method: "POST",
@@ -65,7 +65,7 @@ const routes = [
                 })
             }
         },
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userController_1.UserController).CreateUser)
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userAccount_controller_1.UserController).CreateUser)
     },
     {
         method: "PUT",
@@ -81,7 +81,7 @@ const routes = [
                 })
             }
         },
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userController_1.UserController).UpdateUser),
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userAccount_controller_1.UserController).UpdateUser),
     },
     {
         method: "POST",
@@ -98,7 +98,7 @@ const routes = [
                 uploads: 'public/tmp',
             }
         },
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userProfileController_1.UserProfileController).createProfile)
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userProfile_controller_1.UserProfileController).createProfile)
     },
     {
         method: "*",
@@ -110,24 +110,17 @@ const routes = [
                 })
             }
         },
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authController_1.AuthController).provideSaltKey)
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authentication_controller_1.AuthController).provideSaltKey)
     },
     {
         method: "POST",
         path: `${prefix}/login`,
-        options: {
-            cors: {
-                origin: ['*'],
-                headers: ["Accept", "Content-Type"],
-                additionalHeaders: ["X-Requested-With"]
-            }
-        },
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authController_1.AuthController).saltLogin),
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authentication_controller_1.AuthController).saltLogin),
     },
     {
         method: "GET",
         path: `${prefix}/notification`,
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(notificationController_1.NotificationController).getNotification)
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(notification_controller_1.NotificationController).getNotification)
     },
     {
         method: "POST",
@@ -139,7 +132,7 @@ const routes = [
                 })
             }
         },
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(notificationController_1.NotificationController).createNotification)
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(notification_controller_1.NotificationController).createNotification)
     },
     {
         method: "PUT",
@@ -154,7 +147,7 @@ const routes = [
                 })
             }
         },
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(notificationController_1.NotificationController).changeReadStatus)
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(notification_controller_1.NotificationController).changeReadStatus)
     },
     {
         method: "POST",

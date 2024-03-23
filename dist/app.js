@@ -43,28 +43,19 @@ const hapi_1 = require("@hapi/hapi");
 const path_1 = require("path");
 const inert = __importStar(require("@hapi/inert"));
 const HapiJwt = __importStar(require("hapi-auth-jwt2"));
-const HapiSwagger = __importStar(require("hapi-swagger"));
 const vision = __importStar(require("@hapi/vision"));
 const pino = __importStar(require("hapi-pino"));
 const static_auth = __importStar(require("hapi-auth-bearer-token"));
 const redis_1 = require("redis");
 const typedi_1 = require("typedi");
-// @ts-ignore
-const hapi_rate_limiter = __importStar(require("hapi-rate-limit"));
+const hapi_rate_limitor = __importStar(require("hapi-rate-limitor"));
 // Local module imports
-const authController_1 = require("./src/controllers/authController");
+const authentication_controller_1 = require("./src/authentication/authentication.controller");
 const customPlugins_1 = require("./src/helpers/customPlugins");
 // Local routes imports
 const routes_1 = __importDefault(require("./src/routes"));
-// ********************************************
-// *                                          *
-// *       OPTIONAL: SET UP SWAGGER           *
-// *                                          *
-// ********************************************
-const SwaggerFile = require("./assets/swagger.json");
-const swaggerOptions = {
-    customSwaggerFile: SwaggerFile
-};
+const boom_1 = require("@hapi/boom");
+const errorCatcher_1 = require("./src/helpers/errorCatcher");
 // ********************************************
 // *                                          *
 // *         CREATE REDIS CONNECTION          *
@@ -93,8 +84,9 @@ const server = new hapi_1.Server({
         },
         cors: {
             origin: ["*"],
-            headers: ["Accept", "Content-Type"],
+            headers: ['Accept', 'Authorization', 'Content-Type', 'If-None-Match'],
             credentials: true,
+            preflightStatusCode: 204
         }
     },
 });
@@ -126,6 +118,7 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     // CREATE CUSTOM EVENTS
     server.event("empty_temp");
     // REGISTER PLUGINS
+    // @ts-ignore
     yield server.register([
         {
             plugin: inert // inert is a plugin used for serving static files
@@ -140,10 +133,6 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
             plugin: vision // a plugin used for rendering templates
         },
         {
-            plugin: HapiSwagger,
-            options: swaggerOptions
-        },
-        {
             plugin: pino,
             options: {
                 transport,
@@ -152,10 +141,16 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
             }
         },
         {
-            plugin: hapi_rate_limiter,
+            plugin: hapi_rate_limitor,
             options: {
+                redis: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/0`,
+                extensionPoint: 'onPostAuth',
+                namespace: 'hapi-rate-limitor',
+                max: 100,
+                duration: 1000 * 60,
                 enabled: true,
-                userLimit: 100,
+                userAttribute: 'id',
+                userLimitAttribute: 'rateLimit'
             }
         },
         {
@@ -167,17 +162,30 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     ]);
     server.auth.strategy('jwt', 'jwt', {
         key: `${process.env.SECRET}`,
-        validate: typedi_1.Container.get(authController_1.AuthController).isLoggedIn // the token will be decoded by the plugin automatically
+        validate: typedi_1.Container.get(authentication_controller_1.AuthController).isLoggedIn // the token will be decoded by the plugin automatically
     });
     server.auth.strategy('static', 'bearer-access-token', {
-        validate: typedi_1.Container.get(authController_1.AuthController).staticTokenValidator
+        validate: typedi_1.Container.get(authentication_controller_1.AuthController).staticTokenValidator
     });
     server.route({
-        method: 'GET',
-        path: '/{picture}',
-        handler: function (req, h) {
-            return h.file(`${req.params.picture}`);
-        }
+        method: "GET",
+        path: `/api/v1/file`,
+        handler: (0, errorCatcher_1.errorCatcher)(function (req, h) {
+            return __awaiter(this, void 0, void 0, function* () {
+                // @ts-ignore
+                let path = req.query["path"];
+                if (!path)
+                    throw (0, boom_1.badRequest)("file path not found in query");
+                let root_path = (0, path_1.join)(__dirname);
+                const distRegEx = /dist/;
+                let filepath;
+                if (distRegEx.test(root_path))
+                    filepath = (0, path_1.join)(__dirname, '/..', '/..', 'public', path);
+                else
+                    filepath = (0, path_1.join)(__dirname, '/..', 'public', path);
+                return h.file(filepath, { confine: false }).header('Cache-Control', "public, max-age=3600");
+            });
+        })
     });
     server.route(routes_1.default);
     return server;

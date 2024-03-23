@@ -8,16 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.type_validation = void 0;
-const joi_1 = require("joi");
+const joi_1 = __importDefault(require("joi"));
 var type_validation;
 (function (type_validation) {
     class loginInfoJoiValidation {
         check(obj) {
             return __awaiter(this, void 0, void 0, function* () {
-                const schema = (0, joi_1.object)({
-                    email: (0, joi_1.string)()
+                const schema = joi_1.default.object({
+                    email: joi_1.default.string()
                         .required()
                         .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } })
                         .messages({
@@ -25,7 +28,7 @@ var type_validation;
                         'string.email': "email format is incorrect",
                         'string.required': "email is not provided"
                     }),
-                    password: (0, joi_1.string)()
+                    password: joi_1.default.string()
                         .required()
                         .min(8)
                         .messages({

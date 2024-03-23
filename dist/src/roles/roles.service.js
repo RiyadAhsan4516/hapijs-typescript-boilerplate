@@ -5,6 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -14,29 +17,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PasswordEncryptionSubscriber = void 0;
-const typeorm_1 = require("typeorm");
-const userAccount_entity_1 = require("../userAccount/userAccount.entity");
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
-let PasswordEncryptionSubscriber = exports.PasswordEncryptionSubscriber = class PasswordEncryptionSubscriber {
-    listenTo() {
-        return userAccount_entity_1.User;
+exports.RoleService = void 0;
+const roles_repository_1 = require("./roles.repository");
+const typedi_1 = require("typedi");
+const boom_1 = require("@hapi/boom");
+let RoleService = exports.RoleService = class RoleService {
+    constructor() {
+        this._roleRepo = typedi_1.Container.get(roles_repository_1.RoleRepository);
     }
-    beforeInsert(event) {
+    getAllRoles() {
         return __awaiter(this, void 0, void 0, function* () {
-            event.entity.password = yield bcryptjs_1.default.hash(event.entity.password, 10);
+            const result = yield this._roleRepo.getAll();
+            if (!result || result.length < 1)
+                throw new boom_1.Boom("", { statusCode: 204 });
+            return result;
         });
     }
-    beforeUpdate(event) {
+    createRoles(payload) {
         return __awaiter(this, void 0, void 0, function* () {
-            event.entity.password = yield bcryptjs_1.default.hash(event.entity.password, 10);
+            const result = yield this._roleRepo.create(payload);
+            if (!result || result.length < 1)
+                throw new boom_1.Boom("query failed", { statusCode: 418 });
+            return result;
         });
     }
 };
-exports.PasswordEncryptionSubscriber = PasswordEncryptionSubscriber = __decorate([
-    (0, typeorm_1.EventSubscriber)()
-], PasswordEncryptionSubscriber);
+exports.RoleService = RoleService = __decorate([
+    (0, typedi_1.Service)(),
+    __metadata("design:paramtypes", [])
+], RoleService);

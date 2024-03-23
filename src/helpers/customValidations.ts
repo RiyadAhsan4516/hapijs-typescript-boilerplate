@@ -1,10 +1,11 @@
-import {object, ObjectSchema, string} from "joi";
+import Joi, {object, ObjectSchema, string} from "joi";
 
 namespace type_validation{
 
     export interface tokenFormat{
         id: number,
-        type: string
+        role: number,
+        rateLimit: number
     }
 
     export interface generatedTokens {
@@ -18,24 +19,24 @@ namespace type_validation{
     }
 
     export class loginInfoJoiValidation {
-        public async check(obj: any) : Promise<any>{
-            const schema : ObjectSchema = object({
-                email: string()
+        public async check(obj: any): Promise<any> {
+            const schema: Joi.ObjectSchema = Joi.object({
+                email: Joi.string()
                     .required()
-                    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } })
+                    .email({minDomainSegments: 2, tlds: {allow: ['com', 'net', 'io']}})
                     .messages({
-                        'string.base':"email should be of type string",
-                        'string.email' : "email format is incorrect",
-                        'string.required' : "email is not provided"
+                        'string.base': "email should be of type string",
+                        'string.email': "email format is incorrect",
+                        'string.required': "email is not provided"
                     }),
 
-                password: string()
+                password: Joi.string()
                     .required()
                     .min(8)
                     .messages({
-                        'string.base' : "password has to be a string",
-                        'string.required' : "password is not provided",
-                        'string.min' : "password minimum length is 8"
+                        'string.base': "password has to be a string",
+                        'string.required': "password is not provided",
+                        'string.min': "password minimum length is 8"
                     })
             })
 

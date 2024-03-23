@@ -2,14 +2,12 @@ import { DataSource } from "typeorm"
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-import {PasswordEncryptionSubscriber} from "./helpers/passwordEncryptionSubscriber";
-import {User} from "./entities/userEntity";
-import {UserProfile} from "./entities/userProfileEntity";
-import {Roles} from "./entities/roleEntity";
-import {Notification} from "./entities/notificationEntity";
-import {PolicyReadStatus} from "./entities/policyEntity";
+import {User} from "./userAccount/userAccount.entity";
+import {UserProfile} from "./userProfile/userProfile.entity";
+import {Roles} from "./roles/roles.entity";
+import {Notification} from "./notification/notification.entity";
 
-let entity_list : any  = [User, UserProfile, Roles, Notification, PolicyReadStatus]
+let entity_list : any  = [User, UserProfile, Roles, Notification]
 
 export const AppDataSource : DataSource = new DataSource({
     type: "mariadb",
@@ -22,6 +20,6 @@ export const AppDataSource : DataSource = new DataSource({
     logging: ["error"],
     poolSize: 1,
     entities: entity_list,
-    subscribers: [PasswordEncryptionSubscriber],
+    subscribers: ["./helpers/passwordEncryptionSubscriber"],
     migrationsRun: true
 })

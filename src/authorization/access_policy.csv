@@ -1,0 +1,2 @@
+# test policy, role, route, method
+p, customer, /api/v1/testing/route, GET

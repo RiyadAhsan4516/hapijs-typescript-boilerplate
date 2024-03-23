@@ -5,11 +5,11 @@ import {Container} from "typedi";
 import {badData} from "@hapi/boom";
 
 // LOCAL MODULE IMPORTS
-import {RoleController} from "./controllers/roleController";
-import {UserController} from "./controllers/userController";
-import {UserProfileController} from "./controllers/userProfileController";
-import {AuthController} from "./controllers/authController";
-import {NotificationController} from "./controllers/notificationController"
+import {RoleController} from "./roles/roles.controller";
+import {UserController} from "./userAccount/userAccount.controller";
+import {UserProfileController} from "./userProfile/userProfile.controller";
+import {AuthController} from "./authentication/authentication.controller";
+import {NotificationController} from "./notification/notification.controller";
 import {errorCatcher} from "./helpers/errorCatcher";
 
 const prefix : string = "/api/v1"
@@ -105,13 +105,6 @@ const routes : ServerRoute[] = [
     {
         method: "POST",
         path: `${prefix}/login`,
-        options: {
-            cors: {
-                origin: ['*'], // Allow all origins
-                headers: ["Accept", "Content-Type"],
-                additionalHeaders: ["X-Requested-With"]
-            }
-        },
         handler: errorCatcher(Container.get(AuthController).saltLogin),
     },
     {
@@ -165,7 +158,6 @@ const routes : ServerRoute[] = [
             return payload;
         })
     }
-
 ]
 
 export default routes;

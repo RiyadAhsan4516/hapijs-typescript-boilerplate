@@ -1,5 +1,5 @@
 import { EventSubscriber, EntitySubscriberInterface, InsertEvent, UpdateEvent } from 'typeorm';
-import { User } from '../entities/userEntity';
+import {User} from "../userAccount/userAccount.entity";
 import bcrypt from 'bcryptjs';
 
 @EventSubscriber()

@@ -5,33 +5,22 @@ import {Server, ServerApplicationState} from "@hapi/hapi"
 import {join} from "path";
 import * as inert from "@hapi/inert";
 import * as HapiJwt from "hapi-auth-jwt2";
-import * as HapiSwagger from "hapi-swagger";
 import * as vision from "@hapi/vision";
 import * as pino from "hapi-pino";
 import * as static_auth from 'hapi-auth-bearer-token';
 import {createClient} from "redis";
 import {Container} from "typedi";
 import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
-// @ts-ignore
-import * as hapi_rate_limiter from "hapi-rate-limit";
+import * as hapi_rate_limitor from "hapi-rate-limitor";
 
 // Local module imports
-import {AuthController} from "./src/controllers/authController";
+import {AuthController} from "./src/authentication/authentication.controller";
 import {eventHandlerPlugin} from "./src/helpers/customPlugins";
 
 // Local routes imports
 import routes from "./src/routes";
-
-
-// ********************************************
-// *                                          *
-// *       OPTIONAL: SET UP SWAGGER           *
-// *                                          *
-// ********************************************
-const SwaggerFile = require("./assets/swagger.json")
-const swaggerOptions : {} = {
-    customSwaggerFile : SwaggerFile
-}
+import {badRequest} from "@hapi/boom";
+import {errorCatcher} from "./src/helpers/errorCatcher";
 
 
 
@@ -66,8 +55,9 @@ const server : Server<ServerApplicationState> = new Server({
         },
         cors: {
             origin: ["*"],
-            headers: ["Accept", "Content-Type"],
+            headers: ['Accept', 'Authorization', 'Content-Type', 'If-None-Match'],
             credentials: true,
+            preflightStatusCode: 204
         }
     },
 });
@@ -108,6 +98,7 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
 
 
     // REGISTER PLUGINS
+    // @ts-ignore
     await server.register([
         {
             plugin: inert   // inert is a plugin used for serving static files
@@ -122,10 +113,6 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
             plugin: vision  // a plugin used for rendering templates
         },
         {
-            plugin: HapiSwagger,    // swagger api
-            options: swaggerOptions
-        },
-        {
             plugin: pino,    // request logger
             options: {
                 transport,
@@ -134,10 +121,16 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
             }
         },
         {
-            plugin: hapi_rate_limiter,  // rate limiter for routes
-            options:{
+            plugin : hapi_rate_limitor,
+            options: {
+                redis: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/0`,
+                extensionPoint : 'onPostAuth',
+                namespace : 'hapi-rate-limitor',
+                max : 100,
+                duration : 1000*60,
                 enabled: true,
-                userLimit: 100,
+                userAttribute: 'id',
+                userLimitAttribute: 'rateLimit'
             }
         },
         {
@@ -161,11 +154,19 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
 
 
     server.route({
-        method: 'GET',
-        path: '/{picture}',
-        handler: function (req :Request , h: ResponseToolkit<ReqRefDefaults>) {
-            return h.file(`${req.params.picture}`);
-        }
+        method: "GET",
+        path: `/api/v1/file`,
+        handler: errorCatcher(async function (req: Request, h: ResponseToolkit<ReqRefDefaults>) {
+            // @ts-ignore
+            let path: string = req.query["path"]
+            if (!path) throw badRequest("file path not found in query")
+            let root_path: string = join(__dirname)
+            const distRegEx: RegExp = /dist/;
+            let filepath: string
+            if (distRegEx.test(root_path)) filepath = join(__dirname, '/..', '/..', 'public', path)
+            else filepath = join(__dirname, '/..', 'public', path)
+            return h.file(filepath, {confine: false}).header('Cache-Control', "public, max-age=3600")
+        })
     });
 
     server.route(routes);
