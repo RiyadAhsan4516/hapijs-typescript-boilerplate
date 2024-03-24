@@ -2,10 +2,10 @@ import { DataSource } from "typeorm"
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-import {User} from "./userAccount/userAccount.entity";
-import {UserProfile} from "./userProfile/userProfile.entity";
-import {Roles} from "./roles/roles.entity";
-import {Notification} from "./notification/notification.entity";
+import {User} from "./modules/userAccount/userAccount.entity";
+import {UserProfile} from "./modules/userProfile/userProfile.entity";
+import {Roles} from "./modules/roles/roles.entity";
+import {Notification} from "./modules/notification/notification.entity";
 
 let entity_list : any  = [User, UserProfile, Roles, Notification]
 

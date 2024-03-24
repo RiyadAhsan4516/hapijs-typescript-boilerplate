@@ -5,11 +5,11 @@ import {Container} from "typedi";
 import {badData} from "@hapi/boom";
 
 // LOCAL MODULE IMPORTS
-import {RoleController} from "./roles/roles.controller";
-import {UserController} from "./userAccount/userAccount.controller";
-import {UserProfileController} from "./userProfile/userProfile.controller";
-import {AuthController} from "./authentication/authentication.controller";
-import {NotificationController} from "./notification/notification.controller";
+import {RoleController} from "./modules/roles/roles.controller";
+import {UserController} from "./modules/userAccount/userAccount.controller";
+import {UserProfileController} from "./modules/userProfile/userProfile.controller";
+import {AuthController} from "./modules/authentication/authentication.controller";
+import {NotificationController} from "./modules/notification/notification.controller";
 import {errorCatcher} from "./helpers/errorCatcher";
 
 const prefix : string = "/api/v1"

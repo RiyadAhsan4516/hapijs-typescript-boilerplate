@@ -5,12 +5,12 @@ import {AES, enc} from "crypto-js";
 
 // LOCAL IMPORTS
 import {AuthService} from "./authentication.service";
-import {type_validation} from "../helpers/customValidations";
-import {invalidateToken} from "../helpers/tokenInvalidator";
+import {type_validation} from "../../helpers/customValidations";
+import {invalidateToken} from "../../helpers/tokenInvalidator";
 import {unauthorized} from "@hapi/boom";
 import {UserRepository} from "../userAccount/userAccount.repository";
 import {User} from "../userAccount/userAccount.entity";
-import {GenerateTokens} from "../helpers/generateTokens";
+import {GenerateTokens} from "../../helpers/generateTokens";
 import jwt from "jsonwebtoken";
 
 

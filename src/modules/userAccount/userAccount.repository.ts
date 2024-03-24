@@ -1,6 +1,6 @@
 import {Repository, UpdateResult} from "typeorm";
 import {User} from "./userAccount.entity";
-import { AppDataSource } from "../data-source";
+import { AppDataSource } from "../../data-source";
 import {Service} from "typedi";
 
 @Service()

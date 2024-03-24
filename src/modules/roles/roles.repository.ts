@@ -1,4 +1,4 @@
-import { AppDataSource } from "../data-source";
+import { AppDataSource } from "../../data-source";
 import {Roles} from "./roles.entity";
 import { Repository } from "typeorm";
 import {Service} from "typedi";

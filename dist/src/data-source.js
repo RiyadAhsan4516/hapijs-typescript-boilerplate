@@ -27,10 +27,10 @@ exports.AppDataSource = void 0;
 const typeorm_1 = require("typeorm");
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
-const userAccount_entity_1 = require("./userAccount/userAccount.entity");
-const userProfile_entity_1 = require("./userProfile/userProfile.entity");
-const roles_entity_1 = require("./roles/roles.entity");
-const notification_entity_1 = require("./notification/notification.entity");
+const userAccount_entity_1 = require("./modules/userAccount/userAccount.entity");
+const userProfile_entity_1 = require("./modules/userProfile/userProfile.entity");
+const roles_entity_1 = require("./modules/roles/roles.entity");
+const notification_entity_1 = require("./modules/notification/notification.entity");
 let entity_list = [userAccount_entity_1.User, userProfile_entity_1.UserProfile, roles_entity_1.Roles, notification_entity_1.Notification];
 exports.AppDataSource = new typeorm_1.DataSource({
     type: "mariadb",

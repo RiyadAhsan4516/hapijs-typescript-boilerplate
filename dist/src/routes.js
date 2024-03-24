@@ -17,11 +17,11 @@ const joi_1 = __importDefault(require("joi"));
 const typedi_1 = require("typedi");
 const boom_1 = require("@hapi/boom");
 // LOCAL MODULE IMPORTS
-const roles_controller_1 = require("./roles/roles.controller");
-const userAccount_controller_1 = require("./userAccount/userAccount.controller");
-const userProfile_controller_1 = require("./userProfile/userProfile.controller");
-const authentication_controller_1 = require("./authentication/authentication.controller");
-const notification_controller_1 = require("./notification/notification.controller");
+const roles_controller_1 = require("./modules/roles/roles.controller");
+const userAccount_controller_1 = require("./modules/userAccount/userAccount.controller");
+const userProfile_controller_1 = require("./modules/userProfile/userProfile.controller");
+const authentication_controller_1 = require("./modules/authentication/authentication.controller");
+const notification_controller_1 = require("./modules/notification/notification.controller");
 const errorCatcher_1 = require("./helpers/errorCatcher");
 const prefix = "/api/v1";
 const routes = [

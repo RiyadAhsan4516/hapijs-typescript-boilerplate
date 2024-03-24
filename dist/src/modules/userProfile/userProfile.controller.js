@@ -14,29 +14,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PasswordEncryptionSubscriber = void 0;
-const typeorm_1 = require("typeorm");
-const userAccount_entity_1 = require("../modules/userAccount/userAccount.entity");
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
-let PasswordEncryptionSubscriber = exports.PasswordEncryptionSubscriber = class PasswordEncryptionSubscriber {
-    listenTo() {
-        return userAccount_entity_1.User;
-    }
-    beforeInsert(event) {
+exports.UserProfileController = void 0;
+const userProfile_service_1 = require("./userProfile.service");
+const typedi_1 = require("typedi");
+let UserProfileController = exports.UserProfileController = class UserProfileController {
+    createProfile(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
-            event.entity.password = yield bcryptjs_1.default.hash(event.entity.password, 10);
+            let service = typedi_1.Container.get(userProfile_service_1.UserProfileService);
+            // @ts-ignore
+            const attributes = Object.assign({}, req.payload);
+            return yield this.service.createUserProfile(attributes);
         });
     }
-    beforeUpdate(event) {
+    // async getProfile(req: Request, h:ResponseToolkit<ReqRefDefaults>): Promise<void>{
+    //     let id = +req.params.id;
+    //     let result = await this.service.getUserProfile(id);
+    //     if(result.errno || result.error){
+    //         return next(result)
+    //     }
+    //     res.status(200).json({
+    //         data: result
+    //     })
+    // }
+    getAllProfiles(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
-            event.entity.password = yield bcryptjs_1.default.hash(event.entity.password, 10);
+            let service = typedi_1.Container.get(userProfile_service_1.UserProfileService);
+            let result = yield service.getProfiles();
+            return h.response(result).code(200);
         });
     }
 };
-exports.PasswordEncryptionSubscriber = PasswordEncryptionSubscriber = __decorate([
-    (0, typeorm_1.EventSubscriber)()
-], PasswordEncryptionSubscriber);
+exports.UserProfileController = UserProfileController = __decorate([
+    (0, typedi_1.Service)()
+], UserProfileController);

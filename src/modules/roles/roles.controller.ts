@@ -6,7 +6,7 @@ import {gzip} from "zlib";
 // LOCAL IMPORTS
 import {RoleService} from "./roles.service";
 import {Roles} from "./roles.entity";
-import {payloadCompressor} from "../helpers/payloadCompressor";
+import {payloadCompressor} from "../../helpers/payloadCompressor";
 
 @Service()
 export class RoleController {

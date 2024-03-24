@@ -1,5 +1,5 @@
 import {UserProfileRepository} from "./userProfile.repository";
-import {fileProcessor} from "../helpers/fileProcessor";
+import {fileProcessor} from "../../helpers/fileProcessor";
 import {Container, Service} from "typedi";
 import {ObjectSchema, object, number, string} from "joi"
 

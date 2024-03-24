@@ -14,29 +14,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PasswordEncryptionSubscriber = void 0;
-const typeorm_1 = require("typeorm");
-const userAccount_entity_1 = require("../modules/userAccount/userAccount.entity");
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
-let PasswordEncryptionSubscriber = exports.PasswordEncryptionSubscriber = class PasswordEncryptionSubscriber {
-    listenTo() {
-        return userAccount_entity_1.User;
-    }
-    beforeInsert(event) {
+exports.RoleController = void 0;
+const typedi_1 = require("typedi");
+// LOCAL IMPORTS
+const roles_service_1 = require("./roles.service");
+const payloadCompressor_1 = require("../../helpers/payloadCompressor");
+let RoleController = exports.RoleController = class RoleController {
+    getAllRoles(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
-            event.entity.password = yield bcryptjs_1.default.hash(event.entity.password, 10);
+            // CHECK REQUEST METHOD
+            const service = typedi_1.Container.get(roles_service_1.RoleService);
+            //FETCH DATA FROM REPOSITORY
+            let data = yield service.getAllRoles();
+            // CHECK THE LENGTH OF DATA ARRAY
+            if (data.length < 1)
+                return h.response("no data found").code(204);
+            //COMPRESS THE FETCHED DATA USING ZLIB GZIP FUNCTION
+            let compressedData = yield (0, payloadCompressor_1.payloadCompressor)(data);
+            // RETURN THE COMPRESSED DATA ALONG WITH CUSTOMIZED HEADER
+            return h.response(compressedData).header('Content-Encoding', 'gzip').type("application/json");
         });
     }
-    beforeUpdate(event) {
+    // FINISH SETTING UP REDIS OBJECT UPON CREATION
+    createRoles(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
-            event.entity.password = yield bcryptjs_1.default.hash(event.entity.password, 10);
+            const payload = req.payload;
+            let result = typedi_1.Container.get(roles_service_1.RoleService).createRoles(payload);
+            console.log(result);
         });
     }
 };
-exports.PasswordEncryptionSubscriber = PasswordEncryptionSubscriber = __decorate([
-    (0, typeorm_1.EventSubscriber)()
-], PasswordEncryptionSubscriber);
+exports.RoleController = RoleController = __decorate([
+    (0, typedi_1.Service)()
+], RoleController);

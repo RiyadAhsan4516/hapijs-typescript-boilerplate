@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import {UserProfile} from "./userProfile.entity";
-import { AppDataSource } from "../data-source";
+import { AppDataSource } from "../../data-source";
 import {Service} from "typedi";
 
 @Service()

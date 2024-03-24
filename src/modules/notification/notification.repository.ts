@@ -1,6 +1,6 @@
 import {InsertResult, Repository, UpdateResult} from "typeorm";
 import {Notification} from "./notification.entity";
-import { AppDataSource } from "../data-source";
+import { AppDataSource } from "../../data-source";
 import {Service} from "typedi";
 import * as Boom from "@hapi/boom"
 

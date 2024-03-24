@@ -5,10 +5,10 @@ import {badData, unauthorized} from "@hapi/boom";
 
 // LOCAL IMPORTS
 import {UserRepository} from "../userAccount/userAccount.repository";
-import {GenerateTokens} from "../helpers/generateTokens";
+import {GenerateTokens} from "../../helpers/generateTokens";
 import {User} from "../userAccount/userAccount.entity";
-import {type_validation} from "../helpers/customValidations";
-import {client} from "../../app";
+import {type_validation} from "../../helpers/customValidations";
+import {client} from "../../../app";
 import {authorize} from "../authorization/authorization.access";
 
 

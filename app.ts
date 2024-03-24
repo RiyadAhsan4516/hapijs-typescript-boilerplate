@@ -14,7 +14,7 @@ import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
 import * as hapi_rate_limitor from "hapi-rate-limitor";
 
 // Local module imports
-import {AuthController} from "./src/authentication/authentication.controller";
+import {AuthController} from "./src/modules/authentication/authentication.controller";
 import {eventHandlerPlugin} from "./src/helpers/customPlugins";
 
 // Local routes imports
@@ -70,17 +70,9 @@ const server : Server<ServerApplicationState> = new Server({
 // ********************************************
 
 // MULTIPLE TARGETS CAN ALSO BE SET AT ONCE. IN THAT CASE THE TARGETS MUST BE AN ARRAY
-let transport : any;
-if(process.env.NODE_ENV === 'production') {
-    transport = {
-        target : "pino/file",
-        options: { destination: `${__dirname}/app.log`}
-    }
-} else {
-    transport = {
-        target : '@logtail/pino',
-        options: { sourceToken: process.env.LOGTAIL_TOKEN }
-    }
+let transport : any  = {        // THIS DATA IS STATIC SO ANY TYPE WILL DO NO HARM
+    target : "pino/file",
+    options: { destination: `${__dirname}/app.log`}
 }
 
 

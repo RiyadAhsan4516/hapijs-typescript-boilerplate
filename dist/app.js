@@ -50,7 +50,7 @@ const redis_1 = require("redis");
 const typedi_1 = require("typedi");
 const hapi_rate_limitor = __importStar(require("hapi-rate-limitor"));
 // Local module imports
-const authentication_controller_1 = require("./src/authentication/authentication.controller");
+const authentication_controller_1 = require("./src/modules/authentication/authentication.controller");
 const customPlugins_1 = require("./src/helpers/customPlugins");
 // Local routes imports
 const routes_1 = __importDefault(require("./src/routes"));
@@ -96,19 +96,10 @@ const server = new hapi_1.Server({
 // *                                          *
 // ********************************************
 // MULTIPLE TARGETS CAN ALSO BE SET AT ONCE. IN THAT CASE THE TARGETS MUST BE AN ARRAY
-let transport;
-if (process.env.NODE_ENV === 'production') {
-    transport = {
-        target: "pino/file",
-        options: { destination: `${__dirname}/app.log` }
-    };
-}
-else {
-    transport = {
-        target: '@logtail/pino',
-        options: { sourceToken: process.env.LOGTAIL_TOKEN }
-    };
-}
+let transport = {
+    target: "pino/file",
+    options: { destination: `${__dirname}/app.log` }
+};
 // ********************************************
 // *                                          *
 // *          SERVER INITIALIZER              *

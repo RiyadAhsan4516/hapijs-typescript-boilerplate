@@ -27,6 +27,7 @@
     "http-errors": "^2.0.0",
     "jsonwebtoken": "^9.0.0",
     "mysql2": "^3.3.5",
+    "node-libcurl": "^4.0.0",
     "redis": "^4.6.8",
     "redis-om": "^0.4.2",
     "reflect-metadata": "^0.1.13",
