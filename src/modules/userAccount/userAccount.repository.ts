@@ -51,7 +51,6 @@ export class UserRepository{
 
     async UpdateUser(inputs : any, id: string): Promise<User>{
         let {...newInputs}= inputs
-
         // @ts-ignore
         let user : UpdateResult = await this.userRepo.createQueryBuilder()
             .update(User)

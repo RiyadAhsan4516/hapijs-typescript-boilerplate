@@ -19,24 +19,22 @@ export class UserController{
     }
 
     public async getUser(req: Request, h:ResponseToolkit<ReqRefDefaults>): Promise<ResponseObject>{
+        let id : number = +req.params.id;
         let service : UserService = Container.get(UserService);
-        let id = req.params.id;
         let result : User | null = await service.getOne(id)
         if(!result) return h.response("No user found with this id").code(204)
         return h.response(await payloadFormatter(result)).code(200)
     }
 
     public async CreateUser(req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<User | ResponseObject>{
+        // @ts-ignore
+        let payload: any = {...req.payload};
         let service : UserService = Container.get(UserService);
-        let inputs : object
-        if(typeof req.payload === 'string') throw Boom.badData("payload has to be an object");
-        else inputs = {...req.payload};
-        let result = await service.createUser(inputs);
+        let result = await service.createUser(payload);
         if(!result || result.length<1){
             return h.response("No data found").code(204)
         }
-
-        return result;
+        return h.response(await payloadFormatter(result)).code(201);
     }
 
     public async UpdateUser(req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<User>{

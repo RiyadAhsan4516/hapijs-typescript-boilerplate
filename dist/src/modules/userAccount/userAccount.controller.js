@@ -58,8 +58,8 @@ let UserController = exports.UserController = class UserController {
     }
     getUser(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
+            let id = +req.params.id;
             let service = typedi_1.Container.get(userAccount_service_1.UserService);
-            let id = req.params.id;
             let result = yield service.getOne(id);
             if (!result)
                 return h.response("No user found with this id").code(204);
@@ -68,17 +68,14 @@ let UserController = exports.UserController = class UserController {
     }
     CreateUser(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
+            // @ts-ignore
+            let payload = Object.assign({}, req.payload);
             let service = typedi_1.Container.get(userAccount_service_1.UserService);
-            let inputs;
-            if (typeof req.payload === 'string')
-                throw Boom.badData("payload has to be an object");
-            else
-                inputs = Object.assign({}, req.payload);
-            let result = yield service.createUser(inputs);
+            let result = yield service.createUser(payload);
             if (!result || result.length < 1) {
                 return h.response("No data found").code(204);
             }
-            return result;
+            return h.response(yield (0, payloadFormatter_1.payloadFormatter)(result)).code(201);
         });
     }
     UpdateUser(req, h) {
