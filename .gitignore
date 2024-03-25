@@ -2,3 +2,4 @@
 .idea
 .env
 yarn-error.log
+app.log
