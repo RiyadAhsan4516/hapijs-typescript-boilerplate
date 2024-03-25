@@ -19,13 +19,14 @@ function paginate(query, limit, pageNo, order) {
         if (pageNo > last_page) {
             skip = (last_page) * (limit);
         }
-        let result = yield query
+        let data = yield query
             .take(take)
             .skip(skip)
             .maxExecutionTime(1000)
             .orderBy(order)
+            .maxExecutionTime(1000)
             .getMany();
-        return { total_count, result };
+        return { total_count, data };
     });
 }
 exports.paginate = paginate;

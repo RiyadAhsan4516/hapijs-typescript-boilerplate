@@ -1,7 +1,8 @@
-import {Repository, UpdateResult} from "typeorm";
+import {InsertResult, Repository, SelectQueryBuilder, UpdateResult} from "typeorm";
 import {User} from "./userAccount.entity";
 import { AppDataSource } from "../../data-source";
 import {Service} from "typedi";
+import { paginate } from "../../helpers/paginator";
 
 @Service()
 export class UserRepository{
@@ -12,10 +13,10 @@ export class UserRepository{
         this.userRepo = AppDataSource.getRepository(User)
     }
 
-    async getAllUsers(): Promise<User[]>{
-        return await this.userRepo.createQueryBuilder()
-            .maxExecutionTime(1000)
-            .getMany()
+    async getAllUsers(limit: number, pageNo: number, params : {[key : string]: string}) : Promise<{total_count: number, data: any[]}> {
+        let query: SelectQueryBuilder<User> = this.userRepo.createQueryBuilder()
+        query = await this.addQuery(query, params)
+        return await paginate(query, limit, pageNo, {"modified_at": "DESC"})
     }
 
     async getOneUser(id: number): Promise<User | null>{
@@ -26,8 +27,8 @@ export class UserRepository{
     }
 
     async getUserWithPassword(email: string) : Promise<User | null>{
-        return await this.userRepo.createQueryBuilder("user")
-            .select(["user.id", "user.email", "user.password"])
+        return await this.userRepo.createQueryBuilder()
+            .select(["id", "email", "password"])
             .where("user.email = :email", {email: email})
             .getOne();
     }
@@ -35,7 +36,7 @@ export class UserRepository{
     async createUser(inputs: object) : Promise<any>{
 
         try{
-            let newUser = await this.userRepo.createQueryBuilder()
+            let newUser : InsertResult = await this.userRepo.createQueryBuilder()
                 .insert()
                 .into(User)
                 .values(inputs)
@@ -60,5 +61,10 @@ export class UserRepository{
 
         return user.raw
 
+    }
+
+    async addQuery(query: SelectQueryBuilder<any>, params: {[key: string]: string}) : Promise<SelectQueryBuilder<any>> {
+        if(params.email) query = query.andWhere("User.email LIKE :email", {email: `%${params.email}%`})
+        return query
     }
 }

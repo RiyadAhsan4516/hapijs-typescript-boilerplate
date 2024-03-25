@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserProfile = void 0;
 const typeorm_1 = require("typeorm");
 const userAccount_entity_1 = require("../userAccount/userAccount.entity");
-const roles_entity_1 = require("../roles/roles.entity");
 let UserProfile = exports.UserProfile = class UserProfile {
 };
 __decorate([
@@ -35,11 +34,6 @@ __decorate([
     (0, typeorm_1.Column)({ length: 100 }),
     __metadata("design:type", String)
 ], UserProfile.prototype, "profile_photo", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => roles_entity_1.Roles, (role) => role.userProfiles),
-    (0, typeorm_1.JoinColumn)({ name: "role_id" }),
-    __metadata("design:type", roles_entity_1.Roles)
-], UserProfile.prototype, "role_id", void 0);
 __decorate([
     (0, typeorm_1.OneToOne)(() => userAccount_entity_1.User, (user) => user.user_profile_id, { onDelete: "CASCADE" }),
     (0, typeorm_1.JoinColumn)({ name: "user_id", referencedColumnName: "id" }),

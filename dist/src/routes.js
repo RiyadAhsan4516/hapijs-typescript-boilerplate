@@ -35,22 +35,22 @@ const routes = [
     },
     {
         method: "GET",
-        path: `${prefix}/users/allUsers`,
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userAccount_controller_1.UserController).getUsers),
-        options: {
-            auth: "jwt"
-        }
+        path: `${prefix}/users/all_users/{limit}/{pageNo}`,
+        // options: {
+        //     auth: "jwt"
+        // },
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userAccount_controller_1.UserController).getUsers)
     },
     {
         method: "GET",
-        path: `${prefix}/users/getOne/{id}`,
+        path: `${prefix}/users/get_one/{id}`,
         options: {
             validate: {
                 params: joi_1.default.object({
                     id: joi_1.default.string().alphanum().required().error((0, boom_1.badData)("id sent in param is not valid"))
                 })
             },
-            auth: "jwt"
+            // auth: "jwt"
         },
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userAccount_controller_1.UserController).getUser)
     },

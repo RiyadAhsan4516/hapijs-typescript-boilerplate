@@ -42,14 +42,18 @@ exports.UserController = void 0;
 const typedi_1 = require("typedi");
 const userAccount_service_1 = require("./userAccount.service");
 const Boom = __importStar(require("@hapi/boom"));
+const payloadFormatter_1 = require("../../helpers/payloadFormatter");
 let UserController = exports.UserController = class UserController {
     getUsers(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
+            let limit = +req.params.limit;
+            let pageNo = +req.params.pageNo;
+            let params = Object.assign({}, req.query);
             let service = typedi_1.Container.get(userAccount_service_1.UserService);
-            let result = yield service.getAll();
-            if (!result || result.length < 1)
+            let result = yield service.getAll(limit, pageNo, params);
+            if (!result || result.total_count < 1)
                 return h.response("No data found").code(204);
-            return result;
+            return h.response(yield (0, payloadFormatter_1.payloadFormatter)(result)).code(200);
         });
     }
     getUser(req, h) {
@@ -59,7 +63,7 @@ let UserController = exports.UserController = class UserController {
             let result = yield service.getOne(id);
             if (!result)
                 return h.response("No user found with this id").code(204);
-            return result;
+            return h.response(yield (0, payloadFormatter_1.payloadFormatter)(result)).code(200);
         });
     }
     CreateUser(req, h) {

@@ -33,15 +33,16 @@ exports.UserRepository = void 0;
 const userAccount_entity_1 = require("./userAccount.entity");
 const data_source_1 = require("../../data-source");
 const typedi_1 = require("typedi");
+const paginator_1 = require("../../helpers/paginator");
 let UserRepository = exports.UserRepository = class UserRepository {
     constructor() {
         this.userRepo = data_source_1.AppDataSource.getRepository(userAccount_entity_1.User);
     }
-    getAllUsers() {
+    getAllUsers(limit, pageNo, params) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.userRepo.createQueryBuilder()
-                .maxExecutionTime(1000)
-                .getMany();
+            let query = this.userRepo.createQueryBuilder();
+            query = yield this.addQuery(query, params);
+            return yield (0, paginator_1.paginate)(query, limit, pageNo, { "modified_at": "DESC" });
         });
     }
     getOneUser(id) {
@@ -54,8 +55,8 @@ let UserRepository = exports.UserRepository = class UserRepository {
     }
     getUserWithPassword(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.userRepo.createQueryBuilder("user")
-                .select(["user.id", "user.email", "user.password"])
+            return yield this.userRepo.createQueryBuilder()
+                .select(["id", "email", "password"])
                 .where("user.email = :email", { email: email })
                 .getOne();
         });
@@ -88,6 +89,13 @@ let UserRepository = exports.UserRepository = class UserRepository {
                 .where(id)
                 .execute();
             return user.raw;
+        });
+    }
+    addQuery(query, params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (params.email)
+                query = query.andWhere("User.email LIKE :email", { email: `%${params.email}%` });
+            return query;
         });
     }
 };

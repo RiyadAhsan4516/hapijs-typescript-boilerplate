@@ -1,4 +1,4 @@
-# <HAPISCRIPT>
+# HAPISCRIPT
 
 ## Description
 

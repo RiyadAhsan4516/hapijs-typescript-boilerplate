@@ -45,13 +45,10 @@ let UserProfileRepository = exports.UserProfileRepository = class UserProfileRep
     getAUserProfile(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this.userProfileRepo.find({
-                    where: { id },
-                    relations: {
-                        role_id: true,
-                        user_id: true
-                    },
-                });
+                return yield this.userProfileRepo.createQueryBuilder()
+                    .where("id = :id", { id })
+                    .maxExecutionTime(1000)
+                    .getOne();
             }
             catch (err) {
                 return { error: "Something went wrong" };
@@ -61,12 +58,9 @@ let UserProfileRepository = exports.UserProfileRepository = class UserProfileRep
     getAllProfiles() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this.userProfileRepo.find({
-                    relations: {
-                        role_id: true,
-                        user_id: true
-                    }
-                });
+                return yield this.userProfileRepo.createQueryBuilder()
+                    .maxExecutionTime(1000)
+                    .getMany();
             }
             catch (err) {
                 return { error: "something went wrong" };

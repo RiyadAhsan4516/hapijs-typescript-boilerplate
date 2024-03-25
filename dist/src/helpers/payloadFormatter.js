@@ -10,11 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.payloadFormatter = void 0;
-function payloadFormatter(totalData = 1, data) {
+function payloadFormatter(data) {
     return __awaiter(this, void 0, void 0, function* () {
+        let total_count = 1;
+        if (data.total_count)
+            return data;
         return {
-            totalCount: data.total_count ? data.total_count : totalData,
-            data: data.total_count ? data.result : data
+            total_count,
+            data: [data]
         };
     });
 }

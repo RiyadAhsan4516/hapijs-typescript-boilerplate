@@ -1,6 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn } from "typeorm";
+import {Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn} from "typeorm";
 import {User} from "../userAccount/userAccount.entity";
-import {Roles} from "../roles/roles.entity";
 
 interface user_profile{
     id: number,
@@ -8,7 +7,6 @@ interface user_profile{
     address: string,
     phone_number: string,
     profile_photo: string,
-    role_id: Roles,
     user_id: User
 }
 
@@ -30,10 +28,6 @@ export class UserProfile implements user_profile{
 
     @Column({length: 100})
     profile_photo: string;
-
-    @ManyToOne(()=>Roles, (role: Roles)  => role.userProfiles)
-    @JoinColumn({name: "role_id"})
-    role_id: Roles;
 
     @OneToOne(()=>User, (user : User)=>user.user_profile_id, {onDelete: "CASCADE"})
     @JoinColumn({name:"user_id", referencedColumnName: "id"})

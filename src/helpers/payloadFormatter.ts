@@ -1,6 +1,8 @@
-export async function payloadFormatter (totalData : number = 1, data : any) {
+export async function payloadFormatter(data: any): Promise<{total_count : number, data : any}> {
+    let total_count: number = 1;
+    if (data.total_count) return data
     return {
-        totalCount : data.total_count? data.total_count : totalData,
-        data : data.total_count? data.result : data
+        total_count,
+        data: [data]
     }
 }

@@ -26,9 +26,9 @@ let UserService = exports.UserService = class UserService {
     constructor() {
         this.repository = typedi_2.Container.get(userAccount_repository_1.UserRepository);
     }
-    getAll() {
+    getAll(limit, pageNo, params) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.repository.getAllUsers();
+            return yield this.repository.getAllUsers(limit, pageNo, params);
         });
     }
     getOne(id) {

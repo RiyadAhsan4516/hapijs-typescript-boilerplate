@@ -15,12 +15,13 @@ export async function paginate(query : SelectQueryBuilder<any>, limit: number, p
         skip = (last_page)*(limit);
     }
 
-    let result : any[] =  await query
+    let data : any[] =  await query
         .take(take)
         .skip(skip)
         .maxExecutionTime(1000)
         .orderBy(order)
+        .maxExecutionTime(1000)
         .getMany()
 
-    return {total_count, result}
+    return {total_count, data}
 }

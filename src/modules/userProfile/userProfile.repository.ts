@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import {InsertResult, Repository} from "typeorm";
 import {UserProfile} from "./userProfile.entity";
 import { AppDataSource } from "../../data-source";
 import {Service} from "typedi";
@@ -14,7 +14,7 @@ export class UserProfileRepository{
 
     async createUserProfile(inputs: object) : Promise<any>{
         try{
-            let newUserProfile = await this.userProfileRepo.createQueryBuilder()
+            let newUserProfile : InsertResult = await this.userProfileRepo.createQueryBuilder()
                 .insert()
                 .into(UserProfile)
                 .values(inputs)
@@ -29,13 +29,10 @@ export class UserProfileRepository{
 
     async getAUserProfile (id:number) : Promise<any>{
         try{
-            return await this.userProfileRepo.find({
-                where: {id},
-                relations:{
-                    role_id: true,
-                    user_id: true
-                },
-            })
+            return await this.userProfileRepo.createQueryBuilder()
+                .where("id = :id", {id})
+                .maxExecutionTime(1000)
+                .getOne()
         }catch(err){
             return {error: "Something went wrong"}
         }
@@ -44,12 +41,9 @@ export class UserProfileRepository{
 
     async getAllProfiles () : Promise<UserProfile[] | {error: string}>{
         try{
-            return await this.userProfileRepo.find({
-                relations:{
-                    role_id: true,
-                    user_id: true
-                }
-            })
+            return await this.userProfileRepo.createQueryBuilder()
+                .maxExecutionTime(1000)
+                .getMany()
         }catch(err){
             return {error: "something went wrong"}
         }

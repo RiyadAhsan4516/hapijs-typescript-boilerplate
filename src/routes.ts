@@ -25,22 +25,22 @@ const routes : ServerRoute[] = [
     },
     {
         method: "GET",
-        path: `${prefix}/users/allUsers`,
-        handler: errorCatcher(Container.get(UserController).getUsers),
-        options: {
-            auth: "jwt"
-        }
+        path: `${prefix}/users/all_users/{limit}/{pageNo}`,
+        // options: {
+        //     auth: "jwt"
+        // },
+        handler: errorCatcher(Container.get(UserController).getUsers)
     },
     {
         method: "GET",
-        path: `${prefix}/users/getOne/{id}`,
+        path: `${prefix}/users/get_one/{id}`,
         options:{
             validate:{
                 params: Joi.object({
                     id: Joi.string().alphanum().required().error(badData("id sent in param is not valid"))
                 })
             },
-            auth: "jwt"
+            // auth: "jwt"
         },
         handler: errorCatcher(Container.get(UserController).getUser)
     },
