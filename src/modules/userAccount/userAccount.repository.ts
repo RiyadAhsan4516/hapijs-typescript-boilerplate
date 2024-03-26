@@ -28,8 +28,10 @@ export class UserRepository{
 
     async getUserWithPassword(email: string) : Promise<User | null>{
         return await this.userRepo.createQueryBuilder()
-            .select(["id", "email", "password"])
-            .where("user.email = :email", {email: email})
+            .select(["User.id", "User.email", "User.password"])
+            .innerJoin("User.role_id", "role")
+            .addSelect(["role.id", "role.name"])
+            .where("User.email = :email", {email: email})
             .getOne();
     }
 

@@ -23,7 +23,7 @@ const boom_1 = require("@hapi/boom");
 // LOCAL IMPORTS
 const userAccount_repository_1 = require("../userAccount/userAccount.repository");
 const generateTokens_1 = require("../../helpers/generateTokens");
-const customValidations_1 = require("../../helpers/customValidations");
+const customInterfaces_1 = require("../../helpers/customInterfaces");
 const app_1 = require("../../../app");
 const authorization_access_1 = require("../authorization/authorization.access");
 let AuthService = exports.AuthService = class AuthService {
@@ -38,7 +38,7 @@ let AuthService = exports.AuthService = class AuthService {
     validateLogin(originalData) {
         return __awaiter(this, void 0, void 0, function* () {
             // SET UP INPUT VALIDATION ON ORIGINAL DATA
-            let validationCheck = yield new customValidations_1.type_validation.loginInfoJoiValidation;
+            let validationCheck = yield new customInterfaces_1.type_validation.loginInfoJoiValidation;
             let validation_result = yield validationCheck.check(originalData);
             if (validation_result.error)
                 throw (0, boom_1.badData)(validation_result.error.details[0].message);
@@ -51,7 +51,7 @@ let AuthService = exports.AuthService = class AuthService {
             // TOKEN GENERATION PAYLOAD
             const payload = {
                 id: user.id,
-                role: user.id,
+                role: user.role_id.id,
                 rateLimit: 100
             };
             // GENERATE AN ACCESS TOKEN
@@ -67,7 +67,7 @@ let AuthService = exports.AuthService = class AuthService {
             const user = yield typedi_1.Container.get(userAccount_repository_1.UserRepository).getOneUser(decoded.id);
             let role;
             // TODO: SET ROLE HERE
-            user ? role = user.email : role = "";
+            user ? role = user.role_id.name : role = "";
             yield (0, authorization_access_1.authorize)(role, url, method);
             let access_tokens = JSON.parse(yield app_1.client.hGet(`tokens-${decoded.id}`, "access"));
             let refresh_tokens = JSON.parse(yield app_1.client.hGet(`tokens-${decoded.id}`, "refresh"));

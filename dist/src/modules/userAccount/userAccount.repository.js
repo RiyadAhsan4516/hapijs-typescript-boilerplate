@@ -56,8 +56,10 @@ let UserRepository = exports.UserRepository = class UserRepository {
     getUserWithPassword(email) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.userRepo.createQueryBuilder()
-                .select(["id", "email", "password"])
-                .where("user.email = :email", { email: email })
+                .select(["User.id", "User.email", "User.password"])
+                .innerJoin("User.role_id", "role")
+                .addSelect(["role.id", "role.name"])
+                .where("User.email = :email", { email: email })
                 .getOne();
         });
     }

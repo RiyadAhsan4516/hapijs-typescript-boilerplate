@@ -1,4 +1,4 @@
-import Joi, {object, ObjectSchema, string} from "joi";
+import Joi from "joi";
 
 namespace type_validation{
 

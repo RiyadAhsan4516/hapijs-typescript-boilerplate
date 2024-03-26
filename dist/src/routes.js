@@ -23,6 +23,7 @@ const userProfile_controller_1 = require("./modules/userProfile/userProfile.cont
 const authentication_controller_1 = require("./modules/authentication/authentication.controller");
 const notification_controller_1 = require("./modules/notification/notification.controller");
 const errorCatcher_1 = require("./helpers/errorCatcher");
+const inputValidator_1 = require("./helpers/inputValidator");
 const prefix = "/api/v1";
 const routes = [
     {
@@ -36,9 +37,12 @@ const routes = [
     {
         method: "GET",
         path: `${prefix}/users/all_users/{limit}/{pageNo}`,
-        // options: {
-        //     auth: "jwt"
-        // },
+        options: {
+            validate: {
+                params: inputValidator_1.inputValidations.paginationParam
+            }
+            // auth: "jwt"
+        },
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userAccount_controller_1.UserController).getUsers)
     },
     {
@@ -139,9 +143,7 @@ const routes = [
         path: `${prefix}/notification_status/{id}`,
         options: {
             validate: {
-                params: joi_1.default.object({
-                    id: joi_1.default.string().required().error((0, boom_1.badData)("Please provide id as a request parameter"))
-                }),
+                params: inputValidator_1.inputValidations.paginationParam,
                 payload: joi_1.default.object({
                     read_status: joi_1.default.number().required().error((0, boom_1.badData)("Please provide the read_status. It must be in number format"))
                 })

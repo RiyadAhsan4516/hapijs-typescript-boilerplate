@@ -11,6 +11,7 @@ import {UserProfileController} from "./modules/userProfile/userProfile.controlle
 import {AuthController} from "./modules/authentication/authentication.controller";
 import {NotificationController} from "./modules/notification/notification.controller";
 import {errorCatcher} from "./helpers/errorCatcher";
+import {inputValidations} from "./helpers/inputValidator";
 
 const prefix : string = "/api/v1"
 
@@ -26,9 +27,12 @@ const routes : ServerRoute[] = [
     {
         method: "GET",
         path: `${prefix}/users/all_users/{limit}/{pageNo}`,
-        // options: {
-        //     auth: "jwt"
-        // },
+        options: {
+            validate: {
+                params: inputValidations.paginationParam
+            }
+            // auth: "jwt"
+        },
         handler: errorCatcher(Container.get(UserController).getUsers)
     },
     {
@@ -129,9 +133,7 @@ const routes : ServerRoute[] = [
         path: `${prefix}/notification_status/{id}`,
         options: {
             validate: {
-                params: Joi.object({
-                    id: Joi.string().required().error(badData("Please provide id as a request parameter"))
-                }),
+                params: inputValidations.paginationParam,
                 payload: Joi.object({
                     read_status: Joi.number().required().error(badData("Please provide the read_status. It must be in number format"))
                 })

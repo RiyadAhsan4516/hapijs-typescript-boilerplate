@@ -59,7 +59,7 @@ let AuthController = exports.AuthController = class AuthController {
             // RETURN THE ACCESS TOKEN ALONG WITH A MESSAGE
             return {
                 message: "Login successful",
-                token: `Bearer ${result.accessToken}`
+                token: `Bearer ${accessToken}`
             };
         });
     }
@@ -117,10 +117,9 @@ let AuthController = exports.AuthController = class AuthController {
             const user = yield typedi_1.Container.get(userAccount_repository_1.UserRepository).getOneUser(decoded.id);
             if (!user)
                 return (0, boom_1.unauthorized)("the user of this token does not exist");
-            // TODO: SET ROLE ID
             const payload = {
                 id: user.id,
-                role: user.id,
+                role: user.role_id.id,
                 rateLimit: 100
             };
             const accessToken = yield typedi_1.Container.get(generateTokens_1.GenerateTokens).createToken(payload, "15m");

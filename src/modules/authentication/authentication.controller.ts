@@ -5,7 +5,7 @@ import {AES, enc} from "crypto-js";
 
 // LOCAL IMPORTS
 import {AuthService} from "./authentication.service";
-import {type_validation} from "../../helpers/customValidations";
+import {type_validation} from "../../helpers/customInterfaces";
 import {invalidateToken} from "../../helpers/tokenInvalidator";
 import {unauthorized} from "@hapi/boom";
 import {UserRepository} from "../userAccount/userAccount.repository";
@@ -50,7 +50,7 @@ export class AuthController {
         // RETURN THE ACCESS TOKEN ALONG WITH A MESSAGE
         return {
             message: "Login successful",
-            token: `Bearer ${result.accessToken}`
+            token: `Bearer ${accessToken}`
         }
 
     }
@@ -115,10 +115,9 @@ export class AuthController {
         const user: User | null = await Container.get(UserRepository).getOneUser(decoded.id)
         if (!user) return unauthorized("the user of this token does not exist");
 
-        // TODO: SET ROLE ID
         const payload: type_validation.tokenFormat = {
             id: user.id,
-            role: user.id,
+            role: user.role_id.id,
             rateLimit: 100
         }
         const accessToken: string = await Container.get(GenerateTokens).createToken(payload, "15m")

@@ -7,7 +7,7 @@ import {badData, unauthorized} from "@hapi/boom";
 import {UserRepository} from "../userAccount/userAccount.repository";
 import {GenerateTokens} from "../../helpers/generateTokens";
 import {User} from "../userAccount/userAccount.entity";
-import {type_validation} from "../../helpers/customValidations";
+import {type_validation} from "../../helpers/customInterfaces";
 import {client} from "../../../app";
 import {authorize} from "../authorization/authorization.access";
 
@@ -40,7 +40,7 @@ export class AuthService{
         // TOKEN GENERATION PAYLOAD
         const payload: type_validation.tokenFormat = {
             id: user.id,
-            role: user.id,
+            role: user.role_id.id,
             rateLimit: 100
         }
 
@@ -60,7 +60,7 @@ export class AuthService{
         let role : string
 
         // TODO: SET ROLE HERE
-        user? role = user.email : role = ""
+        user? role = user.role_id.name : role = ""
 
         await authorize(role, url, method)
 
