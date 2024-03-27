@@ -39,7 +39,6 @@
     "@hapi/inert": "^7.1.0",
     "@hapi/lab": "^25.1.2",
     "@hapi/vision": "^7.0.2",
-    "@logtail/pino": "^0.4.6",
     "@types/bcrypt": "^5.0.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/config": "^3.3.4",
