@@ -153,6 +153,7 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
         }
     ]);
     // EXTRACT THE KEY FOR IS LOGGED IN JWT VERIFICATION
+    // IF PRIVATE KEY IS NOT CREATED, THEN CREATE IT : openssl genrsa -out private_key.pem 2048
     const privateKey = yield promises_1.default.readFile("./private_key.pem", 'utf8');
     server.auth.strategy('jwt', 'jwt', {
         key: privateKey,

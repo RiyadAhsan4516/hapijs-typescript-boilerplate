@@ -1,50 +1,47 @@
 import {InsertResult, Repository} from "typeorm";
 import {UserProfile} from "./userProfile.entity";
-import { AppDataSource } from "../../data-source";
+import {AppDataSource} from "../../data-source";
 import {Service} from "typedi";
 
 @Service()
-export class UserProfileRepository{
+export class UserProfileRepository {
 
-    private readonly userProfileRepo : Repository<UserProfile>
+    private readonly userProfileRepo: Repository<UserProfile>
 
-    constructor(){
+    constructor() {
         this.userProfileRepo = AppDataSource.getRepository(UserProfile)
     }
 
-    async createUserProfile(inputs: object) : Promise<any>{
-        try{
-            let newUserProfile : InsertResult = await this.userProfileRepo.createQueryBuilder()
-                .insert()
-                .into(UserProfile)
-                .values(inputs)
-                .returning(["id",'name', 'address', 'phone_number', 'profile_photo', 'user_id', 'role'])
-                .execute()
+    async createUserProfile(inputs: object): Promise<InsertResult> {
+        let newUserProfile: InsertResult = await this.userProfileRepo.createQueryBuilder()
+            .insert()
+            .into(UserProfile)
+            .values(inputs)
+            .returning(["id", 'name', 'address', 'phone_number', 'profile_photo', 'user_id', 'role'])
+            .execute()
 
-            return newUserProfile.raw[0]
-        }catch(err){
-            return err
-        }
+        return newUserProfile.raw[0]
+
     }
 
-    async getAUserProfile (id:number) : Promise<any>{
-        try{
+    async getAUserProfile(id: number): Promise<any> {
+        try {
             return await this.userProfileRepo.createQueryBuilder()
                 .where("id = :id", {id})
                 .maxExecutionTime(1000)
                 .getOne()
-        }catch(err){
+        } catch (err) {
             return {error: "Something went wrong"}
         }
     }
 
 
-    async getAllProfiles () : Promise<UserProfile[] | {error: string}>{
-        try{
+    async getAllProfiles(): Promise<UserProfile[] | { error: string }> {
+        try {
             return await this.userProfileRepo.createQueryBuilder()
                 .maxExecutionTime(1000)
                 .getMany()
-        }catch(err){
+        } catch (err) {
             return {error: "something went wrong"}
         }
     }

@@ -26,11 +26,10 @@ function fileProcessor(uploaded_file, allowed_types, file_size = 2000000, folder
         if (!allowed_types.includes(file_type))
             throw (0, boom_1.unsupportedMediaType)("file type invalid");
         let filepath = uploaded_file.path.split("/tmp")[0];
+        // SAVE THE FILE IN ITS CORRESPONDING FOLDER
         let dest;
-        if (folder) {
-            yield checkFolder(`${filepath}/${folder}`);
+        if (folder)
             dest = `${filepath}/${folder}/${uploaded_file.path.split("tmp")[1]}.${fileType}`;
-        }
         else
             dest = `${filepath}${uploaded_file.path.split("tmp")[1]}.${fileType}`;
         yield (0, fs_1.rename)(uploaded_file.path, dest, (err) => {
@@ -42,17 +41,3 @@ function fileProcessor(uploaded_file, allowed_types, file_size = 2000000, folder
     });
 }
 exports.fileProcessor = fileProcessor;
-function checkFolder(destination) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // CHECK IF FOLDER EXISTS
-        yield (0, fs_1.exists)(destination, (e) => __awaiter(this, void 0, void 0, function* () {
-            if (e)
-                return;
-            else
-                yield (0, fs_1.mkdir)(destination, { recursive: true }, (err) => {
-                    if (err)
-                        console.log(err);
-                });
-        }));
-    });
-}

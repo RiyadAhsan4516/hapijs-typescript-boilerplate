@@ -22,7 +22,6 @@ function imageResizer(dimensions, path_to_file) {
             .resize(dimensions.width, dimensions.height, '!')
             .write(`${relative_path}_thumb.${file_type}`, function (err) {
             if (err) {
-                console.log(err);
                 throw (0, boom_1.badImplementation)("Image resize failed");
             }
         });

@@ -1,17 +1,20 @@
 import {UserProfileService} from "./userProfile.service";
-import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
+import {ReqRefDefaults, Request, ResponseObject, ResponseToolkit} from "@hapi/hapi";
 import {Container, Service} from "typedi";
+import {InsertResult} from "typeorm";
+import {payloadFormatter} from "../../helpers/payloadFormatter";
 
 @Service()
 export class UserProfileController{
 
     private service : UserProfileService
 
-    async createProfile(req: Request, h:ResponseToolkit<ReqRefDefaults>){
+    async createProfile(req: Request, h:ResponseToolkit<ReqRefDefaults>): Promise<ResponseObject>{
         let service : UserProfileService = Container.get(UserProfileService);
         // @ts-ignore
         const attributes : any = {...req.payload};
-        return await this.service.createUserProfile(attributes)
+        let result : InsertResult =  await this.service.createUserProfile(attributes)
+        return h.response(await payloadFormatter(result)).code(200)
     }
 
     // async getProfile(req: Request, h:ResponseToolkit<ReqRefDefaults>): Promise<void>{

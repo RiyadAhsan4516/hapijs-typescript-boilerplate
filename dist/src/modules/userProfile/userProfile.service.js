@@ -23,14 +23,17 @@ const userProfile_repository_1 = require("./userProfile.repository");
 const fileProcessor_1 = require("../../helpers/fileProcessor");
 const typedi_1 = require("typedi");
 const joi_1 = require("joi");
+const imageResizer_1 = require("../../helpers/imageResizer");
 let UserProfileService = exports.UserProfileService = class UserProfileService {
     constructor() {
         this.repository = typedi_1.Container.get(userProfile_repository_1.UserProfileRepository);
     }
     createUserProfile(inputs) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (inputs.profile_photo)
-                inputs.profile_photo = yield (0, fileProcessor_1.fileProcessor)(inputs.profile_photo, ["jpeg", "png"], 3000000);
+            if (inputs.profile_photo) {
+                let path = yield (0, fileProcessor_1.fileProcessor)(inputs.profile_photo, ["jpeg", "png", "webp"], 3000000, "profile");
+                inputs.profile_photo = yield (0, imageResizer_1.imageResizer)({ width: 100, height: 100 }, path);
+            }
             return yield this.repository.createUserProfile(inputs);
         });
     }

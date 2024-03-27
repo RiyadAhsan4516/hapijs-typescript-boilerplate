@@ -28,18 +28,13 @@ let UserProfileRepository = exports.UserProfileRepository = class UserProfileRep
     }
     createUserProfile(inputs) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                let newUserProfile = yield this.userProfileRepo.createQueryBuilder()
-                    .insert()
-                    .into(userProfile_entity_1.UserProfile)
-                    .values(inputs)
-                    .returning(["id", 'name', 'address', 'phone_number', 'profile_photo', 'user_id', 'role'])
-                    .execute();
-                return newUserProfile.raw[0];
-            }
-            catch (err) {
-                return err;
-            }
+            let newUserProfile = yield this.userProfileRepo.createQueryBuilder()
+                .insert()
+                .into(userProfile_entity_1.UserProfile)
+                .values(inputs)
+                .returning(["id", 'name', 'address', 'phone_number', 'profile_photo', 'user_id', 'role'])
+                .execute();
+            return newUserProfile.raw[0];
         });
     }
     getAUserProfile(id) {

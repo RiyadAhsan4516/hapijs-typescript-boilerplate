@@ -18,13 +18,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserProfileController = void 0;
 const userProfile_service_1 = require("./userProfile.service");
 const typedi_1 = require("typedi");
+const payloadFormatter_1 = require("../../helpers/payloadFormatter");
 let UserProfileController = exports.UserProfileController = class UserProfileController {
     createProfile(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
             let service = typedi_1.Container.get(userProfile_service_1.UserProfileService);
             // @ts-ignore
             const attributes = Object.assign({}, req.payload);
-            return yield this.service.createUserProfile(attributes);
+            let result = yield this.service.createUserProfile(attributes);
+            return h.response(yield (0, payloadFormatter_1.payloadFormatter)(result)).code(200);
         });
     }
     // async getProfile(req: Request, h:ResponseToolkit<ReqRefDefaults>): Promise<void>{

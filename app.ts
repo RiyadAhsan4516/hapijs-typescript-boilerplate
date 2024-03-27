@@ -136,6 +136,7 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
 
 
     // EXTRACT THE KEY FOR IS LOGGED IN JWT VERIFICATION
+    // IF PRIVATE KEY IS NOT CREATED, THEN CREATE IT : openssl genrsa -out private_key.pem 2048
     const privateKey: string = await fs.readFile("./private_key.pem", 'utf8')
     server.auth.strategy('jwt', 'jwt', {        // inject the auth strategy as jwt into the server
         key: privateKey,

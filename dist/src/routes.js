@@ -62,7 +62,7 @@ const routes = [
     },
     {
         method: "POST",
-        path: `${prefix}/users/createNew`,
+        path: `${prefix}/users/create_new`,
         options: {
             validate: {
                 payload: joi_1.default.object({
@@ -75,7 +75,7 @@ const routes = [
     },
     {
         method: "PUT",
-        path: `${prefix}/users/updateInfo/{id}`,
+        path: `${prefix}/users/update_info/{id}`,
         options: {
             validate: {
                 payload: joi_1.default.object({
@@ -91,7 +91,7 @@ const routes = [
     },
     {
         method: "POST",
-        path: `${prefix}/userProfile/createNew`,
+        path: `${prefix}/user_profile/create_new`,
         options: {
             payload: {
                 allow: "multipart/form-data",
@@ -155,7 +155,7 @@ const routes = [
     },
     {
         method: "POST",
-        path: `${prefix}/test`,
+        path: `${prefix}/test_image_resizer`,
         options: {
             payload: {
                 allow: "multipart/form-data",
@@ -163,7 +163,7 @@ const routes = [
                 multipart: {
                     output: "file", // use file to allow multiple files
                 },
-                maxBytes: 1000 * 1000 * 2,
+                maxBytes: 1000 * 1000 * 3,
                 uploads: 'public/tmp',
             }
         },
