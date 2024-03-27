@@ -21,6 +21,7 @@ import {eventHandlerPlugin} from "./src/helpers/customPlugins";
 import routes from "./src/routes";
 import {badRequest} from "@hapi/boom";
 import {errorCatcher} from "./src/helpers/errorCatcher";
+import fs from "fs/promises";
 
 
 
@@ -134,9 +135,14 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
     ]);
 
 
+    // EXTRACT THE KEY FOR IS LOGGED IN JWT VERIFICATION
+    const privateKey: string = await fs.readFile("./private_key.pem", 'utf8')
     server.auth.strategy('jwt', 'jwt', {        // inject the auth strategy as jwt into the server
-        key: `${process.env.SECRET}`,
-        validate: Container.get(AuthController).isLoggedIn      // the token will be decoded by the plugin automatically
+        key: privateKey,
+        validate: Container.get(AuthController).isLoggedIn,      // the token will be decoded by the plugin automatically
+        verifyOptions : {
+            algorithms: ["RS256"]
+        }
     })
 
 

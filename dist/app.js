@@ -56,6 +56,7 @@ const customPlugins_1 = require("./src/helpers/customPlugins");
 const routes_1 = __importDefault(require("./src/routes"));
 const boom_1 = require("@hapi/boom");
 const errorCatcher_1 = require("./src/helpers/errorCatcher");
+const promises_1 = __importDefault(require("fs/promises"));
 // ********************************************
 // *                                          *
 // *         CREATE REDIS CONNECTION          *
@@ -151,9 +152,14 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
             }
         }
     ]);
+    // EXTRACT THE KEY FOR IS LOGGED IN JWT VERIFICATION
+    const privateKey = yield promises_1.default.readFile("./private_key.pem", 'utf8');
     server.auth.strategy('jwt', 'jwt', {
-        key: `${process.env.SECRET}`,
-        validate: typedi_1.Container.get(authentication_controller_1.AuthController).isLoggedIn // the token will be decoded by the plugin automatically
+        key: privateKey,
+        validate: typedi_1.Container.get(authentication_controller_1.AuthController).isLoggedIn,
+        verifyOptions: {
+            algorithms: ["RS256"]
+        }
     });
     server.auth.strategy('static', 'bearer-access-token', {
         validate: typedi_1.Container.get(authentication_controller_1.AuthController).staticTokenValidator

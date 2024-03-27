@@ -12,6 +12,8 @@ import {AuthController} from "./modules/authentication/authentication.controller
 import {NotificationController} from "./modules/notification/notification.controller";
 import {errorCatcher} from "./helpers/errorCatcher";
 import {inputValidations} from "./helpers/inputValidator";
+import {fileProcessor} from "./helpers/fileProcessor";
+import {imageResizer} from "./helpers/imageResizer";
 
 const prefix : string = "/api/v1"
 
@@ -30,8 +32,8 @@ const routes : ServerRoute[] = [
         options: {
             validate: {
                 params: inputValidations.paginationParam
-            }
-            // auth: "jwt"
+            },
+            auth: "jwt"
         },
         handler: errorCatcher(Container.get(UserController).getUsers)
     },
@@ -50,7 +52,7 @@ const routes : ServerRoute[] = [
     },
     {
         method: "POST",
-        path: `${prefix}/users/createNew`,
+        path: `${prefix}/users/create_new`,
         options:{
             validate: {
                 payload: Joi.object({
@@ -63,7 +65,7 @@ const routes : ServerRoute[] = [
     },
     {
         method: "PUT",
-        path: `${prefix}/users/updateInfo/{id}`,
+        path: `${prefix}/users/update_info/{id}`,
         options: {
             validate: {
                 payload: Joi.object({
@@ -79,7 +81,7 @@ const routes : ServerRoute[] = [
     },
     {
         method: "POST",
-        path: `${prefix}/userProfile/createNew`,
+        path: `${prefix}/user_profile/create_new`,
         options:  {
             payload: {
                 allow: "multipart/form-data",
@@ -109,7 +111,7 @@ const routes : ServerRoute[] = [
     {
         method: "POST",
         path: `${prefix}/login`,
-        handler: errorCatcher(Container.get(AuthController).saltLogin),
+        handler: errorCatcher(Container.get(AuthController).generalLogin),
     },
     {
         method: "GET",
@@ -143,7 +145,7 @@ const routes : ServerRoute[] = [
     },
     {
         method: "POST",
-        path: `${prefix}/test`,
+        path: `${prefix}/test_image_resizer`,
         options: {
           payload: {
               allow: "multipart/form-data",
@@ -151,13 +153,14 @@ const routes : ServerRoute[] = [
               multipart: {
                   output: "file",    // use file to allow multiple files
               },
-              maxBytes: 1000 * 1000 * 2, // 2 Mb
+              maxBytes: 1000 * 1000 * 3, // 3 Mb
               uploads: 'public/tmp',
           }
         },
         handler: errorCatcher(async function(req: any, h:ResponseToolkit<ReqRefDefaults>){
             const {payload} = req
-            return payload;
+            if (payload.profile_photo) payload.profile_photo = await fileProcessor(payload.profile_photo, ["jpeg", "png"], 3000000, "profile");
+            return await imageResizer({width: 100, height: 100}, payload.profile_photo)
         })
     }
 ]

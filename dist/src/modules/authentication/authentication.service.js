@@ -25,7 +25,6 @@ const userAccount_repository_1 = require("../userAccount/userAccount.repository"
 const generateTokens_1 = require("../../helpers/generateTokens");
 const customInterfaces_1 = require("../../helpers/customInterfaces");
 const app_1 = require("../../../app");
-const authorization_access_1 = require("../authorization/authorization.access");
 let AuthService = exports.AuthService = class AuthService {
     logoutUser() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -68,7 +67,7 @@ let AuthService = exports.AuthService = class AuthService {
             let role;
             // TODO: SET ROLE HERE
             user ? role = user.role_id.name : role = "";
-            yield (0, authorization_access_1.authorize)(role, url, method);
+            // await authorize(role, url, method)
             let access_tokens = JSON.parse(yield app_1.client.hGet(`tokens-${decoded.id}`, "access"));
             let refresh_tokens = JSON.parse(yield app_1.client.hGet(`tokens-${decoded.id}`, "refresh"));
             if (access_tokens) {

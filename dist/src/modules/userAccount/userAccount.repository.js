@@ -48,7 +48,9 @@ let UserRepository = exports.UserRepository = class UserRepository {
     getOneUser(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.userRepo.createQueryBuilder()
-                .where("id = :id", { id })
+                .where("User.id = :id", { id })
+                .innerJoin("User.role_id", "role")
+                .addSelect(["role.id", "role.name"])
                 .maxExecutionTime(1000)
                 .getOne();
         });

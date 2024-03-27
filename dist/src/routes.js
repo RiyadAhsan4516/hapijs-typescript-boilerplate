@@ -24,6 +24,8 @@ const authentication_controller_1 = require("./modules/authentication/authentica
 const notification_controller_1 = require("./modules/notification/notification.controller");
 const errorCatcher_1 = require("./helpers/errorCatcher");
 const inputValidator_1 = require("./helpers/inputValidator");
+const fileProcessor_1 = require("./helpers/fileProcessor");
+const imageResizer_1 = require("./helpers/imageResizer");
 const prefix = "/api/v1";
 const routes = [
     {
@@ -40,8 +42,8 @@ const routes = [
         options: {
             validate: {
                 params: inputValidator_1.inputValidations.paginationParam
-            }
-            // auth: "jwt"
+            },
+            auth: "jwt"
         },
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userAccount_controller_1.UserController).getUsers)
     },
@@ -119,7 +121,7 @@ const routes = [
     {
         method: "POST",
         path: `${prefix}/login`,
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authentication_controller_1.AuthController).saltLogin),
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authentication_controller_1.AuthController).generalLogin),
     },
     {
         method: "GET",
@@ -168,7 +170,9 @@ const routes = [
         handler: (0, errorCatcher_1.errorCatcher)(function (req, h) {
             return __awaiter(this, void 0, void 0, function* () {
                 const { payload } = req;
-                return payload;
+                if (payload.profile_photo)
+                    payload.profile_photo = yield (0, fileProcessor_1.fileProcessor)(payload.profile_photo, ["jpeg", "png"], 3000000, "profile");
+                return yield (0, imageResizer_1.imageResizer)({ width: 100, height: 100 }, payload.profile_photo);
             });
         })
     }

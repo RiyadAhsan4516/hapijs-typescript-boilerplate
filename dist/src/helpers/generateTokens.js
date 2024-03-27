@@ -14,18 +14,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenerateTokens = void 0;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const jsonwebtoken_1 = require("jsonwebtoken");
 const typedi_1 = require("typedi");
+const promises_1 = require("fs/promises");
+const path_1 = require("path");
 let GenerateTokens = exports.GenerateTokens = class GenerateTokens {
     createToken(payload, expire) {
         return __awaiter(this, void 0, void 0, function* () {
-            return jsonwebtoken_1.default.sign(payload, `${process.env.SECRET}`, {
+            let path = (0, path_1.join)(__dirname, '../', '../', 'private_key.pem');
+            const privateKey = yield (0, promises_1.readFile)(path, 'utf8');
+            return (0, jsonwebtoken_1.sign)(payload, privateKey, {
                 expiresIn: expire,
+                algorithm: "RS256"
             });
         });
     }

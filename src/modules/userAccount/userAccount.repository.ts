@@ -21,7 +21,9 @@ export class UserRepository{
 
     async getOneUser(id: number): Promise<User | null>{
         return await this.userRepo.createQueryBuilder()
-            .where("id = :id", {id})
+            .where("User.id = :id", {id})
+            .innerJoin("User.role_id", "role")
+            .addSelect(["role.id", "role.name"])
             .maxExecutionTime(1000)
             .getOne()
     }

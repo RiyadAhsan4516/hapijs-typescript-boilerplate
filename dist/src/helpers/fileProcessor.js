@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.fileProcessor = void 0;
 const fs_1 = require("fs");
 const boom_1 = require("@hapi/boom");
-function fileProcessor(uploaded_file, allowed_types, file_size = 2000000) {
+function fileProcessor(uploaded_file, allowed_types, file_size = 2000000, folder = null) {
     return __awaiter(this, void 0, void 0, function* () {
         // CHECK FILE HEADERS
         if (!uploaded_file.headers)
@@ -26,8 +26,14 @@ function fileProcessor(uploaded_file, allowed_types, file_size = 2000000) {
         if (!allowed_types.includes(file_type))
             throw (0, boom_1.unsupportedMediaType)("file type invalid");
         let filepath = uploaded_file.path.split("/tmp")[0];
-        const dest = `${filepath}${uploaded_file.path.split("tmp")[1]}.${fileType}`;
-        (0, fs_1.rename)(uploaded_file.path, dest, (err) => {
+        let dest;
+        if (folder) {
+            yield checkFolder(`${filepath}/${folder}`);
+            dest = `${filepath}/${folder}/${uploaded_file.path.split("tmp")[1]}.${fileType}`;
+        }
+        else
+            dest = `${filepath}${uploaded_file.path.split("tmp")[1]}.${fileType}`;
+        yield (0, fs_1.rename)(uploaded_file.path, dest, (err) => {
             if (err) {
                 throw (0, boom_1.badData)("Bad file was provided. Upload failed");
             }
@@ -36,3 +42,17 @@ function fileProcessor(uploaded_file, allowed_types, file_size = 2000000) {
     });
 }
 exports.fileProcessor = fileProcessor;
+function checkFolder(destination) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // CHECK IF FOLDER EXISTS
+        yield (0, fs_1.exists)(destination, (e) => __awaiter(this, void 0, void 0, function* () {
+            if (e)
+                return;
+            else
+                yield (0, fs_1.mkdir)(destination, { recursive: true }, (err) => {
+                    if (err)
+                        console.log(err);
+                });
+        }));
+    });
+}

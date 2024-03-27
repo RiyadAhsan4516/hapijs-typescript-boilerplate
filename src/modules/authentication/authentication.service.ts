@@ -62,7 +62,7 @@ export class AuthService{
         // TODO: SET ROLE HERE
         user? role = user.role_id.name : role = ""
 
-        await authorize(role, url, method)
+        // await authorize(role, url, method)
 
         let access_tokens  = JSON.parse(await client.hGet(`tokens-${decoded.id}`, "access"))
         let refresh_tokens = JSON.parse(await client.hGet(`tokens-${decoded.id}`, "refresh"))
