@@ -62,7 +62,7 @@ const promises_1 = __importDefault(require("fs/promises"));
 // *         CREATE REDIS CONNECTION          *
 // *                                          *
 // ********************************************
-const client = (0, redis_1.createClient)({ url: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/3` });
+const client = (0, redis_1.createClient)({ url: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/0` });
 exports.client = client;
 try {
     client.connect().then(() => console.log("redis connected"));
@@ -154,9 +154,10 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     ]);
     // EXTRACT THE KEY FOR IS LOGGED IN JWT VERIFICATION
     // IF PRIVATE KEY IS NOT CREATED, THEN CREATE IT : openssl genrsa -out private_key.pem 2048
-    const privateKey = yield promises_1.default.readFile("./private_key.pem", 'utf8');
+    // IF PUBLIC KEY IS NOT CREATED, THEN CREATE IT AS WELL : openssl rsa -pubout -in private_key.pem -out public_key.pem
+    const publicKey = yield promises_1.default.readFile("./public_key.pem", 'utf8');
     server.auth.strategy('jwt', 'jwt', {
-        key: privateKey,
+        key: publicKey,
         validate: typedi_1.Container.get(authentication_controller_1.AuthController).isLoggedIn,
         verifyOptions: {
             algorithms: ["RS256"]

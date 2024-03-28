@@ -18,6 +18,23 @@ import {imageResizer} from "./helpers/imageResizer";
 const prefix : string = "/api/v1"
 
 const routes : ServerRoute[] = [
+
+    // FEATURE : LOGIN/LOGOUT
+    {
+        method: "POST",
+        path: `${prefix}/login`,
+        handler: errorCatcher(Container.get(AuthController).generalLogin),
+    },{
+        method: "GET",
+        path: `${prefix}/logout`,
+        options: {
+            auth: "jwt"
+        },
+        handler: errorCatcher(Container.get(AuthController).logout),
+    },
+
+
+
     {
         method: "*",
         path: `${prefix}/roles`,
@@ -109,11 +126,6 @@ const routes : ServerRoute[] = [
         handler : errorCatcher(Container.get(AuthController).provideSaltKey)
     },
     {
-        method: "POST",
-        path: `${prefix}/login`,
-        handler: errorCatcher(Container.get(AuthController).generalLogin),
-    },
-    {
         method: "GET",
         path: `${prefix}/notification`,
         handler : errorCatcher(Container.get(NotificationController).getNotification)
@@ -161,6 +173,7 @@ const routes : ServerRoute[] = [
             const {payload} = req
             if (payload.profile_photo) payload.profile_photo = await fileProcessor(payload.profile_photo, ["jpeg", "png"], 3000000, "profile");
             return await imageResizer({width: 100, height: 100}, payload.profile_photo)
+            // return h.response(req.info.remoteAddress)
         })
     }
 ]

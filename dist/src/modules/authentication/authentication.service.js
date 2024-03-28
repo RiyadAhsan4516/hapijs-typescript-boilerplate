@@ -25,16 +25,19 @@ const userAccount_repository_1 = require("../userAccount/userAccount.repository"
 const generateTokens_1 = require("../../helpers/generateTokens");
 const customInterfaces_1 = require("../../helpers/customInterfaces");
 const app_1 = require("../../../app");
+const tokenInvalidator_1 = require("../../helpers/tokenInvalidator");
 let AuthService = exports.AuthService = class AuthService {
-    logoutUser() {
+    logoutUser(user_id, ip) {
         return __awaiter(this, void 0, void 0, function* () {
+            // INVALIDATE THE TOKENS (NEW FORMAT)
+            yield (0, tokenInvalidator_1.tokenInvalidator)(+user_id, ip);
             return {
                 accessToken: "",
                 refreshToken: ""
             };
         });
     }
-    validateLogin(originalData) {
+    validateLogin(originalData, ip) {
         return __awaiter(this, void 0, void 0, function* () {
             // SET UP INPUT VALIDATION ON ORIGINAL DATA
             let validationCheck = yield new customInterfaces_1.type_validation.loginInfoJoiValidation;
@@ -57,23 +60,22 @@ let AuthService = exports.AuthService = class AuthService {
             const accessToken = yield typedi_1.Container.get(generateTokens_1.GenerateTokens).createToken(payload, "15m");
             // GENERATE A REFRESH TOKEN
             const refreshToken = yield typedi_1.Container.get(generateTokens_1.GenerateTokens).createToken(payload, "1d");
+            // SET THE TOKENS IN REDIS
+            yield (0, tokenInvalidator_1.tokenSetup)({ access: accessToken, refresh: refreshToken }, user.id, ip);
             // RETURN THE GENERATED ACCESS AND REFRESH TOKEN
             return { accessToken, refreshToken };
         });
     }
-    validateTokenInfo(decoded, token, url, method) {
+    validateTokenInfo(decoded, token, url, method, ip) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield typedi_1.Container.get(userAccount_repository_1.UserRepository).getOneUser(decoded.id);
             let role;
             // TODO: SET ROLE HERE
             user ? role = user.role_id.name : role = "";
             // await authorize(role, url, method)
-            let access_tokens = JSON.parse(yield app_1.client.hGet(`tokens-${decoded.id}`, "access"));
-            let refresh_tokens = JSON.parse(yield app_1.client.hGet(`tokens-${decoded.id}`, "refresh"));
-            if (access_tokens) {
-                if (access_tokens.tokens && access_tokens.tokens.includes(token))
-                    return { isValid: false };
-                if (refresh_tokens && refresh_tokens.tokens && refresh_tokens.tokens.includes(token))
+            let blacklisted_tokens = JSON.parse(yield app_1.client.hGet(`blacklist-${decoded.id}`, ip));
+            if (blacklisted_tokens) {
+                if (blacklisted_tokens.includes(token))
                     return { isValid: false };
             }
             if (!user)

@@ -30,7 +30,7 @@ import fs from "fs/promises";
 // *         CREATE REDIS CONNECTION          *
 // *                                          *
 // ********************************************
-const client : any = createClient({url: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/3`});
+const client : any = createClient({url: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/0`});
 try{
     client.connect().then(()=>console.log("redis connected"));
 }catch(err){
@@ -137,9 +137,10 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
 
     // EXTRACT THE KEY FOR IS LOGGED IN JWT VERIFICATION
     // IF PRIVATE KEY IS NOT CREATED, THEN CREATE IT : openssl genrsa -out private_key.pem 2048
-    const privateKey: string = await fs.readFile("./private_key.pem", 'utf8')
+    // IF PUBLIC KEY IS NOT CREATED, THEN CREATE IT AS WELL : openssl rsa -pubout -in private_key.pem -out public_key.pem
+    const publicKey: string = await fs.readFile("./public_key.pem", 'utf8')
     server.auth.strategy('jwt', 'jwt', {        // inject the auth strategy as jwt into the server
-        key: privateKey,
+        key: publicKey,
         validate: Container.get(AuthController).isLoggedIn,      // the token will be decoded by the plugin automatically
         verifyOptions : {
             algorithms: ["RS256"]

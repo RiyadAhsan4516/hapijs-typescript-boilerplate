@@ -1,28 +1,33 @@
 // THIRD PARTY IMPORTS
-import {Service, Container} from "typedi";
+import {Container, Service} from "typedi";
 import {compare} from "bcryptjs";
-import {badData, unauthorized} from "@hapi/boom";
+import {badData, forbidden, unauthorized} from "@hapi/boom";
 
 // LOCAL IMPORTS
 import {UserRepository} from "../userAccount/userAccount.repository";
-import {GenerateTokens} from "../../helpers/generateTokens";
 import {User} from "../userAccount/userAccount.entity";
 import {type_validation} from "../../helpers/customInterfaces";
 import {client} from "../../../app";
-import {authorize} from "../authorization/authorization.access";
+import {tokenInvalidator, tokenRenew} from "../../helpers/tokenCache";
+import fs from "fs/promises";
+import jwt, {VerifyErrors} from "jsonwebtoken";
 
 
 @Service()
 export class AuthService{
 
-    public async logoutUser(){
+    public async logoutUser(user_id: string, ip : string){
+
+        // INVALIDATE THE TOKENS (NEW FORMAT)
+        await tokenInvalidator(+user_id, ip)
+
         return {
             accessToken : "",
             refreshToken : ""
         }
     }
 
-    public async validateLogin(originalData : any) : Promise<{accessToken: string, refreshToken: string}>{
+    public async validateLogin(originalData : any, ip: string) : Promise<{accessToken: string, refreshToken: string}>{
 
         // SET UP INPUT VALIDATION ON ORIGINAL DATA
         let validationCheck: type_validation.loginInfoJoiValidation = await new type_validation.loginInfoJoiValidation;
@@ -37,25 +42,12 @@ export class AuthService{
             throw unauthorized("email or password invalid")
         }
 
-        // TOKEN GENERATION PAYLOAD
-        const payload: type_validation.tokenFormat = {
-            id: user.id,
-            role: user.role_id.id,
-            rateLimit: 100
-        }
-
-        // GENERATE AN ACCESS TOKEN
-        const accessToken: string = await Container.get(GenerateTokens).createToken(payload, "15m")
-
-        // GENERATE A REFRESH TOKEN
-        const refreshToken: string = await Container.get(GenerateTokens).createToken(payload, "1d")
-
         // RETURN THE GENERATED ACCESS AND REFRESH TOKEN
-        return {accessToken, refreshToken}
+        return await tokenRenew(user, ip)
 
     }
 
-    public async validateTokenInfo(decoded: any, token : string, url : string, method: string): Promise<{ isValid: boolean }> {
+    public async validateTokenInfo(decoded: any, token : string, url : string, method: string, ip: string): Promise<{ isValid: boolean }> {
         const user: User | null = await Container.get(UserRepository).getOneUser(decoded.id);
         let role : string
 
@@ -64,15 +56,39 @@ export class AuthService{
 
         // await authorize(role, url, method)
 
-        let access_tokens  = JSON.parse(await client.hGet(`tokens-${decoded.id}`, "access"))
-        let refresh_tokens = JSON.parse(await client.hGet(`tokens-${decoded.id}`, "refresh"))
-        if(access_tokens){
-            if(access_tokens.tokens && access_tokens.tokens.includes(token)) return {isValid: false}
-            if(refresh_tokens && refresh_tokens.tokens && refresh_tokens.tokens.includes(token)) return {isValid: false}
+       let blacklisted_tokens = JSON.parse(await client.hGet(`blacklist-${decoded.id}`, ip))
+        if(blacklisted_tokens){
+            if(blacklisted_tokens.includes(token)) return {isValid: false}
         }
 
         if (!user) return {isValid: false}
         else return {isValid: true}
+    }
+
+    public async refreshToken(refresh_token : string | null, ip: string){
+        let token;
+        if (!refresh_token) throw unauthorized("you are not authorized to perform this action")
+        else token = refresh_token;
+
+        if (!token) throw unauthorized("you need to login again");
+
+        // VERIFY TOKEN USING RS256 PUBLIC KEY
+        let cert : string = await fs.readFile("./../../../public_key.pem", "utf8")
+        let decoded: any
+        await jwt.verify(token, cert, (err : VerifyErrors | null, decode : any) : void=>{
+            if(!err) decoded = decode
+            else throw forbidden("you are not authorized to perform this action")
+        });
+
+        // CHECK IF USER WITH THIS ID FOUND FROM DECODING ACTUALLY EXISTS
+        const user: User | null = await Container.get(UserRepository).getOneUser(decoded.id)
+        if (!user) return unauthorized("the user of this token does not exist");
+
+        // INVALIDATE THE PREVIOUS TOKENS HERE
+        await tokenInvalidator(user.id, ip)
+
+        // CREATE AND RETURN NEW TOKENS
+        return await tokenRenew(user, ip)
     }
 
 }

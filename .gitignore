@@ -4,3 +4,4 @@
 yarn-error.log
 app.log
 private_key.pem
+public_key.pem

@@ -28,6 +28,19 @@ const fileProcessor_1 = require("./helpers/fileProcessor");
 const imageResizer_1 = require("./helpers/imageResizer");
 const prefix = "/api/v1";
 const routes = [
+    // FEATURE : LOGIN/LOGOUT
+    {
+        method: "POST",
+        path: `${prefix}/login`,
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authentication_controller_1.AuthController).generalLogin),
+    }, {
+        method: "GET",
+        path: `${prefix}/logout`,
+        options: {
+            auth: "jwt"
+        },
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authentication_controller_1.AuthController).logout),
+    },
     {
         method: "*",
         path: `${prefix}/roles`,
@@ -119,11 +132,6 @@ const routes = [
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authentication_controller_1.AuthController).provideSaltKey)
     },
     {
-        method: "POST",
-        path: `${prefix}/login`,
-        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authentication_controller_1.AuthController).generalLogin),
-    },
-    {
         method: "GET",
         path: `${prefix}/notification`,
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(notification_controller_1.NotificationController).getNotification)
@@ -173,6 +181,7 @@ const routes = [
                 if (payload.profile_photo)
                     payload.profile_photo = yield (0, fileProcessor_1.fileProcessor)(payload.profile_photo, ["jpeg", "png"], 3000000, "profile");
                 return yield (0, imageResizer_1.imageResizer)({ width: 100, height: 100 }, payload.profile_photo);
+                // return h.response(req.info.remoteAddress)
             });
         })
     }
