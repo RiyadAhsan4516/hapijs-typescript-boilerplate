@@ -14,20 +14,20 @@ import jwt, {VerifyErrors} from "jsonwebtoken";
 
 
 @Service()
-export class AuthService{
+export class AuthService {
 
-    public async logoutUser(user_id: string, ip : string){
+    public async logoutUser(user_id: string, ip: string) {
 
         // INVALIDATE THE TOKENS (NEW FORMAT)
         await tokenInvalidator(+user_id, ip)
 
         return {
-            accessToken : "",
-            refreshToken : ""
+            accessToken: "",
+            refreshToken: ""
         }
     }
 
-    public async validateLogin(originalData : any, ip: string) : Promise<{accessToken: string, refreshToken: string}>{
+    public async validateLogin(originalData: any, ip: string): Promise<{ accessToken: string, refreshToken: string }> {
 
         // SET UP INPUT VALIDATION ON ORIGINAL DATA
         let validationCheck: type_validation.loginInfoJoiValidation = await new type_validation.loginInfoJoiValidation;
@@ -47,25 +47,30 @@ export class AuthService{
 
     }
 
-    public async validateTokenInfo(decoded: any, token : string, url : string, method: string, ip: string): Promise<{ isValid: boolean }> {
+    public async validateTokenInfo(decoded: any, token: string, url: string, method: string, ip: string): Promise<{
+        isValid: boolean
+    }> {
         const user: User | null = await Container.get(UserRepository).getOneUser(decoded.id);
-        let role : string
+        let role: string
 
         // TODO: SET ROLE HERE
-        user? role = user.role_id.name : role = ""
+        user ? role = user.role_id.name : role = ""
 
         // await authorize(role, url, method)
 
-       let blacklisted_tokens = JSON.parse(await client.hGet(`blacklist-${decoded.id}`, ip))
-        if(blacklisted_tokens){
-            if(blacklisted_tokens.includes(token)) return {isValid: false}
+        let blacklisted_tokens = JSON.parse(await client.hGet(`blacklist-${decoded.id}`, ip))
+        if (blacklisted_tokens) {
+            if (blacklisted_tokens.includes(token)) return {isValid: false}
         }
 
         if (!user) return {isValid: false}
         else return {isValid: true}
     }
 
-    public async refreshToken(refresh_token : string | null, ip: string) : Promise<{accessToken : string, refreshToken : string}>{
+    public async refreshToken(refresh_token: string | null, ip: string): Promise<{
+        accessToken: string,
+        refreshToken: string
+    }> {
         let token;
         if (!refresh_token) throw unauthorized("you are not authorized to perform this action")
         else token = refresh_token;
@@ -73,10 +78,10 @@ export class AuthService{
         if (!token) throw unauthorized("you need to login again");
 
         // VERIFY TOKEN USING RS256 PUBLIC KEY
-        let cert : string = await fs.readFile("./../../../public_key.pem", "utf8")
+        let cert: string = await fs.readFile("./../../../public_key.pem", "utf8")
         let decoded: any
-        await jwt.verify(token, cert, (err : VerifyErrors | null, decode : any) : void=>{
-            if(!err) decoded = decode
+        await jwt.verify(token, cert, (err: VerifyErrors | null, decode: any): void => {
+            if (!err) decoded = decode
             else throw forbidden("you are not authorized to perform this action")
         });
 

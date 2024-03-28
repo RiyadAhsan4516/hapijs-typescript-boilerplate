@@ -63,7 +63,7 @@ else {
 // *                                          *
 // ********************************************
 process.on('unhandledRejection', (err) => {
-    console.log(err);
+    console.log("error =>");
     process.exit(1);
 });
 // ********************************************
