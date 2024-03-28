@@ -33,7 +33,8 @@ const routes = [
         method: "POST",
         path: `${prefix}/login`,
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authentication_controller_1.AuthController).generalLogin),
-    }, {
+    },
+    {
         method: "GET",
         path: `${prefix}/logout`,
         options: {

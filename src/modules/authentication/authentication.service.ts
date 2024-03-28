@@ -65,7 +65,7 @@ export class AuthService{
         else return {isValid: true}
     }
 
-    public async refreshToken(refresh_token : string | null, ip: string){
+    public async refreshToken(refresh_token : string | null, ip: string) : Promise<{accessToken : string, refreshToken : string}>{
         let token;
         if (!refresh_token) throw unauthorized("you are not authorized to perform this action")
         else token = refresh_token;
@@ -82,7 +82,7 @@ export class AuthService{
 
         // CHECK IF USER WITH THIS ID FOUND FROM DECODING ACTUALLY EXISTS
         const user: User | null = await Container.get(UserRepository).getOneUser(decoded.id)
-        if (!user) return unauthorized("the user of this token does not exist");
+        if (!user) throw unauthorized("the user of this token does not exist");
 
         // INVALIDATE THE PREVIOUS TOKENS HERE
         await tokenInvalidator(user.id, ip)

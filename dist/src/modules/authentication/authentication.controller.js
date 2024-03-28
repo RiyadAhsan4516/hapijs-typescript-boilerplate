@@ -14,21 +14,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const typedi_1 = require("typedi");
 const crypto_js_1 = require("crypto-js");
 // LOCAL IMPORTS
 const authentication_service_1 = require("./authentication.service");
-const tokenInvalidator_1 = require("../../helpers/tokenInvalidator");
-const boom_1 = require("@hapi/boom");
-const userAccount_repository_1 = require("../userAccount/userAccount.repository");
-const generateTokens_1 = require("../../helpers/generateTokens");
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const promises_1 = __importDefault(require("fs/promises"));
 let AuthController = exports.AuthController = class AuthController {
     // FEATURE : USER LOGIN
     provideSaltKey(req, h) {
@@ -103,46 +94,12 @@ let AuthController = exports.AuthController = class AuthController {
     // FEATURE: TAKE REFRESH TOKEN
     refreshToken(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
+            let service = typedi_1.Container.get(authentication_service_1.AuthService);
             // SET NAME OF THE REFRESH COOKIE ACCORDING TO THE ORIGIN
-            let name;
-            if (req.headers.origin)
-                name = req.headers.origin.split("://")[1].split(".")[0].concat("-refresh");
-            else
-                name = "127.0.0.1-refresh";
-            let token;
-            if (!req.state[name])
-                throw (0, boom_1.unauthorized)("you are not authorized to perform this action");
-            else
-                token = req.state[name];
-            if (!token)
-                throw (0, boom_1.unauthorized)("you need to login again");
-            // VERIFY TOKEN USING RS256 PUBLIC KEY
-            let cert = yield promises_1.default.readFile("./../../../public_key.pem", "utf8");
-            let decoded;
-            yield jsonwebtoken_1.default.verify(token, cert, (err, decode) => {
-                if (!err)
-                    decoded = decode;
-                else
-                    throw (0, boom_1.forbidden)("you are not authorized to perform this action");
-            });
-            // Check if user with the id in the decoded token actually exists
-            const user = yield typedi_1.Container.get(userAccount_repository_1.UserRepository).getOneUser(decoded.id);
-            if (!user)
-                return (0, boom_1.unauthorized)("the user of this token does not exist");
-            // INVALIDATE THE PREVIOUS TOKENS HERE
-            yield (0, tokenInvalidator_1.tokenInvalidator)(user.id, req.info.remoteAddress);
-            // CREATE NEW TOKENS
-            const payload = {
-                id: user.id,
-                role: user.role_id.id,
-                rateLimit: 100
-            };
-            const accessToken = yield typedi_1.Container.get(generateTokens_1.GenerateTokens).createToken(payload, "15m");
-            const refreshToken = yield typedi_1.Container.get(generateTokens_1.GenerateTokens).createToken(payload, "1d");
-            // SET UP NEW TOKENS
-            yield (0, tokenInvalidator_1.tokenSetup)({ access: accessToken, refresh: refreshToken }, user.id, req.info.remoteAddress);
-            h.state(name, refreshToken, { encoding: 'none', isSecure: true, isHttpOnly: true, isSameSite: "None" });
-            return h.response({ token: accessToken }).code(200);
+            let name = req.headers.origin.split("://")[1].split(".")[0].concat("-refresh");
+            let payload = yield service.refreshToken(req.state[name], req.info.remoteAddress);
+            h.state(name, payload.refreshToken, { encoding: 'none', isSecure: true, isHttpOnly: true, isSameSite: "None" });
+            return h.response({ token: payload.accessToken }).code(200);
         });
     }
     // FEATURE : LOGOUT USER
@@ -154,11 +111,7 @@ let AuthController = exports.AuthController = class AuthController {
             const service = typedi_1.Container.get(authentication_service_1.AuthService);
             const result = yield service.logoutUser(user_id, req.info.remoteAddress);
             // SET NAME OF THE REFRESH COOKIE ACCORDING TO THE ORIGIN
-            let name;
-            if (req.headers.origin)
-                name = req.headers.origin.split("://")[1].split(".")[0].concat(`-refresh`);
-            else
-                name = "127.0.0.1-refresh";
+            let name = req.headers.origin.split("://")[1].split(".")[0].concat(`-refresh`);
             // SET THE COOKIE WITH NECESSARY OPTIONS
             h.state(name, result.refreshToken, { encoding: 'none', isSecure: true, isHttpOnly: true, isSameSite: "None" });
             // RETURN THE ACCESS TOKEN ALONG WITH A MESSAGE

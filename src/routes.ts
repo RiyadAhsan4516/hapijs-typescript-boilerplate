@@ -24,7 +24,8 @@ const routes : ServerRoute[] = [
         method: "POST",
         path: `${prefix}/login`,
         handler: errorCatcher(Container.get(AuthController).generalLogin),
-    },{
+    },
+    {
         method: "GET",
         path: `${prefix}/logout`,
         options: {
@@ -32,7 +33,6 @@ const routes : ServerRoute[] = [
         },
         handler: errorCatcher(Container.get(AuthController).logout),
     },
-
 
 
     {

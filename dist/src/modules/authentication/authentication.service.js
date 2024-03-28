@@ -14,6 +14,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 // THIRD PARTY IMPORTS
@@ -22,15 +25,16 @@ const bcryptjs_1 = require("bcryptjs");
 const boom_1 = require("@hapi/boom");
 // LOCAL IMPORTS
 const userAccount_repository_1 = require("../userAccount/userAccount.repository");
-const generateTokens_1 = require("../../helpers/generateTokens");
 const customInterfaces_1 = require("../../helpers/customInterfaces");
 const app_1 = require("../../../app");
-const tokenInvalidator_1 = require("../../helpers/tokenInvalidator");
+const tokenCache_1 = require("../../helpers/tokenCache");
+const promises_1 = __importDefault(require("fs/promises"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 let AuthService = exports.AuthService = class AuthService {
     logoutUser(user_id, ip) {
         return __awaiter(this, void 0, void 0, function* () {
             // INVALIDATE THE TOKENS (NEW FORMAT)
-            yield (0, tokenInvalidator_1.tokenInvalidator)(+user_id, ip);
+            yield (0, tokenCache_1.tokenInvalidator)(+user_id, ip);
             return {
                 accessToken: "",
                 refreshToken: ""
@@ -50,20 +54,8 @@ let AuthService = exports.AuthService = class AuthService {
             if (!user || !(yield (0, bcryptjs_1.compare)(originalData.password, user.password))) {
                 throw (0, boom_1.unauthorized)("email or password invalid");
             }
-            // TOKEN GENERATION PAYLOAD
-            const payload = {
-                id: user.id,
-                role: user.role_id.id,
-                rateLimit: 100
-            };
-            // GENERATE AN ACCESS TOKEN
-            const accessToken = yield typedi_1.Container.get(generateTokens_1.GenerateTokens).createToken(payload, "15m");
-            // GENERATE A REFRESH TOKEN
-            const refreshToken = yield typedi_1.Container.get(generateTokens_1.GenerateTokens).createToken(payload, "1d");
-            // SET THE TOKENS IN REDIS
-            yield (0, tokenInvalidator_1.tokenSetup)({ access: accessToken, refresh: refreshToken }, user.id, ip);
             // RETURN THE GENERATED ACCESS AND REFRESH TOKEN
-            return { accessToken, refreshToken };
+            return yield (0, tokenCache_1.tokenRenew)(user, ip);
         });
     }
     validateTokenInfo(decoded, token, url, method, ip) {
@@ -82,6 +74,34 @@ let AuthService = exports.AuthService = class AuthService {
                 return { isValid: false };
             else
                 return { isValid: true };
+        });
+    }
+    refreshToken(refresh_token, ip) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let token;
+            if (!refresh_token)
+                throw (0, boom_1.unauthorized)("you are not authorized to perform this action");
+            else
+                token = refresh_token;
+            if (!token)
+                throw (0, boom_1.unauthorized)("you need to login again");
+            // VERIFY TOKEN USING RS256 PUBLIC KEY
+            let cert = yield promises_1.default.readFile("./../../../public_key.pem", "utf8");
+            let decoded;
+            yield jsonwebtoken_1.default.verify(token, cert, (err, decode) => {
+                if (!err)
+                    decoded = decode;
+                else
+                    throw (0, boom_1.forbidden)("you are not authorized to perform this action");
+            });
+            // CHECK IF USER WITH THIS ID FOUND FROM DECODING ACTUALLY EXISTS
+            const user = yield typedi_1.Container.get(userAccount_repository_1.UserRepository).getOneUser(decoded.id);
+            if (!user)
+                throw (0, boom_1.unauthorized)("the user of this token does not exist");
+            // INVALIDATE THE PREVIOUS TOKENS HERE
+            yield (0, tokenCache_1.tokenInvalidator)(user.id, ip);
+            // CREATE AND RETURN NEW TOKENS
+            return yield (0, tokenCache_1.tokenRenew)(user, ip);
         });
     }
 };

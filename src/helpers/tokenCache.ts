@@ -24,7 +24,6 @@ export async function tokenSetup(tokens : tokenTypes, user_id: number, ip : stri
     await client.expire(`tokens-${user_id}`, 24*60*60)
 }
 
-
 export async function tokenInvalidator(user_id: number, ip : string){
     let cached_tokens : any = JSON.parse(await client.hGet(`tokens-${user_id}`, ip))
     if(!cached_tokens) throw forbidden("You are not authorized to perform this action")
@@ -39,8 +38,7 @@ export async function tokenInvalidator(user_id: number, ip : string){
     await client.expire(`blacklist-${user_id}`, 24*60*60)
 }
 
-
-export async function tokenRenew(user : any, ip : string){
+export async function tokenRenew(user : any, ip : string) : Promise<{accessToken : string, refreshToken : string}>{
     const payload: type_validation.tokenFormat = {
         id: user.id,
         role: user.role_id.id,
