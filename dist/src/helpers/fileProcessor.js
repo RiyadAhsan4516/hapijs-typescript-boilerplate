@@ -21,17 +21,10 @@ function fileProcessor(uploaded_file, allowed_types, file_size = 2000000, folder
         if (uploaded_file.bytes > file_size)
             throw (0, boom_1.badData)("the uploaded file is too large!");
         // CHECK THE FILE TYPE
-        const file_type = uploaded_file.headers['content-type'].split("/")[1];
-        const fileType = uploaded_file.filename.split(".")[1];
-        if (!allowed_types.includes(file_type))
-            throw (0, boom_1.unsupportedMediaType)("file type invalid");
-        let filepath = uploaded_file.path.split("/tmp")[0];
+        let fileType, filepath;
+        ({ fileType, filepath } = yield checkFileTypeAndReturnPath(uploaded_file, allowed_types));
         // SAVE THE FILE IN ITS CORRESPONDING FOLDER
-        let dest;
-        if (folder)
-            dest = `${filepath}/${folder}/${uploaded_file.path.split("tmp")[1]}.${fileType}`;
-        else
-            dest = `${filepath}${uploaded_file.path.split("tmp")[1]}.${fileType}`;
+        let dest = yield getUploadDestination(folder, filepath, uploaded_file, fileType);
         yield (0, fs_1.rename)(uploaded_file.path, dest, (err) => {
             if (err) {
                 throw (0, boom_1.badData)("Bad file was provided. Upload failed");
@@ -41,3 +34,20 @@ function fileProcessor(uploaded_file, allowed_types, file_size = 2000000, folder
     });
 }
 exports.fileProcessor = fileProcessor;
+function checkFileTypeAndReturnPath(uploaded_file, allowed_types) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const file_type = uploaded_file.headers['content-type'].split("/")[1];
+        const fileType = uploaded_file.filename.split(".")[1];
+        if (!allowed_types.includes(file_type))
+            throw (0, boom_1.unsupportedMediaType)("file type invalid");
+        return { fileType, filepath: uploaded_file.path.split("/tmp")[0] };
+    });
+}
+function getUploadDestination(folder, filepath, uploaded_file, fileType) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (folder)
+            return `${filepath}/${folder}/${uploaded_file.path.split("tmp")[1]}.${fileType}`;
+        else
+            return `${filepath}${uploaded_file.path.split("tmp")[1]}.${fileType}`;
+    });
+}

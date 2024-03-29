@@ -59,9 +59,7 @@ const routes : ServerRoute[] = [
         path: `${prefix}/users/get_one/{id}`,
         options:{
             validate:{
-                params: Joi.object({
-                    id: Joi.string().alphanum().required().error(badData("id sent in param is not valid"))
-                })
+                params: inputValidations.idParam
             },
             // auth: "jwt"
         },

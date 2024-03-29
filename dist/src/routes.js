@@ -66,9 +66,7 @@ const routes = [
         path: `${prefix}/users/get_one/{id}`,
         options: {
             validate: {
-                params: joi_1.default.object({
-                    id: joi_1.default.string().alphanum().required().error((0, boom_1.badData)("id sent in param is not valid"))
-                })
+                params: inputValidator_1.inputValidations.idParam
             },
             // auth: "jwt"
         },
