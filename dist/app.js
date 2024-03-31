@@ -49,6 +49,8 @@ const static_auth = __importStar(require("hapi-auth-bearer-token"));
 const redis_1 = require("redis");
 const typedi_1 = require("typedi");
 const hapi_rate_limitor = __importStar(require("hapi-rate-limitor"));
+// @ts-ignore
+const scooter = __importStar(require("@hapi/scooter"));
 // Local module imports
 const authentication_controller_1 = require("./src/modules/authentication/authentication.controller");
 const customPlugins_1 = require("./src/helpers/customPlugins");
@@ -150,6 +152,9 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
             options: {
                 Server: server
             }
+        },
+        {
+            plugin: scooter
         }
     ]);
     // EXTRACT THE KEY FOR IS LOGGED IN JWT VERIFICATION

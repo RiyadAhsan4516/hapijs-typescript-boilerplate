@@ -2,14 +2,9 @@ import {rename} from "fs";
 import {badData, unsupportedMediaType} from "@hapi/boom";
 
 export async function fileProcessor(uploaded_file: any, allowed_types: string[], file_size: number = 2000000, folder: string | null = null): Promise<string> {
-    // CHECK FILE HEADERS
     if (!uploaded_file.headers) throw badData("if image is uploaded, then it must be a file")
-    // CHECK FILE SIZE
     if (uploaded_file.bytes > file_size) throw badData("the uploaded file is too large!")
-    // CHECK THE FILE TYPE
-    let fileType: string, filepath: string;
-    ({fileType, filepath} = await checkFileTypeAndReturnPath(uploaded_file, allowed_types));
-    // SAVE THE FILE IN ITS CORRESPONDING FOLDER
+    let {fileType, filepath} = await checkFileTypeAndReturnPath(uploaded_file, allowed_types);
     let dest: string = await getUploadDestination(folder, filepath, uploaded_file, fileType)
     await rename(uploaded_file.path, dest, (err: NodeJS.ErrnoException | null): void => {
         if (err) {

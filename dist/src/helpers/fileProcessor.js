@@ -14,16 +14,11 @@ const fs_1 = require("fs");
 const boom_1 = require("@hapi/boom");
 function fileProcessor(uploaded_file, allowed_types, file_size = 2000000, folder = null) {
     return __awaiter(this, void 0, void 0, function* () {
-        // CHECK FILE HEADERS
         if (!uploaded_file.headers)
             throw (0, boom_1.badData)("if image is uploaded, then it must be a file");
-        // CHECK FILE SIZE
         if (uploaded_file.bytes > file_size)
             throw (0, boom_1.badData)("the uploaded file is too large!");
-        // CHECK THE FILE TYPE
-        let fileType, filepath;
-        ({ fileType, filepath } = yield checkFileTypeAndReturnPath(uploaded_file, allowed_types));
-        // SAVE THE FILE IN ITS CORRESPONDING FOLDER
+        let { fileType, filepath } = yield checkFileTypeAndReturnPath(uploaded_file, allowed_types);
         let dest = yield getUploadDestination(folder, filepath, uploaded_file, fileType);
         yield (0, fs_1.rename)(uploaded_file.path, dest, (err) => {
             if (err) {

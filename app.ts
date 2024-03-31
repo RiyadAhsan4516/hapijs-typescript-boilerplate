@@ -13,6 +13,9 @@ import {Container} from "typedi";
 import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
 import * as hapi_rate_limitor from "hapi-rate-limitor";
 
+// @ts-ignore
+import * as scooter from "@hapi/scooter"
+
 // Local module imports
 import {AuthController} from "./src/modules/authentication/authentication.controller";
 import {eventHandlerPlugin} from "./src/helpers/customPlugins";
@@ -131,6 +134,9 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
             options:{
                 Server : server
             }
+        },
+        {
+            plugin : scooter
         }
     ]);
 

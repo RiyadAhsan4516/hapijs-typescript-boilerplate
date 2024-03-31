@@ -26,6 +26,7 @@ const errorCatcher_1 = require("./helpers/errorCatcher");
 const inputValidator_1 = require("./helpers/inputValidator");
 const fileProcessor_1 = require("./helpers/fileProcessor");
 const imageResizer_1 = require("./helpers/imageResizer");
+const test_controller_1 = require("./modules/test/test.controller");
 const prefix = "/api/v1";
 const routes = [
     // FEATURE : LOGIN/LOGOUT
@@ -41,6 +42,11 @@ const routes = [
             auth: "jwt"
         },
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(authentication_controller_1.AuthController).logout),
+    },
+    {
+        method: "*",
+        path: `${prefix}/test`,
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(test_controller_1.TestController).getAll)
     },
     {
         method: "*",

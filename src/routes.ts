@@ -14,6 +14,7 @@ import {errorCatcher} from "./helpers/errorCatcher";
 import {inputValidations} from "./helpers/inputValidator";
 import {fileProcessor} from "./helpers/fileProcessor";
 import {imageResizer} from "./helpers/imageResizer";
+import {TestController} from "./modules/test/test.controller";
 
 const prefix : string = "/api/v1"
 
@@ -32,6 +33,12 @@ const routes : ServerRoute[] = [
             auth: "jwt"
         },
         handler: errorCatcher(Container.get(AuthController).logout),
+    },
+
+    {
+        method: "*",
+        path: `${prefix}/test`,
+        handler: errorCatcher(Container.get(TestController).getAll)
     },
 
 
