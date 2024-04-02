@@ -43,9 +43,12 @@ const typedi_1 = require("typedi");
 const userAccount_service_1 = require("./userAccount.service");
 const Boom = __importStar(require("@hapi/boom"));
 const payloadFormatter_1 = require("../../helpers/payloadFormatter");
+const authorization_access_1 = require("../authorization/authorization.access");
 let UserController = exports.UserController = class UserController {
     getUsers(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
+            // CALL CASBIN AUTHORIZE FUNCTION INSIDE THE CONTROLLER
+            yield (0, authorization_access_1.authorize)(`${req.auth.credentials.role}`, 'userList', "read");
             let limit = +req.params.limit;
             let pageNo = +req.params.pageNo;
             let params = Object.assign({}, req.query);

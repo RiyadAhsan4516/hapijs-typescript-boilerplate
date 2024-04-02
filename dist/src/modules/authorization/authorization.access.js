@@ -15,14 +15,10 @@ const path_1 = require("path");
 const boom_1 = require("@hapi/boom");
 let enforcer;
 (0, casbin_1.newEnforcer)((0, path_1.join)(__dirname, 'access_model.conf'), (0, path_1.join)(__dirname, 'access_policy.csv')).then((data) => enforcer = data);
-function authorize(role, url, method) {
+function authorize(sub, obj, act) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (yield enforcer.enforce(role, url, method.toUpperCase())) {
-            return;
-        }
-        else {
-            throw (0, boom_1.forbidden)("You are not authorized to perform this action");
-        }
+        if (!(yield enforcer.enforce(sub, obj, act)))
+            throw (0, boom_1.forbidden)("you do not have permission to perform this action");
     });
 }
 exports.authorize = authorize;

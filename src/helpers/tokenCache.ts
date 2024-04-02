@@ -41,7 +41,7 @@ export async function tokenInvalidator(user_id: number, ip: string) {
 export async function tokenRenew(user: any, ip: string): Promise<{ accessToken: string, refreshToken: string }> {
     const payload: type_validation.tokenFormat = {
         id: user.id,
-        role: user.role_id.id,
+        role: user.role_id.name,
         rateLimit: 100
     }
     const accessToken: string = await Container.get(GenerateTokens).createToken(payload, "15m")

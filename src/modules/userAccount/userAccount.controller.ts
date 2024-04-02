@@ -4,11 +4,14 @@ import {UserService} from "./userAccount.service";
 import {User} from "./userAccount.entity";
 import * as Boom from "@hapi/boom";
 import {payloadFormatter} from "../../helpers/payloadFormatter";
+import {authorize} from "../authorization/authorization.access";
 
 @Service()
 export class UserController{
 
     public async getUsers(req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<ResponseObject>{
+        // CALL CASBIN AUTHORIZE FUNCTION INSIDE THE CONTROLLER
+        await authorize(`${req.auth.credentials.role}`, 'userList', "read")
         let limit : number = +req.params.limit;
         let pageNo : number = +req.params.pageNo;
         let params : {[key: string] : string} = {...req.query};

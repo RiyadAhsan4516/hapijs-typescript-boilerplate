@@ -1,5 +1,5 @@
 import type {ReqRefDefaults, Request, ResponseObject, ResponseToolkit} from '@hapi/hapi';
-import {Container, Service} from "typedi";
+import {Service} from "typedi";
 
 
 @Service()

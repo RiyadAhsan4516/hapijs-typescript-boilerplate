@@ -4,7 +4,7 @@ namespace type_validation{
 
     export interface tokenFormat{
         id: number,
-        role: number,
+        role: string,
         rateLimit: number
     }
 

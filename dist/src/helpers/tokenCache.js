@@ -50,7 +50,7 @@ function tokenRenew(user, ip) {
     return __awaiter(this, void 0, void 0, function* () {
         const payload = {
             id: user.id,
-            role: user.role_id.id,
+            role: user.role_id.name,
             rateLimit: 100
         };
         const accessToken = yield typedi_1.Container.get(generateTokens_1.GenerateTokens).createToken(payload, "15m");

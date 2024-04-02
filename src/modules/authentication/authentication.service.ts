@@ -53,11 +53,6 @@ export class AuthService {
         const user: User | null = await Container.get(UserRepository).getOneUser(decoded.id);
         let role: string
 
-        // TODO: SET ROLE HERE
-        user ? role = user.role_id.name : role = ""
-
-        // await authorize(role, url, method)
-
         let blacklisted_tokens = JSON.parse(await client.hGet(`blacklist-${decoded.id}`, ip))
         if (blacklisted_tokens) {
             if (blacklisted_tokens.includes(token)) return {isValid: false}
