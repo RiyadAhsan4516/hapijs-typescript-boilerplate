@@ -1,25 +1,28 @@
 import {InsertResult, Repository, SelectQueryBuilder, UpdateResult} from "typeorm";
 import {User} from "./userAccount.entity";
-import { AppDataSource } from "../../data-source";
+import {AppDataSource} from "../../data-source";
 import {Service} from "typedi";
-import { paginate } from "../../helpers/paginator";
+import {paginate} from "../../helpers/paginator";
 
 @Service()
-export class UserRepository{
+export class UserRepository {
 
-    private userRepo : Repository<User>
+    private userRepo: Repository<User>
 
-    constructor(){
+    constructor() {
         this.userRepo = AppDataSource.getRepository(User)
     }
 
-    async getAllUsers(limit: number, pageNo: number, params : {[key : string]: string}) : Promise<{total_count: number, data: any[]}> {
+    async getAllUsers(limit: number, pageNo: number, params: { [key: string]: string }): Promise<{
+        total_count: number,
+        data: any[]
+    }> {
         let query: SelectQueryBuilder<User> = this.userRepo.createQueryBuilder()
         query = await this.addQuery(query, params)
         return await paginate(query, limit, pageNo, {"modified_at": "DESC"})
     }
 
-    async getOneUser(id: number): Promise<User | null>{
+    async getOneUser(id: number): Promise<User | null> {
         return await this.userRepo.createQueryBuilder()
             .where("User.id = :id", {id})
             .innerJoin("User.role_id", "role")
@@ -28,7 +31,7 @@ export class UserRepository{
             .getOne()
     }
 
-    async getUserWithPassword(email: string) : Promise<User | null>{
+    async getUserWithPassword(email: string): Promise<User | null> {
         return await this.userRepo.createQueryBuilder()
             .select(["User.id", "User.email", "User.password"])
             .innerJoin("User.role_id", "role")
@@ -37,26 +40,22 @@ export class UserRepository{
             .getOne();
     }
 
-    async createUser(inputs: object) : Promise<any>{
+    async createUser(inputs: object): Promise<any> {
+        let newUser: InsertResult = await this.userRepo.createQueryBuilder()
+            .insert()
+            .into(User)
+            .values(inputs)
+            .returning(["id", 'email', "account_created_at"])
+            .execute()
+        console.log(newUser)
+        return newUser.raw[0]
 
-        try{
-            let newUser : InsertResult = await this.userRepo.createQueryBuilder()
-                .insert()
-                .into(User)
-                .values(inputs)
-                .returning(["id",'email'])
-                .execute()
-
-            return newUser.raw
-        }catch(err){
-            return err
-        }
     }
 
-    async UpdateUser(inputs : any, id: string): Promise<User>{
-        let {...newInputs}= inputs
+    async UpdateUser(inputs: any, id: string): Promise<User> {
+        let {...newInputs} = inputs
         // @ts-ignore
-        let user : UpdateResult = await this.userRepo.createQueryBuilder()
+        let user: UpdateResult = await this.userRepo.createQueryBuilder()
             .update(User)
             .set(newInputs)
             .where(id)
@@ -66,8 +65,10 @@ export class UserRepository{
 
     }
 
-    async addQuery(query: SelectQueryBuilder<any>, params: {[key: string]: string}) : Promise<SelectQueryBuilder<any>> {
-        if(params.email) query = query.andWhere("User.email LIKE :email", {email: `%${params.email}%`})
+    async addQuery(query: SelectQueryBuilder<any>, params: {
+        [key: string]: string
+    }): Promise<SelectQueryBuilder<any>> {
+        if (params.email) query = query.andWhere("User.email LIKE :email", {email: `%${params.email}%`})
         return query
     }
 }

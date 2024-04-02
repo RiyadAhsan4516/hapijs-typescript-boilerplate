@@ -14,26 +14,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PasswordEncryptionSubscriber = void 0;
 const typeorm_1 = require("typeorm");
 const userAccount_entity_1 = require("../modules/userAccount/userAccount.entity");
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const bcryptjs_1 = require("bcryptjs");
 let PasswordEncryptionSubscriber = exports.PasswordEncryptionSubscriber = class PasswordEncryptionSubscriber {
     listenTo() {
         return userAccount_entity_1.User;
     }
     beforeInsert(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            event.entity.password = yield bcryptjs_1.default.hash(event.entity.password, 10);
+            event.entity.password = yield (0, bcryptjs_1.hash)(event.entity.password, 10);
         });
     }
     beforeUpdate(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            event.entity.password = yield bcryptjs_1.default.hash(event.entity.password, 10);
+            event.entity.password = yield (0, bcryptjs_1.hash)(event.entity.password, 10);
         });
     }
 };

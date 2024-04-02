@@ -17,11 +17,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const userAccount_repository_1 = require("./userAccount.repository");
 const typedi_1 = require("typedi");
 const typedi_2 = require("typedi");
+const moment_1 = __importDefault(require("moment"));
 let UserService = exports.UserService = class UserService {
     constructor() {
         this.repository = typedi_2.Container.get(userAccount_repository_1.UserRepository);
@@ -38,6 +42,7 @@ let UserService = exports.UserService = class UserService {
     }
     createUser(inputs) {
         return __awaiter(this, void 0, void 0, function* () {
+            inputs["account_creation_date"] = (0, moment_1.default)().format("YYYY-MM-DD HH:mm:ss");
             return yield this.repository.createUser(inputs);
         });
     }

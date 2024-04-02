@@ -18,7 +18,6 @@ export async function paginate(query : SelectQueryBuilder<any>, limit: number, p
     let data : any[] = await query
         .take(take)
         .skip(skip)
-        .maxExecutionTime(1000)
         .orderBy(order)
         .maxExecutionTime(1000)
         .getMany()

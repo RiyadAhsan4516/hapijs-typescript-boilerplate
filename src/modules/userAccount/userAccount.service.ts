@@ -1,6 +1,7 @@
 import {UserRepository} from "./userAccount.repository";
 import {Service} from "typedi";
 import {Container} from "typedi";
+import moment from "moment";
 
 @Service()
 export class UserService {
@@ -20,7 +21,8 @@ export class UserService {
     }
 
 
-    async createUser(inputs: object) {
+    async createUser(inputs: any) {
+        inputs["account_creation_date"] = moment().format("YYYY-MM-DD HH:mm:ss")
         return await this.repository.createUser(inputs)
     }
 

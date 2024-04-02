@@ -1,36 +1,15 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppDataSource = void 0;
 const typeorm_1 = require("typeorm");
-const dotenv = __importStar(require("dotenv"));
-dotenv.config();
+// import * as dotenv from 'dotenv';
+// dotenv.config();
 const userAccount_entity_1 = require("./modules/userAccount/userAccount.entity");
 const userProfile_entity_1 = require("./modules/userProfile/userProfile.entity");
 const roles_entity_1 = require("./modules/roles/roles.entity");
 const notification_entity_1 = require("./modules/notification/notification.entity");
+const passwordEncryptionSubscriber_1 = require("./helpers/passwordEncryptionSubscriber");
+const typeorm_naming_strategies_1 = require("typeorm-naming-strategies");
 let entity_list = [userAccount_entity_1.User, userProfile_entity_1.UserProfile, roles_entity_1.Roles, notification_entity_1.Notification];
 exports.AppDataSource = new typeorm_1.DataSource({
     type: "mariadb",
@@ -43,6 +22,10 @@ exports.AppDataSource = new typeorm_1.DataSource({
     logging: ["error"],
     poolSize: 1,
     entities: entity_list,
-    subscribers: ["./helpers/passwordEncryptionSubscriber"],
+    namingStrategy: new typeorm_naming_strategies_1.SnakeNamingStrategy(),
+    cache: {
+        duration: 1000
+    },
+    subscribers: [passwordEncryptionSubscriber_1.PasswordEncryptionSubscriber],
     migrationsRun: true
 });

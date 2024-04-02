@@ -84,8 +84,8 @@ const routes = [
         options: {
             validate: {
                 payload: joi_1.default.object({
-                    email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error((0, boom_1.badData)("email input validation failed")),
-                    password: joi_1.default.string().min(8).error((0, boom_1.badData)("password input validation failed"))
+                    email: joi_1.default.string().trim().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error((0, boom_1.badData)("email input validation error")),
+                    password: joi_1.default.string().trim().min(8).error((0, boom_1.badData)("password input validation failed"))
                 })
             }
         },
@@ -97,8 +97,8 @@ const routes = [
         options: {
             validate: {
                 payload: joi_1.default.object({
-                    email: joi_1.default.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).error((0, boom_1.badData)("email input validation failed")),
-                    password: joi_1.default.string().min(8).error((0, boom_1.badData)("password input validation failed"))
+                    email: joi_1.default.string().trim().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).error((0, boom_1.badData)("email validation failed")),
+                    password: joi_1.default.string().trim().min(8).error((0, boom_1.badData)("password input validation failed"))
                 }),
                 params: joi_1.default.object({
                     id: joi_1.default.string().alphanum().required().error((0, boom_1.badData)("id validation on parameters failed"))

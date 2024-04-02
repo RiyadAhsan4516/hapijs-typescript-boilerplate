@@ -67,18 +67,14 @@ let UserRepository = exports.UserRepository = class UserRepository {
     }
     createUser(inputs) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                let newUser = yield this.userRepo.createQueryBuilder()
-                    .insert()
-                    .into(userAccount_entity_1.User)
-                    .values(inputs)
-                    .returning(["id", 'email'])
-                    .execute();
-                return newUser.raw;
-            }
-            catch (err) {
-                return err;
-            }
+            let newUser = yield this.userRepo.createQueryBuilder()
+                .insert()
+                .into(userAccount_entity_1.User)
+                .values(inputs)
+                .returning(["id", 'email', "account_created_at"])
+                .execute();
+            console.log(newUser);
+            return newUser.raw[0];
         });
     }
     UpdateUser(inputs, id) {

@@ -22,7 +22,6 @@ function paginate(query, limit, pageNo, order) {
         let data = yield query
             .take(take)
             .skip(skip)
-            .maxExecutionTime(1000)
             .orderBy(order)
             .maxExecutionTime(1000)
             .getMany();

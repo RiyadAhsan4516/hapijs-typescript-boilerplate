@@ -1,11 +1,13 @@
 import { DataSource } from "typeorm"
-import * as dotenv from 'dotenv';
-dotenv.config();
+// import * as dotenv from 'dotenv';
+// dotenv.config();
 
 import {User} from "./modules/userAccount/userAccount.entity";
 import {UserProfile} from "./modules/userProfile/userProfile.entity";
 import {Roles} from "./modules/roles/roles.entity";
 import {Notification} from "./modules/notification/notification.entity";
+import {PasswordEncryptionSubscriber} from "./helpers/passwordEncryptionSubscriber";
+import {SnakeNamingStrategy} from "typeorm-naming-strategies";
 
 let entity_list : any  = [User, UserProfile, Roles, Notification]
 
@@ -20,6 +22,10 @@ export const AppDataSource : DataSource = new DataSource({
     logging: ["error"],
     poolSize: 1,
     entities: entity_list,
-    subscribers: ["./helpers/passwordEncryptionSubscriber"],
+    namingStrategy: new SnakeNamingStrategy(),
+    cache: {
+        duration: 1000
+    },
+    subscribers: [PasswordEncryptionSubscriber],
     migrationsRun: true
 })

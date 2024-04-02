@@ -78,8 +78,8 @@ const routes : ServerRoute[] = [
         options:{
             validate: {
                 payload: Joi.object({
-                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(badData("email input validation failed")),
-                    password: Joi.string().min(8).error(badData("password input validation failed"))
+                    email: Joi.string().trim().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).required().error(badData("email input validation error")),
+                    password: Joi.string().trim().min(8).error(badData("password input validation failed"))
                 })
             }
         },
@@ -91,8 +91,8 @@ const routes : ServerRoute[] = [
         options: {
             validate: {
                 payload: Joi.object({
-                    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).error(badData("email input validation failed")),
-                    password: Joi.string().min(8).error(badData("password input validation failed"))
+                    email: Joi.string().trim().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'io'] } }).error(badData("email validation failed")),
+                    password: Joi.string().trim().min(8).error(badData("password input validation failed"))
                 }),
                 params: Joi.object({
                     id: Joi.string().alphanum().required().error(badData("id validation on parameters failed"))

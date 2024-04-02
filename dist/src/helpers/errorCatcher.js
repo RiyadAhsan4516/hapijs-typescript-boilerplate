@@ -10,7 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorCatcher = void 0;
-const boom_1 = require("@hapi/boom");
+function errorPayload(statusCode, error, message) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return { statusCode, error, message };
+    });
+}
 function errorCatcher(fn) {
     return (req, h) => __awaiter(this, void 0, void 0, function* () {
         try {
@@ -22,16 +26,13 @@ function errorCatcher(fn) {
             if (err.isBoom)
                 return h.response(err.output.payload).code(err.output.statusCode);
             else if (err.sqlState && err.errno == 1062)
-                return h.response("Duplicate Entry found").code(400);
+                return h.response(yield errorPayload(400, "bad request", "duplicate entry found")).code(400);
             else if (err.sqlState && err.errno == 1451)
-                return h.response("cannot add/update/delete due to foreign key constraint").code(400);
+                return h.response(yield errorPayload(400, "bad request", "cannot add/update/delete due to foreign key constraint")).code(400);
             else if (err.sqlState && err.errno)
-                return h.response({
-                    statusCode: 422,
-                    error: "unprocessable entity",
-                    message: err.sqlMessage
-                }).code(422);
-            throw (0, boom_1.teapot)("sip on your tea while i fix my code :)");
+                return h.response(yield errorPayload(422, "unprocessable entity", err.sqlMessage)).code(422);
+            else
+                return h.response(yield errorPayload(418, "server issue", "fatal error occurred")).code(418);
         }
     });
 }
