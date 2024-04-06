@@ -40,7 +40,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationController = void 0;
 const typedi_1 = require("typedi");
-const stream_1 = require("stream");
 const Boom = __importStar(require("@hapi/boom"));
 const notification_service_1 = require("./notification.service");
 let NotificationController = exports.NotificationController = class NotificationController {
@@ -56,36 +55,61 @@ let NotificationController = exports.NotificationController = class Notification
         });
     }
     // SERVE NOTIFICATION USING SSE CONNECTION. SET STATUS TO 1 AFTER BEING SENT
+    // RAW METHOD =>
+    // public async getNotification(req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<ResponseObject>{
+    //     // @ts-ignore
+    //     // class ResponseStream extends Stream.PassThrough {
+    //     //     setCompressor(compressor: any) : void {
+    //     //         // @ts-ignore
+    //     //         this._compressor = compressor;
+    //     //     }
+    //     // }
+    //
+    //     // const stream : ResponseStream = new ResponseStream();
+    //     const stream : PassThrough = new PassThrough();
+    //     let service : NotificationService = Container.get(NotificationService);
+    //
+    //     let intervalId : NodeJS.Timer = setInterval(async () => {
+    //         let data : Notification[] = await service.serveNotification();
+    //         if (data.length > 0) {
+    //             for(let i: number = 0 ; i<data.length; i++){
+    //                 stream.write(`id: ${data[i].id}\n`);
+    //                 stream.write('data:' + data[i].notification + ';\n\n');
+    //
+    //                 // CHANGE READ STATUS
+    //                 await service.changeStatus(data[i].id, 1);
+    //             }
+    //         }
+    //         //@ts-ignore
+    //         // stream._compressor.flush();
+    //     }, 100);
+    //
+    //     req.raw.req.on('close', () => {
+    //         clearInterval(intervalId);
+    //         stream.end();
+    //     })
+    //
+    //     return h.response(stream).type('text/event-stream')
+    // }
+    // USING PACKAGE =>
     getNotification(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
-            // @ts-ignore
-            // class ResponseStream extends Stream.PassThrough {
-            //     setCompressor(compressor: any) : void {
-            //         // @ts-ignore
-            //         this._compressor = compressor;
-            //     }
-            // }
-            // const stream : ResponseStream = new ResponseStream();
-            const stream = new stream_1.PassThrough();
             let service = typedi_1.Container.get(notification_service_1.NotificationService);
+            let res = h.event({ id: 0, data: "Event source initiated" });
             let intervalId = setInterval(() => __awaiter(this, void 0, void 0, function* () {
                 let data = yield service.serveNotification();
                 if (data.length > 0) {
                     for (let i = 0; i < data.length; i++) {
-                        stream.write(`id: ${data[i].id}\n`);
-                        stream.write('data:' + data[i].notification + ';\n\n');
+                        h.event({ id: data[i].id, data: data[i].notification });
                         // CHANGE READ STATUS
                         yield service.changeStatus(data[i].id, 1);
                     }
                 }
-                //@ts-ignore
-                // stream._compressor.flush();
-            }), 100);
+            }), 1000);
             req.raw.req.on('close', () => {
                 clearInterval(intervalId);
-                stream.end();
             });
-            return h.response(stream).type('text/event-stream');
+            return h.response(res);
         });
     }
     // CHANGE NOTIFICATION STATUS TO 2 WHEN IT IS READ

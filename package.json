@@ -32,6 +32,7 @@
     "mysql2": "^3.3.5",
     "redis": "^4.6.8",
     "reflect-metadata": "^0.1.13",
+    "susie": "^3.0.0",
     "typedi": "^0.10.0",
     "typeorm": "^0.3.16",
     "typeorm-naming-strategies": "^4.1.0"

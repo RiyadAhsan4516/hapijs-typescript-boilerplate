@@ -127,6 +127,9 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
             plugin: vision // a plugin used for rendering templates
         },
         {
+            plugin: require("susie")
+        },
+        {
             plugin: pino,
             options: {
                 transport,

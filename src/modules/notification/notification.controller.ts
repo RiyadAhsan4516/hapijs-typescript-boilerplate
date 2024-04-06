@@ -17,41 +17,66 @@ export class NotificationController{
     }
 
     // SERVE NOTIFICATION USING SSE CONNECTION. SET STATUS TO 1 AFTER BEING SENT
-    public async getNotification(req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<ResponseObject>{
-        // @ts-ignore
-        // class ResponseStream extends Stream.PassThrough {
-        //     setCompressor(compressor: any) : void {
-        //         // @ts-ignore
-        //         this._compressor = compressor;
-        //     }
-        // }
 
-        // const stream : ResponseStream = new ResponseStream();
-        const stream : PassThrough = new PassThrough();
+    // RAW METHOD =>
+    // public async getNotification(req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<ResponseObject>{
+    //     // @ts-ignore
+    //     // class ResponseStream extends Stream.PassThrough {
+    //     //     setCompressor(compressor: any) : void {
+    //     //         // @ts-ignore
+    //     //         this._compressor = compressor;
+    //     //     }
+    //     // }
+    //
+    //     // const stream : ResponseStream = new ResponseStream();
+    //     const stream : PassThrough = new PassThrough();
+    //     let service : NotificationService = Container.get(NotificationService);
+    //
+    //     let intervalId : NodeJS.Timer = setInterval(async () => {
+    //         let data : Notification[] = await service.serveNotification();
+    //         if (data.length > 0) {
+    //             for(let i: number = 0 ; i<data.length; i++){
+    //                 stream.write(`id: ${data[i].id}\n`);
+    //                 stream.write('data:' + data[i].notification + ';\n\n');
+    //
+    //                 // CHANGE READ STATUS
+    //                 await service.changeStatus(data[i].id, 1);
+    //             }
+    //         }
+    //         //@ts-ignore
+    //         // stream._compressor.flush();
+    //     }, 100);
+    //
+    //     req.raw.req.on('close', () => {
+    //         clearInterval(intervalId);
+    //         stream.end();
+    //     })
+    //
+    //     return h.response(stream).type('text/event-stream')
+    // }
+
+    // USING PACKAGE =>
+    public async getNotification(req: Request, h:any) : Promise<ResponseObject>{
         let service : NotificationService = Container.get(NotificationService);
-
+        let res = h.event({id: 0, data : "Event source initiated"})
         let intervalId : NodeJS.Timer = setInterval(async () => {
             let data : Notification[] = await service.serveNotification();
             if (data.length > 0) {
                 for(let i: number = 0 ; i<data.length; i++){
-                    stream.write(`id: ${data[i].id}\n`);
-                    stream.write('data:' + data[i].notification + ';\n\n');
-
+                    h.event({id : data[i].id, data : data[i].notification})
                     // CHANGE READ STATUS
                     await service.changeStatus(data[i].id, 1);
                 }
             }
-            //@ts-ignore
-            // stream._compressor.flush();
-        }, 100);
+        }, 1000);
 
         req.raw.req.on('close', () => {
             clearInterval(intervalId);
-            stream.end();
         })
 
-        return h.response(stream).type('text/event-stream')
+        return h.response(res)
     }
+
 
     // CHANGE NOTIFICATION STATUS TO 2 WHEN IT IS READ
     public async changeReadStatus(req: Request, h:ResponseToolkit<ReqRefDefaults>){

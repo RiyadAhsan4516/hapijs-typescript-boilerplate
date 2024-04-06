@@ -109,6 +109,9 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
             plugin: vision  // a plugin used for rendering templates
         },
         {
+            plugin : require("susie")
+        },
+        {
             plugin: pino,    // request logger
             options: {
                 transport,
