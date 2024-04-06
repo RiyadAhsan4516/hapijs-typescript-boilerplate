@@ -1,6 +1,5 @@
 import type {ReqRefDefaults, Request, ResponseObject, ResponseToolkit} from '@hapi/hapi';
 import {Container, Service} from "typedi";
-import {PassThrough} from "stream"
 import * as Boom from "@hapi/boom";
 import {NotificationService} from "./notification.service";
 import {Notification} from "./notification.entity";
