@@ -15,8 +15,6 @@ of handling heavy loads, I couldn't find a proper boilerplate that would start o
 If you're looking for a boilerplate containing the basic functionalities like payload compressors, file-processor, authentication, casbin
 authorization and on top of them all, uses typescript, then this is the boilerplate for you.
 
-I pretty much poured all of my fundamental backend knowledge into it (I wouldn't say I know everything :3).
-
 Feel free to make pull requests if you wish to improve it further
 
 ### Stack :
