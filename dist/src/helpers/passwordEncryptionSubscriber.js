@@ -29,8 +29,10 @@ let PasswordEncryptionSubscriber = exports.PasswordEncryptionSubscriber = class 
         });
     }
     beforeUpdate(event) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            event.entity.password = yield (0, bcryptjs_1.hash)(event.entity.password, 10);
+            if ((_a = event === null || event === void 0 ? void 0 : event.entity) === null || _a === void 0 ? void 0 : _a.password)
+                event.entity.password = yield (0, bcryptjs_1.hash)(event.entity.password, 10);
         });
     }
 };
