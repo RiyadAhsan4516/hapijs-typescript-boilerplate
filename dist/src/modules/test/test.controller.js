@@ -17,7 +17,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TestController = void 0;
 const typedi_1 = require("typedi");
-let TestController = exports.TestController = class TestController {
+let TestController = class TestController {
     getAll(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
             let limit = +req.params.limit;
@@ -34,6 +34,7 @@ let TestController = exports.TestController = class TestController {
         });
     }
 };
+exports.TestController = TestController;
 exports.TestController = TestController = __decorate([
     (0, typedi_1.Service)()
 ], TestController);

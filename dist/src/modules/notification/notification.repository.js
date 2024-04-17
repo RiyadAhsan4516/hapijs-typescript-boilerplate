@@ -46,7 +46,7 @@ const notification_entity_1 = require("./notification.entity");
 const data_source_1 = require("../../data-source");
 const typedi_1 = require("typedi");
 const Boom = __importStar(require("@hapi/boom"));
-let NotificationRepository = exports.NotificationRepository = class NotificationRepository {
+let NotificationRepository = class NotificationRepository {
     constructor() {
         this.notifyRepo = data_source_1.AppDataSource.getRepository(notification_entity_1.Notification);
     }
@@ -96,6 +96,7 @@ let NotificationRepository = exports.NotificationRepository = class Notification
         });
     }
 };
+exports.NotificationRepository = NotificationRepository;
 exports.NotificationRepository = NotificationRepository = __decorate([
     (0, typedi_1.Service)(),
     __metadata("design:paramtypes", [])

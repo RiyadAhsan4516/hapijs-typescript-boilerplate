@@ -58,7 +58,7 @@ export class NotificationController{
     public async getNotification(req: Request, h:any) : Promise<ResponseObject>{
         let service : NotificationService = Container.get(NotificationService);
         let res = h.event({id: 0, data : "Event source initiated"})
-        let intervalId : NodeJS.Timer = setInterval(async () => {
+        let intervalId : NodeJS.Timer | any = setInterval(async () => {
             let data : Notification[] = await service.serveNotification();
             if (data.length > 0) {
                 for(let i: number = 0 ; i<data.length; i++){
@@ -70,7 +70,7 @@ export class NotificationController{
         }, 1000);
 
         req.raw.req.on('close', () => {
-            clearInterval(intervalId);
+            if(intervalId) clearInterval(intervalId);
         })
 
         return h.response(res)

@@ -44,7 +44,7 @@ const userAccount_service_1 = require("./userAccount.service");
 const Boom = __importStar(require("@hapi/boom"));
 const payloadFormatter_1 = require("../../helpers/payloadFormatter");
 const authorization_access_1 = require("../authorization/authorization.access");
-let UserController = exports.UserController = class UserController {
+let UserController = class UserController {
     getUsers(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
             // CALL CASBIN AUTHORIZE FUNCTION INSIDE THE CONTROLLER
@@ -93,6 +93,7 @@ let UserController = exports.UserController = class UserController {
         });
     }
 };
+exports.UserController = UserController;
 exports.UserController = UserController = __decorate([
     (0, typedi_1.Service)()
 ], UserController);

@@ -130,7 +130,7 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
             plugin: require("susie")
         },
         {
-            plugin: pino,
+            plugin: pino, // request logger
             options: {
                 transport,
                 level: 'info',
@@ -151,7 +151,7 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
             }
         },
         {
-            plugin: customPlugins_1.eventHandlerPlugin,
+            plugin: customPlugins_1.eventHandlerPlugin, // custom plugin for handling "empty_temp" event
             options: {
                 Server: server
             }
@@ -166,7 +166,7 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     const publicKey = yield promises_1.default.readFile("./public_key.pem", 'utf8');
     server.auth.strategy('jwt', 'jwt', {
         key: publicKey,
-        validate: typedi_1.Container.get(authentication_controller_1.AuthController).isLoggedIn,
+        validate: typedi_1.Container.get(authentication_controller_1.AuthController).isLoggedIn, // the token will be decoded by the plugin automatically
         verifyOptions: {
             algorithms: ["RS256"]
         }

@@ -12,8 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Roles = void 0;
 const typeorm_1 = require("typeorm");
 const userAccount_entity_1 = require("../userAccount/userAccount.entity");
-let Roles = exports.Roles = class Roles {
+let Roles = class Roles {
 };
+exports.Roles = Roles;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)

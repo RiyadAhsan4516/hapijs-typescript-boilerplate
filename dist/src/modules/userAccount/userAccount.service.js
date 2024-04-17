@@ -26,7 +26,7 @@ const userAccount_repository_1 = require("./userAccount.repository");
 const typedi_1 = require("typedi");
 const typedi_2 = require("typedi");
 const moment_1 = __importDefault(require("moment"));
-let UserService = exports.UserService = class UserService {
+let UserService = class UserService {
     constructor() {
         this.repository = typedi_2.Container.get(userAccount_repository_1.UserRepository);
     }
@@ -52,6 +52,7 @@ let UserService = exports.UserService = class UserService {
         });
     }
 };
+exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, typedi_1.Service)(),
     __metadata("design:paramtypes", [])

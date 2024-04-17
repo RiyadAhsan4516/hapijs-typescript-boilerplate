@@ -20,7 +20,7 @@ const jsonwebtoken_1 = require("jsonwebtoken");
 const typedi_1 = require("typedi");
 const promises_1 = require("fs/promises");
 const path_1 = require("path");
-let GenerateTokens = exports.GenerateTokens = class GenerateTokens {
+let GenerateTokens = class GenerateTokens {
     createToken(payload, expire) {
         return __awaiter(this, void 0, void 0, function* () {
             let path = (0, path_1.join)(__dirname, '../', '../', 'private_key.pem');
@@ -32,6 +32,7 @@ let GenerateTokens = exports.GenerateTokens = class GenerateTokens {
         });
     }
 };
+exports.GenerateTokens = GenerateTokens;
 exports.GenerateTokens = GenerateTokens = __decorate([
     (0, typedi_1.Service)()
 ], GenerateTokens);

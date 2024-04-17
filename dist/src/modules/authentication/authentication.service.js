@@ -30,7 +30,7 @@ const app_1 = require("../../../app");
 const tokenCache_1 = require("../../helpers/tokenCache");
 const promises_1 = __importDefault(require("fs/promises"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-let AuthService = exports.AuthService = class AuthService {
+let AuthService = class AuthService {
     logoutUser(user_id, ip) {
         return __awaiter(this, void 0, void 0, function* () {
             // INVALIDATE THE TOKENS (NEW FORMAT)
@@ -102,6 +102,7 @@ let AuthService = exports.AuthService = class AuthService {
         });
     }
 };
+exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, typedi_1.Service)()
 ], AuthService);

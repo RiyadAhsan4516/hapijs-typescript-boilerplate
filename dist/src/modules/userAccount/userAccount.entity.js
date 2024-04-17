@@ -13,8 +13,9 @@ exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const userProfile_entity_1 = require("../userProfile/userProfile.entity");
 const roles_entity_1 = require("../roles/roles.entity");
-let User = exports.User = class User {
+let User = class User {
 };
+exports.User = User;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)

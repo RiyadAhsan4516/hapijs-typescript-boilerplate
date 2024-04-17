@@ -34,7 +34,7 @@ const userAccount_entity_1 = require("./userAccount.entity");
 const data_source_1 = require("../../data-source");
 const typedi_1 = require("typedi");
 const paginator_1 = require("../../helpers/paginator");
-let UserRepository = exports.UserRepository = class UserRepository {
+let UserRepository = class UserRepository {
     constructor() {
         this.userRepo = data_source_1.AppDataSource.getRepository(userAccount_entity_1.User);
     }
@@ -99,6 +99,7 @@ let UserRepository = exports.UserRepository = class UserRepository {
         });
     }
 };
+exports.UserRepository = UserRepository;
 exports.UserRepository = UserRepository = __decorate([
     (0, typedi_1.Service)(),
     __metadata("design:paramtypes", [])

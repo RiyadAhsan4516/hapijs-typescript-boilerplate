@@ -19,7 +19,7 @@ exports.UserProfileController = void 0;
 const userProfile_service_1 = require("./userProfile.service");
 const typedi_1 = require("typedi");
 const payloadFormatter_1 = require("../../helpers/payloadFormatter");
-let UserProfileController = exports.UserProfileController = class UserProfileController {
+let UserProfileController = class UserProfileController {
     createProfile(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
             let service = typedi_1.Container.get(userProfile_service_1.UserProfileService);
@@ -47,6 +47,7 @@ let UserProfileController = exports.UserProfileController = class UserProfileCon
         });
     }
 };
+exports.UserProfileController = UserProfileController;
 exports.UserProfileController = UserProfileController = __decorate([
     (0, typedi_1.Service)()
 ], UserProfileController);

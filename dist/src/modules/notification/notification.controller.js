@@ -42,7 +42,7 @@ exports.NotificationController = void 0;
 const typedi_1 = require("typedi");
 const Boom = __importStar(require("@hapi/boom"));
 const notification_service_1 = require("./notification.service");
-let NotificationController = exports.NotificationController = class NotificationController {
+let NotificationController = class NotificationController {
     // POST A NOTIFICATION. INITIALLY WITH THE STATUS 0
     createNotification(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -107,7 +107,8 @@ let NotificationController = exports.NotificationController = class Notification
                 }
             }), 1000);
             req.raw.req.on('close', () => {
-                clearInterval(intervalId);
+                if (intervalId)
+                    clearInterval(intervalId);
             });
             return h.response(res);
         });
@@ -120,6 +121,7 @@ let NotificationController = exports.NotificationController = class Notification
         });
     }
 };
+exports.NotificationController = NotificationController;
 exports.NotificationController = NotificationController = __decorate([
     (0, typedi_1.Service)()
 ], NotificationController);

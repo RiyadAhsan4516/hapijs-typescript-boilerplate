@@ -20,7 +20,7 @@ const typedi_1 = require("typedi");
 // LOCAL IMPORTS
 const roles_service_1 = require("./roles.service");
 const payloadCompressor_1 = require("../../helpers/payloadCompressor");
-let RoleController = exports.RoleController = class RoleController {
+let RoleController = class RoleController {
     getAllRoles(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
             // CHECK REQUEST METHOD
@@ -45,6 +45,7 @@ let RoleController = exports.RoleController = class RoleController {
         });
     }
 };
+exports.RoleController = RoleController;
 exports.RoleController = RoleController = __decorate([
     (0, typedi_1.Service)()
 ], RoleController);

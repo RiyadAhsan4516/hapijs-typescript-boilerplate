@@ -22,7 +22,7 @@ exports.RoleService = void 0;
 const roles_repository_1 = require("./roles.repository");
 const typedi_1 = require("typedi");
 const boom_1 = require("@hapi/boom");
-let RoleService = exports.RoleService = class RoleService {
+let RoleService = class RoleService {
     constructor() {
         this._roleRepo = typedi_1.Container.get(roles_repository_1.RoleRepository);
     }
@@ -43,6 +43,7 @@ let RoleService = exports.RoleService = class RoleService {
         });
     }
 };
+exports.RoleService = RoleService;
 exports.RoleService = RoleService = __decorate([
     (0, typedi_1.Service)(),
     __metadata("design:paramtypes", [])

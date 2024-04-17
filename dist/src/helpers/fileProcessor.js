@@ -12,8 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.fileProcessor = void 0;
 const fs_1 = require("fs");
 const boom_1 = require("@hapi/boom");
-function fileProcessor(uploaded_file, allowed_types, file_size = 2000000, folder = null) {
-    return __awaiter(this, void 0, void 0, function* () {
+function fileProcessor(uploaded_file_1, allowed_types_1) {
+    return __awaiter(this, arguments, void 0, function* (uploaded_file, allowed_types, file_size = 2000000, folder = null) {
         if (!uploaded_file.headers)
             throw (0, boom_1.badData)("if image is uploaded, then it must be a file");
         if (uploaded_file.bytes > file_size)

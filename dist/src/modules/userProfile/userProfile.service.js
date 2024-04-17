@@ -24,7 +24,7 @@ const fileProcessor_1 = require("../../helpers/fileProcessor");
 const typedi_1 = require("typedi");
 const joi_1 = require("joi");
 const imageResizer_1 = require("../../helpers/imageResizer");
-let UserProfileService = exports.UserProfileService = class UserProfileService {
+let UserProfileService = class UserProfileService {
     constructor() {
         this.repository = typedi_1.Container.get(userProfile_repository_1.UserProfileRepository);
     }
@@ -73,6 +73,7 @@ let UserProfileService = exports.UserProfileService = class UserProfileService {
         return redisSchemas.validate(input);
     }
 };
+exports.UserProfileService = UserProfileService;
 exports.UserProfileService = UserProfileService = __decorate([
     (0, typedi_1.Service)(),
     __metadata("design:paramtypes", [])

@@ -20,7 +20,7 @@ const typedi_1 = require("typedi");
 const crypto_js_1 = require("crypto-js");
 // LOCAL IMPORTS
 const authentication_service_1 = require("./authentication.service");
-let AuthController = exports.AuthController = class AuthController {
+let AuthController = class AuthController {
     // FEATURE : USER LOGIN
     provideSaltKey(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -56,8 +56,8 @@ let AuthController = exports.AuthController = class AuthController {
         });
     }
     generalLogin(req, h) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const service = typedi_1.Container.get(authentication_service_1.AuthService);
             const { email, password } = req.payload;
             const result = yield service.validateLogin({ email, password }, req.info.remoteAddress);
@@ -122,6 +122,7 @@ let AuthController = exports.AuthController = class AuthController {
         });
     }
 };
+exports.AuthController = AuthController;
 exports.AuthController = AuthController = __decorate([
     (0, typedi_1.Service)()
 ], AuthController);

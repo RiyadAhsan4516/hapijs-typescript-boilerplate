@@ -22,7 +22,7 @@ exports.UserProfileRepository = void 0;
 const userProfile_entity_1 = require("./userProfile.entity");
 const data_source_1 = require("../../data-source");
 const typedi_1 = require("typedi");
-let UserProfileRepository = exports.UserProfileRepository = class UserProfileRepository {
+let UserProfileRepository = class UserProfileRepository {
     constructor() {
         this.userProfileRepo = data_source_1.AppDataSource.getRepository(userProfile_entity_1.UserProfile);
     }
@@ -63,6 +63,7 @@ let UserProfileRepository = exports.UserProfileRepository = class UserProfileRep
         });
     }
 };
+exports.UserProfileRepository = UserProfileRepository;
 exports.UserProfileRepository = UserProfileRepository = __decorate([
     (0, typedi_1.Service)(),
     __metadata("design:paramtypes", [])

@@ -117,7 +117,7 @@ const routes = [
                 multipart: {
                     output: "file"
                 },
-                maxBytes: 1000 * 1000 * 2,
+                maxBytes: 1000 * 1000 * 2, // 2 Mb
                 timeout: 60000,
                 uploads: 'public/tmp',
             }
@@ -176,7 +176,7 @@ const routes = [
                 multipart: {
                     output: "file", // use file to allow multiple files
                 },
-                maxBytes: 1000 * 1000 * 3,
+                maxBytes: 1000 * 1000 * 3, // 3 Mb
                 uploads: 'public/tmp',
             }
         },

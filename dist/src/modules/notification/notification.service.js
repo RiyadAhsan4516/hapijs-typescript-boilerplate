@@ -46,7 +46,7 @@ const typedi_1 = require("typedi");
 // import {Boom} from "@hapi/boom";
 const Boom = __importStar(require("@hapi/boom"));
 const notification_repository_1 = require("./notification.repository");
-let NotificationService = exports.NotificationService = class NotificationService {
+let NotificationService = class NotificationService {
     constructor() {
         this._notificationRepo = typedi_1.Container.get(notification_repository_1.NotificationRepository);
     }
@@ -73,6 +73,7 @@ let NotificationService = exports.NotificationService = class NotificationServic
         });
     }
 };
+exports.NotificationService = NotificationService;
 exports.NotificationService = NotificationService = __decorate([
     (0, typedi_1.Service)(),
     __metadata("design:paramtypes", [])

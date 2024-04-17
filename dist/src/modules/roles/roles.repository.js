@@ -22,7 +22,7 @@ exports.RoleRepository = void 0;
 const data_source_1 = require("../../data-source");
 const roles_entity_1 = require("./roles.entity");
 const typedi_1 = require("typedi");
-let RoleRepository = exports.RoleRepository = class RoleRepository {
+let RoleRepository = class RoleRepository {
     constructor() {
         this._roleRepo = data_source_1.AppDataSource.getRepository(roles_entity_1.Roles);
     }
@@ -38,6 +38,7 @@ let RoleRepository = exports.RoleRepository = class RoleRepository {
         });
     }
 };
+exports.RoleRepository = RoleRepository;
 exports.RoleRepository = RoleRepository = __decorate([
     (0, typedi_1.Service)(),
     __metadata("design:paramtypes", [])
