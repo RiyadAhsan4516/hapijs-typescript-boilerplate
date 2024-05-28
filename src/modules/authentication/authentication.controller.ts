@@ -12,10 +12,10 @@ import {type_validation} from "../../helpers/customInterfaces";
 export class AuthController {
 
     // FEATURE : USER LOGIN
-    public async provideSaltKey(req: Request, h: ResponseToolkit<ReqRefDefaults>): Promise<{ salt: string }> {
+    public async provideSaltKey(req: Request, h: ResponseToolkit<ReqRefDefaults>): Promise<ResponseObject> {
         let saltKey: string;
         req.query["key"] === "1" ? saltKey = "5425e523c30a45e504780e952d57ed15" : saltKey = 'b2aeffe655c33180cfdc4a949957cb5f'
-        return {salt: saltKey}
+        return h.response({salt: saltKey}).code(200)
     }
 
     public async saltLogin(req: Request, h: ResponseToolkit<ReqRefDefaults>): Promise<any> {
@@ -105,7 +105,7 @@ export class AuthController {
     public async logout(req: Request, h: ResponseToolkit<ReqRefDefaults>): Promise<ResponseObject> {
 
         let user_id: string = `${req.auth.credentials.id}`
-        let access_token: string = req.headers.authorization.split(" ")[1]
+        // let access_token: string = req.headers.authorization.split(" ")[1]
 
         // CALL AUTH SERVICE AND LOGOUT THE USER
         const service: AuthService = Container.get(AuthService);

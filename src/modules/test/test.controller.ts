@@ -6,9 +6,9 @@ import {Service} from "typedi";
 export class TestController {
 
     public async getAll(req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<ResponseObject>{
-        let limit : number = +req.params.limit;
-        let pageNo : number = +req.params.pageNo;
-        let params : {[key: string] : string} = {...req.query};
+        // let limit : number = +req.params.limit;
+        // let pageNo : number = +req.params.pageNo;
+        // let params : {[key: string] : string} = {...req.query};
         // @ts-ignore
         let request : any = {...req}
         console.log(request.plugins["scooter"].source)

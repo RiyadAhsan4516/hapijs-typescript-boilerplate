@@ -18,6 +18,7 @@ const eventHandlerPlugin = {
             options.Server.events.on('empty_temp', (payload) => __awaiter(this, void 0, void 0, function* () {
                 let data = JSON.stringify(payload);
                 console.log(`Response inside the event: ${data}`);
+                console.log(server);
             }));
         });
     }

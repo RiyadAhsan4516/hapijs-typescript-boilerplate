@@ -1,7 +1,7 @@
 // THIRD PARTY IMPORTS
 import type {ReqRefDefaults, Request, ResponseObject, ResponseToolkit} from '@hapi/hapi';
 import {Container, Service} from "typedi";
-import {gzip} from "zlib";
+// import {gzip} from "zlib";
 
 // LOCAL IMPORTS
 import {RoleService} from "./roles.service";

@@ -82,7 +82,7 @@ let NotificationRepository = class NotificationRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let newInputs = { read_status };
-                let notification = yield this.notifyRepo.createQueryBuilder()
+                yield this.notifyRepo.createQueryBuilder()
                     .update(notification_entity_1.Notification)
                     .set(newInputs)
                     .where('id = :id', { id })

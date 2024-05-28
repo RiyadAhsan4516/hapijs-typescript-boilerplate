@@ -1,4 +1,13 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -9,11 +18,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authorize = void 0;
+exports.CasbinEnforcer = exports.authorize = void 0;
 const casbin_1 = require("casbin");
 const path_1 = require("path");
 const boom_1 = require("@hapi/boom");
 const data_source_1 = require("../../data-source");
+const typedi_1 = require("typedi");
 // let enforcer : any;
 // newEnforcer(join(__dirname, 'access_model.conf'), join(__dirname, 'access_policy.csv')).then((data : Enforcer )=> enforcer = data);
 //
@@ -43,3 +53,19 @@ function authorize(sub, obj, act) {
     });
 }
 exports.authorize = authorize;
+let CasbinEnforcer = class CasbinEnforcer {
+    constructor() {
+        (0, casbin_1.newEnforcer)((0, path_1.join)(__dirname, 'access_model.conf'), data_source_1.casbin_adapter).then((e) => this.enforcer = e);
+    }
+    authorize(sub, obj, act) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!(yield this.enforcer.enforce(sub, obj, act)))
+                throw (0, boom_1.forbidden)("you do not have permission to perform this action");
+        });
+    }
+};
+exports.CasbinEnforcer = CasbinEnforcer;
+exports.CasbinEnforcer = CasbinEnforcer = __decorate([
+    (0, typedi_1.Service)(),
+    __metadata("design:paramtypes", [])
+], CasbinEnforcer);

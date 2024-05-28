@@ -54,7 +54,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 else {
     data_source_1.AppDataSource.initialize().catch((err) => {
-        console.error("Database failed to load");
+        console.error("Database failed to load : ", err);
     });
 }
 // ********************************************

@@ -61,7 +61,7 @@ let AuthService = class AuthService {
     validateTokenInfo(decoded, token, url, method, ip) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield typedi_1.Container.get(userAccount_repository_1.UserRepository).getOneUser(decoded.id);
-            let role;
+            // let role: string
             let blacklisted_tokens = JSON.parse(yield app_1.client.hGet(`blacklist-${decoded.id}`, ip));
             if (blacklisted_tokens) {
                 if (blacklisted_tokens.includes(token))

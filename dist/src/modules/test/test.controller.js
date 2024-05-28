@@ -20,9 +20,9 @@ const typedi_1 = require("typedi");
 let TestController = class TestController {
     getAll(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
-            let limit = +req.params.limit;
-            let pageNo = +req.params.pageNo;
-            let params = Object.assign({}, req.query);
+            // let limit : number = +req.params.limit;
+            // let pageNo : number = +req.params.pageNo;
+            // let params : {[key: string] : string} = {...req.query};
             // @ts-ignore
             let request = Object.assign({}, req);
             console.log(request.plugins["scooter"].source);

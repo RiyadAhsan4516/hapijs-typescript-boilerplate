@@ -61,6 +61,7 @@ export class RepoFactory {
 
     async addQuery(query: any, params: any) {
         // ADD QUERIES HERE
+        if(params){/*set params here*/}
         return query
     }
 

@@ -72,6 +72,7 @@ let RepoFactory = class RepoFactory {
     addQuery(query, params) {
         return __awaiter(this, void 0, void 0, function* () {
             // ADD QUERIES HERE
+            if (params) { /*set params here*/ }
             return query;
         });
     }

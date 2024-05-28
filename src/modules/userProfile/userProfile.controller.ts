@@ -7,13 +7,11 @@ import {payloadFormatter} from "../../helpers/payloadFormatter";
 @Service()
 export class UserProfileController{
 
-    private service : UserProfileService
-
     async createProfile(req: Request, h:ResponseToolkit<ReqRefDefaults>): Promise<ResponseObject>{
         let service : UserProfileService = Container.get(UserProfileService);
         // @ts-ignore
         const attributes : any = {...req.payload};
-        let result : InsertResult =  await this.service.createUserProfile(attributes)
+        let result : InsertResult =  await service.createUserProfile(attributes)
         return h.response(await payloadFormatter(result)).code(200)
     }
 

@@ -26,7 +26,7 @@ let AuthController = class AuthController {
         return __awaiter(this, void 0, void 0, function* () {
             let saltKey;
             req.query["key"] === "1" ? saltKey = "5425e523c30a45e504780e952d57ed15" : saltKey = 'b2aeffe655c33180cfdc4a949957cb5f';
-            return { salt: saltKey };
+            return h.response({ salt: saltKey }).code(200);
         });
     }
     saltLogin(req, h) {
@@ -106,7 +106,7 @@ let AuthController = class AuthController {
     logout(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
             let user_id = `${req.auth.credentials.id}`;
-            let access_token = req.headers.authorization.split(" ")[1];
+            // let access_token: string = req.headers.authorization.split(" ")[1]
             // CALL AUTH SERVICE AND LOGOUT THE USER
             const service = typedi_1.Container.get(authentication_service_1.AuthService);
             const result = yield service.logoutUser(user_id, req.info.remoteAddress);

@@ -13,6 +13,7 @@ const eventHandlerPlugin : plugins = {
         options.Server.events.on('empty_temp', async (payload : any) : Promise<void> => {
             let data : string = JSON.stringify(payload);
             console.log(`Response inside the event: ${data}`);
+            console.log(server)
         });
     }
 }

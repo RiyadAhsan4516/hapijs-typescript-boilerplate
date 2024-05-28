@@ -1,6 +1,6 @@
-import {InsertResult, Repository, UpdateResult} from "typeorm";
+import {InsertResult, Repository} from "typeorm";
 import {Notification} from "./notification.entity";
-import { AppDataSource } from "../../data-source";
+import {AppDataSource} from "../../data-source";
 import {Service} from "typedi";
 import * as Boom from "@hapi/boom"
 
@@ -42,7 +42,7 @@ export class NotificationRepository{
     async updateReadStatus(read_status: number, id: number): Promise<any>{
         try{
             let newInputs : {read_status: number} = {read_status}
-            let notification : UpdateResult = await this.notifyRepo.createQueryBuilder()
+            await this.notifyRepo.createQueryBuilder()
                 .update(Notification)
                 .set(newInputs)
                 .where('id = :id',{id})
