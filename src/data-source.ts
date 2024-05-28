@@ -1,15 +1,28 @@
-import { DataSource } from "typeorm"
-// import * as dotenv from 'dotenv';
-// dotenv.config();
-
+import {DataSource} from "typeorm"
 import {User} from "./modules/userAccount/userAccount.entity";
 import {UserProfile} from "./modules/userProfile/userProfile.entity";
 import {Roles} from "./modules/roles/roles.entity";
 import {Notification} from "./modules/notification/notification.entity";
 import {PasswordEncryptionSubscriber} from "./helpers/passwordEncryptionSubscriber";
 import {SnakeNamingStrategy} from "typeorm-naming-strategies";
+import TypeORMAdapter from "typeorm-adapter";
+import {CustomCasbinRule} from "./modules/authorization/casbin.entity";
 
-let entity_list : any  = [User, UserProfile, Roles, Notification]
+let entity_list : any  = [User, UserProfile, Roles, Notification, CustomCasbinRule]
+
+export let casbin_adapter : TypeORMAdapter;
+TypeORMAdapter.newAdapter({
+        type: 'mysql',
+        host: 'localhost',
+        port: 3306,
+        username: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_LOCAL,
+    },
+    {
+        customCasbinRuleEntity: CustomCasbinRule,
+    },
+).then((a: TypeORMAdapter)=> casbin_adapter = a)
 
 export const AppDataSource : DataSource = new DataSource({
     type: "mariadb",
@@ -26,6 +39,6 @@ export const AppDataSource : DataSource = new DataSource({
     cache: {
         duration: 1000
     },
-    subscribers: [PasswordEncryptionSubscriber],
+    subscribers: [PasswordEncryptionSubscriber] as any,
     migrationsRun: true
 })

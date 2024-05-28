@@ -2973,12 +2973,21 @@ typedi@^0.10.0:
   resolved "https://registry.yarnpkg.com/typedi/-/typedi-0.10.0.tgz#e8f9a5ee100b84addbdfb57fe90d8d9ed2a21dea"
   integrity sha512-v3UJF8xm68BBj6AF4oQML3ikrfK2c9EmZUyLOfShpJuItAqVBHWP/KtpGinkSsIiP6EZyyb6Z3NXyW9dgS9X1w==
 
+typeorm-adapter@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/typeorm-adapter/-/typeorm-adapter-1.7.0.tgz#8b2b8fec4a0a7838482a9556b5b488a11b1cc737"
+  integrity sha512-70TDkYTFn5nJ06neGTY8f7Ex6JfFd0SM+aXg/igqvKjnNLPFHYAU/sNGF0J4Vil5ZD3+fUklZr4/LI24Jre8sw==
+  dependencies:
+    casbin "^5.27.0"
+    reflect-metadata "^0.1.13"
+    typeorm "^0.3.17"
+
 typeorm-naming-strategies@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/typeorm-naming-strategies/-/typeorm-naming-strategies-4.1.0.tgz#1ec6eb296c8d7b69bb06764d5b9083ff80e814a9"
   integrity sha512-vPekJXzZOTZrdDvTl1YoM+w+sUIfQHG4kZTpbFYoTsufyv9NIBRe4Q+PdzhEAFA2std3D9LZHEb1EjE9zhRpiQ==
 
-typeorm@^0.3.16:
+typeorm@^0.3.16, typeorm@^0.3.17:
   version "0.3.20"
   resolved "https://registry.yarnpkg.com/typeorm/-/typeorm-0.3.20.tgz#4b61d737c6fed4e9f63006f88d58a5e54816b7ab"
   integrity sha512-sJ0T08dV5eoZroaq9uPKBoNcGslHBR4E4y+EBHs//SiGbblGe7IeduP/IH4ddCcj0qp3PHwDwGnuvqEAnKlq/Q==
