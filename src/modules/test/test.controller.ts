@@ -1,5 +1,6 @@
 import type {ReqRefDefaults, Request, ResponseObject, ResponseToolkit} from '@hapi/hapi';
 import {Service} from "typedi";
+import {fileProcessor} from "../../helpers/fileProcessor";
 
 
 @Service()
@@ -17,6 +18,11 @@ export class TestController {
         // let result : {total_count: number, data: any[]} = await service.getAll(limit, pageNo, params)
         // if(!result || result.total_count<1) return h.response("No data found").code(204)
         // return h.response(await payloadFormatter(result)).code(200)
+    }
+    public async upload(req: Request, h:ResponseToolkit<ReqRefDefaults>) : Promise<ResponseObject>{
+        //@ts-ignore
+        let path: string = await fileProcessor(req.payload.photo, ["jpg", "jpeg", "png"], 2000000)
+        return h.response(path).code(200)
     }
 
     // public async getOne(req: Request, h:ResponseToolkit<ReqRefDefaults>): Promise<RequestObject>{

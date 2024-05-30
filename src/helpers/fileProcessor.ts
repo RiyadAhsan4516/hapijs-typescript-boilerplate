@@ -11,7 +11,7 @@ export async function fileProcessor(uploaded_file: any, allowed_types: string[],
             throw badData("Bad file was provided. Upload failed");
         }
     });
-    return dest.split("public")[1];
+    return dest.split("public/")[1];
 }
 
 
@@ -24,6 +24,6 @@ async function checkFileTypeAndReturnPath(uploaded_file: any, allowed_types : st
 
 
 async function getUploadDestination(folder : string | null, filepath: string, uploaded_file: any, fileType: string){
-    if (folder) return `${filepath}/${folder}/${uploaded_file.path.split("tmp")[1]}.${fileType}`
+    if (folder) return `${filepath}/${folder}${uploaded_file.path.split("tmp")[1]}.${fileType}`
     else return `${filepath}${uploaded_file.path.split("tmp")[1]}.${fileType}`
 }

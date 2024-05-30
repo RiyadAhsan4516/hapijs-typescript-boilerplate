@@ -1,7 +1,6 @@
 // Third party imports
 import * as dotenv from "dotenv"
-dotenv.config();
-import {Server, ServerApplicationState} from "@hapi/hapi"
+import {Request, Server, ServerApplicationState} from "@hapi/hapi"
 import {join} from "path";
 import * as inert from "@hapi/inert";
 import * as HapiJwt from "hapi-auth-jwt2";
@@ -10,7 +9,6 @@ import * as pino from "hapi-pino";
 import * as static_auth from 'hapi-auth-bearer-token';
 import {createClient} from "redis";
 import {Container} from "typedi";
-import {ReqRefDefaults, Request, ResponseToolkit} from "@hapi/hapi";
 import * as hapi_rate_limitor from "hapi-rate-limitor";
 
 // @ts-ignore
@@ -22,10 +20,9 @@ import {eventHandlerPlugin} from "./src/helpers/customPlugins";
 
 // Local routes imports
 import routes from "./src/routes";
-import {badRequest} from "@hapi/boom";
-import {errorCatcher} from "./src/helpers/errorCatcher";
 import fs from "fs/promises";
 
+dotenv.config();
 
 
 // ********************************************
@@ -55,7 +52,7 @@ const server : Server<ServerApplicationState> = new Server({
     debug: false,
     routes: {
         files:{
-            relativeTo: join(__dirname, 'public')
+            relativeTo: join(__dirname, 'src', 'public')
         },
         cors: {
             origin: ["*"],
@@ -164,18 +161,12 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
 
     server.route({
         method: "GET",
-        path: `/api/v1/file`,
-        handler: errorCatcher(async function (req: Request, h: ResponseToolkit<ReqRefDefaults>) {
-            // @ts-ignore
-            let path: string = req.query["path"]
-            if (!path) throw badRequest("file path not found in query")
-            let root_path: string = join(__dirname)
-            const distRegEx: RegExp = /dist/;
-            let filepath: string
-            if (distRegEx.test(root_path)) filepath = join(__dirname, '/..', '/..', 'public', path)
-            else filepath = join(__dirname, '/..', 'public', path)
-            return h.file(filepath, {confine: false}).header('Cache-Control', "public, max-age=3600")
-        })
+        path: `/{path*}`,
+        handler:{
+            file: function(req : Request){
+                return req.params.path
+            }
+        }
     });
 
     server.route(routes);

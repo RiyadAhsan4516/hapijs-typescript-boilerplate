@@ -17,6 +17,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TestController = void 0;
 const typedi_1 = require("typedi");
+const fileProcessor_1 = require("../../helpers/fileProcessor");
 let TestController = class TestController {
     getAll(req, h) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -31,6 +32,13 @@ let TestController = class TestController {
             // let result : {total_count: number, data: any[]} = await service.getAll(limit, pageNo, params)
             // if(!result || result.total_count<1) return h.response("No data found").code(204)
             // return h.response(await payloadFormatter(result)).code(200)
+        });
+    }
+    upload(req, h) {
+        return __awaiter(this, void 0, void 0, function* () {
+            //@ts-ignore
+            let path = yield (0, fileProcessor_1.fileProcessor)(req.payload.photo, ["jpg", "jpeg", "png"], 2000000);
+            return h.response(path).code(200);
         });
     }
 };

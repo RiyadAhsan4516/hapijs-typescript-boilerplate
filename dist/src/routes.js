@@ -27,6 +27,7 @@ const inputValidator_1 = require("./helpers/inputValidator");
 const fileProcessor_1 = require("./helpers/fileProcessor");
 const imageResizer_1 = require("./helpers/imageResizer");
 const test_controller_1 = require("./modules/test/test.controller");
+const multipartConfiguration_1 = require("./helpers/multipartConfiguration");
 const prefix = "/api/v1";
 const routes = [
     // FEATURE : LOGIN/LOGOUT
@@ -111,16 +112,7 @@ const routes = [
         method: "POST",
         path: `${prefix}/user_profile/create_new`,
         options: {
-            payload: {
-                allow: "multipart/form-data",
-                parse: true,
-                multipart: {
-                    output: "file"
-                },
-                maxBytes: 1000 * 1000 * 2, // 2 Mb
-                timeout: 60000,
-                uploads: 'public/tmp',
-            }
+            payload: (0, multipartConfiguration_1.multipartConfig)(2, 60000)
         },
         handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(userProfile_controller_1.UserProfileController).createProfile)
     },
@@ -170,15 +162,7 @@ const routes = [
         method: "POST",
         path: `${prefix}/test_image_resizer`,
         options: {
-            payload: {
-                allow: "multipart/form-data",
-                parse: true,
-                multipart: {
-                    output: "file", // use file to allow multiple files
-                },
-                maxBytes: 1000 * 1000 * 3, // 3 Mb
-                uploads: 'public/tmp',
-            }
+            payload: (0, multipartConfiguration_1.multipartConfig)(3, 60000)
         },
         handler: (0, errorCatcher_1.errorCatcher)(function (req, h) {
             return __awaiter(this, void 0, void 0, function* () {
@@ -189,6 +173,14 @@ const routes = [
                 // return h.response(req.info.remoteAddress)
             });
         })
-    }
+    },
+    {
+        method: "POST",
+        path: `${prefix}/upload_test`,
+        options: {
+            payload: (0, multipartConfiguration_1.multipartConfig)(2, 60000)
+        },
+        handler: (0, errorCatcher_1.errorCatcher)(typedi_1.Container.get(test_controller_1.TestController).upload)
+    },
 ];
 exports.default = routes;

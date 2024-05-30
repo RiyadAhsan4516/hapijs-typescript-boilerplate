@@ -25,7 +25,7 @@ function fileProcessor(uploaded_file_1, allowed_types_1) {
                 throw (0, boom_1.badData)("Bad file was provided. Upload failed");
             }
         });
-        return dest.split("public")[1];
+        return dest.split("public/")[1];
     });
 }
 exports.fileProcessor = fileProcessor;
@@ -41,7 +41,7 @@ function checkFileTypeAndReturnPath(uploaded_file, allowed_types) {
 function getUploadDestination(folder, filepath, uploaded_file, fileType) {
     return __awaiter(this, void 0, void 0, function* () {
         if (folder)
-            return `${filepath}/${folder}/${uploaded_file.path.split("tmp")[1]}.${fileType}`;
+            return `${filepath}/${folder}${uploaded_file.path.split("tmp")[1]}.${fileType}`;
         else
             return `${filepath}${uploaded_file.path.split("tmp")[1]}.${fileType}`;
     });

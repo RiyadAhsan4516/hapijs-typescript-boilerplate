@@ -7,9 +7,9 @@
   "license": "MIT",
   "scripts": {
     "prod": "NODE_ENV=production pm2 start ./dist/server.js -i 0 --name HapiScript --watch",
-    "dev": "tsc && ts-node-dev --respawn server.ts",
+    "dev": "ts-node-dev --respawn server.ts",
     "test": "yarn run dist && pm2 start ./dist/app.js -i 1 --name HapiScript --watch",
-    "copy-assets": "cp -r assets dist"
+    "build": "tsc && cp -r src/public dist/src && cp -r private_key.pem dist && cp -r public_key.pem dist && cp -r src/modules/authorization/access_model.conf dist/src/modules/authorization"
   },
   "dependencies": {
     "@hapi/bell": "^13.0.1",

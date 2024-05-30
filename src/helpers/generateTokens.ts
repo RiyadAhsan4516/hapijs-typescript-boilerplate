@@ -5,7 +5,7 @@ import {join} from "path"
 
 @Service()
 export class GenerateTokens{
-    public async createToken(payload: string | Buffer | object, expire: number | string){
+    public async createToken(payload: string | Buffer | object, expire: number | string) : Promise<string>{
         let path : any = join(__dirname, '../', '../', 'private_key.pem')
         const privateKey: string = await readFile(path, 'utf8')
         return sign(payload, privateKey, {

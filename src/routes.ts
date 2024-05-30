@@ -15,6 +15,7 @@ import {inputValidations} from "./helpers/inputValidator";
 import {fileProcessor} from "./helpers/fileProcessor";
 import {imageResizer} from "./helpers/imageResizer";
 import {TestController} from "./modules/test/test.controller";
+import {multipartConfig} from "./helpers/multipartConfiguration";
 
 const prefix : string = "/api/v1"
 
@@ -105,16 +106,7 @@ const routes : ServerRoute[] = [
         method: "POST",
         path: `${prefix}/user_profile/create_new`,
         options:  {
-            payload: {
-                allow: "multipart/form-data",
-                parse: true,
-                multipart: {
-                    output: "file"
-                },
-                maxBytes: 1000 * 1000 * 2, // 2 Mb
-                timeout: 60000,
-                uploads: 'public/tmp',
-            }
+            payload: multipartConfig(2, 60000)
         },
         handler: errorCatcher(Container.get(UserProfileController).createProfile)
     },
@@ -164,15 +156,7 @@ const routes : ServerRoute[] = [
         method: "POST",
         path: `${prefix}/test_image_resizer`,
         options: {
-          payload: {
-              allow: "multipart/form-data",
-              parse: true,
-              multipart: {
-                  output: "file",    // use file to allow multiple files
-              },
-              maxBytes: 1000 * 1000 * 3, // 3 Mb
-              uploads: 'public/tmp',
-          }
+          payload: multipartConfig(3, 60000)
         },
         handler: errorCatcher(async function(req: any, h:ResponseToolkit<ReqRefDefaults>){
             const {payload} = req
@@ -180,7 +164,15 @@ const routes : ServerRoute[] = [
             return await imageResizer({width: 100, height: 100}, payload.profile_photo)
             // return h.response(req.info.remoteAddress)
         })
-    }
+    },
+    {
+        method: "POST",
+        path: `${prefix}/upload_test`,
+        options: {
+            payload: multipartConfig(2, 60000)
+        },
+        handler: errorCatcher(Container.get(TestController).upload)
+    },
 ]
 
 export default routes;

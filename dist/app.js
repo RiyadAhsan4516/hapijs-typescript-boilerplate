@@ -38,7 +38,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.client = exports.start = exports.init = void 0;
 // Third party imports
 const dotenv = __importStar(require("dotenv"));
-dotenv.config();
 const hapi_1 = require("@hapi/hapi");
 const path_1 = require("path");
 const inert = __importStar(require("@hapi/inert"));
@@ -56,9 +55,8 @@ const authentication_controller_1 = require("./src/modules/authentication/authen
 const customPlugins_1 = require("./src/helpers/customPlugins");
 // Local routes imports
 const routes_1 = __importDefault(require("./src/routes"));
-const boom_1 = require("@hapi/boom");
-const errorCatcher_1 = require("./src/helpers/errorCatcher");
 const promises_1 = __importDefault(require("fs/promises"));
+dotenv.config();
 // ********************************************
 // *                                          *
 // *         CREATE REDIS CONNECTION          *
@@ -83,7 +81,7 @@ const server = new hapi_1.Server({
     debug: false,
     routes: {
         files: {
-            relativeTo: (0, path_1.join)(__dirname, 'public')
+            relativeTo: (0, path_1.join)(__dirname, 'src', 'public')
         },
         cors: {
             origin: ["*"],
@@ -176,23 +174,12 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     });
     server.route({
         method: "GET",
-        path: `/api/v1/file`,
-        handler: (0, errorCatcher_1.errorCatcher)(function (req, h) {
-            return __awaiter(this, void 0, void 0, function* () {
-                // @ts-ignore
-                let path = req.query["path"];
-                if (!path)
-                    throw (0, boom_1.badRequest)("file path not found in query");
-                let root_path = (0, path_1.join)(__dirname);
-                const distRegEx = /dist/;
-                let filepath;
-                if (distRegEx.test(root_path))
-                    filepath = (0, path_1.join)(__dirname, '/..', '/..', 'public', path);
-                else
-                    filepath = (0, path_1.join)(__dirname, '/..', 'public', path);
-                return h.file(filepath, { confine: false }).header('Cache-Control', "public, max-age=3600");
-            });
-        })
+        path: `/{path*}`,
+        handler: {
+            file: function (req) {
+                return req.params.path;
+            }
+        }
     });
     server.route(routes_1.default);
     return server;
