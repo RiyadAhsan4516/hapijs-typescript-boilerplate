@@ -1,6 +1,6 @@
 {
   "name": "hapiscript",
-  "version": "1.0.0",
+  "version": "2.0.1",
   "description": "hapi.js with typescript",
   "main": "src/server.ts",
   "author": "Riyad Ahsan",
@@ -10,7 +10,7 @@
     "dev": "ts-node-dev --respawn src/server.ts",
     "test": "yarn run dist && pm2 start ./dist/app.js -i 1 --name HapiScript --watch",
     "build": "tsc && cp -r src/public dist && cp -r src/private_key.pem dist && cp -r src/public_key.pem dist && cp -r src/modules/authorization/access_model.conf dist/modules/authorization",
-    "openssl" : "openssl genrsa -out src/private_key.pem 2048 && openssl rsa -pubout -in src/private_key.pem -out src/public_key.pem"
+    "openssl": "openssl genrsa -out src/private_key.pem 2048 && openssl rsa -pubout -in src/private_key.pem -out src/public_key.pem"
   },
   "dependencies": {
     "@hapi/bell": "^13.0.1",
@@ -23,7 +23,6 @@
     "bcryptjs": "^2.4.3",
     "casbin": "^5.27.0",
     "crypto-js": "^4.2.0",
-    "dotenv": "^16.3.0",
     "gm": "^1.25.0",
     "hapi-auth-bearer-token": "^8.0.0",
     "hapi-rate-limitor": "^3.1.2",
