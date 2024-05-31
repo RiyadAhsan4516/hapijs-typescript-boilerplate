@@ -2,14 +2,15 @@
   "name": "hapiscript",
   "version": "1.0.0",
   "description": "hapi.js with typescript",
-  "main": "server.ts",
+  "main": "src/server.ts",
   "author": "Riyad Ahsan",
   "license": "MIT",
   "scripts": {
     "prod": "NODE_ENV=production pm2 start ./dist/server.js -i 0 --name HapiScript --watch",
-    "dev": "ts-node-dev --respawn server.ts",
+    "dev": "ts-node-dev --respawn src/server.ts",
     "test": "yarn run dist && pm2 start ./dist/app.js -i 1 --name HapiScript --watch",
-    "build": "tsc && cp -r src/public dist/src && cp -r private_key.pem dist && cp -r public_key.pem dist && cp -r src/modules/authorization/access_model.conf dist/src/modules/authorization"
+    "build": "tsc && cp -r src/public dist && cp -r src/private_key.pem dist && cp -r src/public_key.pem dist && cp -r src/modules/authorization/access_model.conf dist/modules/authorization",
+    "openssl" : "openssl genrsa -out src/private_key.pem 2048 && openssl rsa -pubout -in src/private_key.pem -out src/public_key.pem"
   },
   "dependencies": {
     "@hapi/bell": "^13.0.1",

@@ -51,11 +51,12 @@ const hapi_rate_limitor = __importStar(require("hapi-rate-limitor"));
 // @ts-ignore
 const scooter = __importStar(require("@hapi/scooter"));
 // Local module imports
-const authentication_controller_1 = require("./src/modules/authentication/authentication.controller");
-const customPlugins_1 = require("./src/helpers/customPlugins");
+const authentication_controller_1 = require("./modules/authentication/authentication.controller");
+const customPlugins_1 = require("./helpers/customPlugins");
 // Local routes imports
-const routes_1 = __importDefault(require("./src/routes"));
+const routes_1 = __importDefault(require("./routes"));
 const promises_1 = __importDefault(require("fs/promises"));
+const payloadFormatter_1 = require("./helpers/payloadFormatter");
 dotenv.config();
 // ********************************************
 // *                                          *
@@ -110,7 +111,6 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     // CREATE CUSTOM EVENTS
     server.event("empty_temp");
     // REGISTER PLUGINS
-    // @ts-ignore
     yield server.register([
         {
             plugin: inert // inert is a plugin used for serving static files
@@ -159,9 +159,8 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
         }
     ]);
     // EXTRACT THE KEY FOR IS LOGGED IN JWT VERIFICATION
-    // IF PRIVATE KEY IS NOT CREATED, THEN CREATE IT : openssl genrsa -out private_key.pem 2048
-    // IF PUBLIC KEY IS NOT CREATED, THEN CREATE IT AS WELL : openssl rsa -pubout -in private_key.pem -out public_key.pem
-    const publicKey = yield promises_1.default.readFile("./public_key.pem", 'utf8');
+    // RUN "yarn run openssl" TO GENERATE THE PUBLIC AND PRIVATE KEYS
+    const publicKey = yield promises_1.default.readFile((0, path_1.join)(__dirname, "public_key.pem"), 'utf8');
     server.auth.strategy('jwt', 'jwt', {
         key: publicKey,
         validate: typedi_1.Container.get(authentication_controller_1.AuthController).isLoggedIn, // the token will be decoded by the plugin automatically
@@ -172,6 +171,14 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     server.auth.strategy('static', 'bearer-access-token', {
         validate: typedi_1.Container.get(authentication_controller_1.AuthController).staticTokenValidator
     });
+    // SERVER DECORATOR
+    function success(result, code) {
+        return __awaiter(this, void 0, void 0, function* () {
+            //@ts-ignore
+            return this.response(yield (0, payloadFormatter_1.payloadFormatter)(result)).code(code);
+        });
+    }
+    server.decorate('toolkit', 'success', success);
     server.route({
         method: "GET",
         path: `/{path*}`,

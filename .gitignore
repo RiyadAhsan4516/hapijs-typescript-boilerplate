@@ -3,5 +3,5 @@
 .env
 yarn-error.log
 app.log
-private_key.pem
-public_key.pem
+src/private_key.pem
+src/public_key.pem

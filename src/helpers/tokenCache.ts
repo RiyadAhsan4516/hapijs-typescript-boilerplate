@@ -1,4 +1,4 @@
-import {client} from "../../app";
+import {client} from "../app";
 import {forbidden} from "@hapi/boom";
 import {type_validation} from "./customInterfaces";
 import {Container} from "typedi";

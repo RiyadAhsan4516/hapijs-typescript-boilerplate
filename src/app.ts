@@ -1,6 +1,6 @@
 // Third party imports
 import * as dotenv from "dotenv"
-import {Request, Server, ServerApplicationState} from "@hapi/hapi"
+import {Request, ResponseObject, Server, ServerApplicationState} from "@hapi/hapi"
 import {join} from "path";
 import * as inert from "@hapi/inert";
 import * as HapiJwt from "hapi-auth-jwt2";
@@ -15,12 +15,13 @@ import * as hapi_rate_limitor from "hapi-rate-limitor";
 import * as scooter from "@hapi/scooter"
 
 // Local module imports
-import {AuthController} from "./src/modules/authentication/authentication.controller";
-import {eventHandlerPlugin} from "./src/helpers/customPlugins";
+import {AuthController} from "./modules/authentication/authentication.controller";
+import {eventHandlerPlugin} from "./helpers/customPlugins";
 
 // Local routes imports
-import routes from "./src/routes";
+import routes from "./routes";
 import fs from "fs/promises";
+import {payloadFormatter} from "./helpers/payloadFormatter";
 
 dotenv.config();
 
@@ -91,7 +92,6 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
 
 
     // REGISTER PLUGINS
-    // @ts-ignore
     await server.register([
         {
             plugin: inert   // inert is a plugin used for serving static files
@@ -142,9 +142,8 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
 
 
     // EXTRACT THE KEY FOR IS LOGGED IN JWT VERIFICATION
-    // IF PRIVATE KEY IS NOT CREATED, THEN CREATE IT : openssl genrsa -out private_key.pem 2048
-    // IF PUBLIC KEY IS NOT CREATED, THEN CREATE IT AS WELL : openssl rsa -pubout -in private_key.pem -out public_key.pem
-    const publicKey: string = await fs.readFile("./public_key.pem", 'utf8')
+    // RUN "yarn run openssl" TO GENERATE THE PUBLIC AND PRIVATE KEYS
+    const publicKey: string = await fs.readFile(join(__dirname, "public_key.pem"), 'utf8')
     server.auth.strategy('jwt', 'jwt', {        // inject the auth strategy as jwt into the server
         key: publicKey,
         validate: Container.get(AuthController).isLoggedIn,      // the token will be decoded by the plugin automatically
@@ -152,11 +151,17 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
             algorithms: ["RS256"]
         }
     })
-
-
     server.auth.strategy('static', 'bearer-access-token', {
         validate: Container.get(AuthController).staticTokenValidator
     })
+
+
+    // SERVER DECORATOR
+    async function success(result: any, code: number): Promise<ResponseObject>{
+        //@ts-ignore
+        return this.response(await payloadFormatter(result)).code(code)
+    }
+    server.decorate('toolkit', 'success', success)
 
 
     server.route({

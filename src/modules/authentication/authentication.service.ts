@@ -7,7 +7,7 @@ import {badData, forbidden, unauthorized} from "@hapi/boom";
 import {UserRepository} from "../userAccount/userAccount.repository";
 import {User} from "../userAccount/userAccount.entity";
 import {type_validation} from "../../helpers/customInterfaces";
-import {client} from "../../../app";
+import {client} from "../../app";
 import {tokenInvalidator, tokenRenew} from "../../helpers/tokenCache";
 import fs from "fs/promises";
 import jwt, {VerifyErrors} from "jsonwebtoken";

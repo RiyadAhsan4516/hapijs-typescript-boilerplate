@@ -26,7 +26,7 @@ const boom_1 = require("@hapi/boom");
 // LOCAL IMPORTS
 const userAccount_repository_1 = require("../userAccount/userAccount.repository");
 const customInterfaces_1 = require("../../helpers/customInterfaces");
-const app_1 = require("../../../app");
+const app_1 = require("../../app");
 const tokenCache_1 = require("../../helpers/tokenCache");
 const promises_1 = __importDefault(require("fs/promises"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));

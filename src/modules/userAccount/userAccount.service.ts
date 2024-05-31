@@ -2,6 +2,7 @@ import {UserRepository} from "./userAccount.repository";
 import {Service} from "typedi";
 import {Container} from "typedi";
 import moment from "moment";
+import {User} from "./userAccount.entity";
 
 @Service()
 export class UserService {
@@ -16,7 +17,7 @@ export class UserService {
         return await this.repository.getAllUsers(limit, pageNo, params)
     }
 
-    async getOne(id: number) {
+    async getOne(id: number): Promise<User | null> {
         return await this.repository.getOneUser(id);
     }
 

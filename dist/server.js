@@ -34,7 +34,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
-const data_source_1 = require("./src/data-source");
+const data_source_1 = require("./data-source");
 require("reflect-metadata");
 const app_1 = require("./app");
 // ********************************************

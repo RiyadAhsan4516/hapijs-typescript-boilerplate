@@ -1,7 +1,6 @@
 import Joi from "joi";
 
 namespace type_validation{
-
     export interface tokenFormat{
         id: number,
         role: string,

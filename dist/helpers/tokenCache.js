@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.tokenRenew = exports.tokenInvalidator = exports.tokenSetup = void 0;
-const app_1 = require("../../app");
+const app_1 = require("../app");
 const boom_1 = require("@hapi/boom");
 const typedi_1 = require("typedi");
 const generateTokens_1 = require("./generateTokens");

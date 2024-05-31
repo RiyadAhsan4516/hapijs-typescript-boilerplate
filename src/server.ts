@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv"
 dotenv.config();
 
-import {AppDataSource} from "./src/data-source";
+import {AppDataSource} from "./data-source";
 import "reflect-metadata";
 import {init, start} from "./app";
 import * as Hapi from "@hapi/hapi";
