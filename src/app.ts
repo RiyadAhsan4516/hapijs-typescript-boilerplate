@@ -157,8 +157,7 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
 
 
     // SERVER DECORATOR
-    async function success(result: any, code: number): Promise<ResponseObject>{
-        //@ts-ignore
+    async function success(this: any, result: any, code: number): Promise<ResponseObject>{
         return this.response(await payloadFormatter(result)).code(code)
     }
     server.decorate('toolkit', 'success', success)

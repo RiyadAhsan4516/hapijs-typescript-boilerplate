@@ -174,7 +174,6 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     // SERVER DECORATOR
     function success(result, code) {
         return __awaiter(this, void 0, void 0, function* () {
-            //@ts-ignore
             return this.response(yield (0, payloadFormatter_1.payloadFormatter)(result)).code(code);
         });
     }
