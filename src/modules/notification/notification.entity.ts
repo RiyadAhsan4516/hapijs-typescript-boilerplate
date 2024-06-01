@@ -6,8 +6,7 @@ interface notification{
     read_status: number
 }
 
-@Entity()
-
+@Entity({name: "notification"})
 export class Notification implements notification{
 
     @PrimaryGeneratedColumn()

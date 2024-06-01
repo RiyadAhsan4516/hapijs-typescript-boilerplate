@@ -27,5 +27,5 @@ __decorate([
     __metadata("design:type", Number)
 ], Notification.prototype, "read_status", void 0);
 exports.Notification = Notification = __decorate([
-    (0, typeorm_1.Entity)()
+    (0, typeorm_1.Entity)({ name: "notification" })
 ], Notification);
