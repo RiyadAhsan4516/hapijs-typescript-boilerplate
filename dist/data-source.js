@@ -33,7 +33,7 @@ exports.AppDataSource = new typeorm_1.DataSource({
     database: process.env.DB_LOCAL,
     synchronize: true,
     logging: ["error"],
-    poolSize: 1,
+    poolSize: 10,
     entities: entity_list,
     namingStrategy: new typeorm_naming_strategies_1.SnakeNamingStrategy(),
     cache: {

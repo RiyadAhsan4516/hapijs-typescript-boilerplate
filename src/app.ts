@@ -92,6 +92,7 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
 
 
     // REGISTER PLUGINS
+    // @ts-ignore
     await server.register([
         {
             plugin: inert   // inert is a plugin used for serving static files

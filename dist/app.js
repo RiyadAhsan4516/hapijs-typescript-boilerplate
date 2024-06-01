@@ -111,6 +111,7 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     // CREATE CUSTOM EVENTS
     server.event("empty_temp");
     // REGISTER PLUGINS
+    // @ts-ignore
     yield server.register([
         {
             plugin: inert // inert is a plugin used for serving static files

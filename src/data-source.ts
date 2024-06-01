@@ -1,4 +1,4 @@
-import {DataSource} from "typeorm"
+import {DataSource, EntitySchema} from "typeorm"
 import {User} from "./modules/userAccount/userAccount.entity";
 import {UserProfile} from "./modules/userProfile/userProfile.entity";
 import {Roles} from "./modules/roles/roles.entity";
@@ -8,7 +8,7 @@ import {SnakeNamingStrategy} from "typeorm-naming-strategies";
 import TypeORMAdapter from "typeorm-adapter";
 import {CustomCasbinRule} from "./modules/authorization/casbin.entity";
 
-let entity_list : any  = [User, UserProfile, Roles, Notification, CustomCasbinRule]
+let entity_list : (Function | string | EntitySchema<any>)[] = [User, UserProfile, Roles, Notification, CustomCasbinRule] as (Function | string | EntitySchema<any>)[]
 
 export let casbin_adapter : TypeORMAdapter;
 TypeORMAdapter.newAdapter({
@@ -33,12 +33,12 @@ export const AppDataSource : DataSource = new DataSource({
     database: process.env.DB_LOCAL,
     synchronize: true,
     logging: ["error"],
-    poolSize: 1,
+    poolSize: 10,
     entities: entity_list,
     namingStrategy: new SnakeNamingStrategy(),
     cache: {
         duration: 1000
     },
-    subscribers: [PasswordEncryptionSubscriber] as any,
+    subscribers: [PasswordEncryptionSubscriber] as (Function)[],
     migrationsRun: true
 })
