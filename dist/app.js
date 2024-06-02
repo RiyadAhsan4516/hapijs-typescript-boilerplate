@@ -82,7 +82,7 @@ const server = new hapi_1.Server({
     debug: false,
     routes: {
         files: {
-            relativeTo: (0, path_1.join)(__dirname, 'src', 'public')
+            relativeTo: (0, path_1.join)(__dirname, '../', 'public')
         },
         cors: {
             origin: ["*"],
@@ -100,7 +100,7 @@ const server = new hapi_1.Server({
 // MULTIPLE TARGETS CAN ALSO BE SET AT ONCE. IN THAT CASE THE TARGETS MUST BE AN ARRAY
 let transport = {
     target: "pino/file",
-    options: { destination: `${__dirname}/app.log` }
+    options: { destination: `${__dirname}/../app.log` }
 };
 // ********************************************
 // *                                          *

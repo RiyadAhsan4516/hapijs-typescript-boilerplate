@@ -9,6 +9,6 @@ export function multipartConfig (size : number, timeout: number) : RouteOptionsP
         },
         maxBytes: 1000 * 1000 * size, // In MB
         timeout,
-        uploads: 'src/public/tmp',
+        uploads: 'public/tmp',
     }
 }

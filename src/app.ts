@@ -53,7 +53,7 @@ const server : Server<ServerApplicationState> = new Server({
     debug: false,
     routes: {
         files:{
-            relativeTo: join(__dirname, 'src', 'public')
+            relativeTo: join(__dirname, '../', 'public')
         },
         cors: {
             origin: ["*"],
@@ -74,7 +74,7 @@ const server : Server<ServerApplicationState> = new Server({
 // MULTIPLE TARGETS CAN ALSO BE SET AT ONCE. IN THAT CASE THE TARGETS MUST BE AN ARRAY
 let transport : any  = {        // THIS DATA IS STATIC SO ANY TYPE WILL DO NO HARM
     target : "pino/file",
-    options: { destination: `${__dirname}/app.log`}
+    options: { destination: `${__dirname}/../app.log`}
 }
 
 

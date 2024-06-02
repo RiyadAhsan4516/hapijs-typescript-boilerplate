@@ -10,7 +10,7 @@ function multipartConfig(size, timeout) {
         },
         maxBytes: 1000 * 1000 * size, // In MB
         timeout,
-        uploads: 'src/public/tmp',
+        uploads: 'public/tmp',
     };
 }
 exports.multipartConfig = multipartConfig;
