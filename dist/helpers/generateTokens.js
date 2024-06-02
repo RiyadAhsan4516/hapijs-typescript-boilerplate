@@ -23,7 +23,7 @@ const path_1 = require("path");
 let GenerateTokens = class GenerateTokens {
     createToken(payload, expire) {
         return __awaiter(this, void 0, void 0, function* () {
-            let path = (0, path_1.join)(__dirname, '../', '../', 'private_key.pem');
+            let path = (0, path_1.join)(__dirname, '../', 'private_key.pem');
             const privateKey = yield (0, promises_1.readFile)(path, 'utf8');
             return (0, jsonwebtoken_1.sign)(payload, privateKey, {
                 expiresIn: expire,
