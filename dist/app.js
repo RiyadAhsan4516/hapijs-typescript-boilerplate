@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.client = exports.start = exports.init = void 0;
+exports.client = exports.init = void 0;
 // Third party imports
 const dotenv = __importStar(require("dotenv"));
 const hapi_1 = require("@hapi/hapi");
@@ -192,13 +192,3 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     return server;
 });
 exports.init = init;
-// ********************************************
-// *                                          *
-// *         SERVER START FUNCTION            *
-// *                                          *
-// ********************************************
-const start = (server) => __awaiter(void 0, void 0, void 0, function* () {
-    yield server.start();
-    return server;
-});
-exports.start = start;

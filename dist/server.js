@@ -42,21 +42,9 @@ const app_1 = require("./app");
 // *        INITIALIZE THE DATABASE           *
 // *                                          *
 // ********************************************
-if (process.env.NODE_ENV === 'development') {
-    console.log("Environment switched to development");
-    data_source_1.AppDataSource.initialize()
-        .then(() => {
-        console.log("Data Source has been initialized!");
-    })
-        .catch((err) => {
-        console.error("Error during Data Source initialization", err);
-    });
-}
-else {
-    data_source_1.AppDataSource.initialize().catch((err) => {
-        console.error("Database failed to load : ", err);
-    });
-}
+data_source_1.AppDataSource.initialize().catch((err) => {
+    console.error("Database failed to load : ", err);
+});
 // ********************************************
 // *                                          *
 // *      HANDLE UNHANDLED REJECTIONS         *
@@ -75,15 +63,15 @@ function launch() {
     return __awaiter(this, void 0, void 0, function* () {
         if (process.env.NODE_ENV === 'development') {
             let server = yield (0, app_1.init)();
-            yield (0, app_1.start)(server);
+            yield server.start();
+            console.log(`[server]: ${process.env.LOCALHOST}:${process.env.PORT}`);
         }
         else {
             let server = yield (0, app_1.init)();
-            yield (0, app_1.start)(server);
+            yield server.start();
         }
     });
 }
 launch().then(() => { }).catch(err => {
-    console.log(err);
-    console.log("THERE WAS AN ERROR LAUNCHING THE SERVER");
+    console.log(`Launch failed : ${err}`);
 });

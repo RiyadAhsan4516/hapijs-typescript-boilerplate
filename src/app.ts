@@ -178,17 +178,4 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
     return server
 };
 
-
-
-// ********************************************
-// *                                          *
-// *         SERVER START FUNCTION            *
-// *                                          *
-// ********************************************
-
-const start = async (server:Server<ServerApplicationState>) : Promise<Server<ServerApplicationState>> =>{
-    await server.start();
-    return server
-}
-
-export {init, start, client}
+export {init, client}
