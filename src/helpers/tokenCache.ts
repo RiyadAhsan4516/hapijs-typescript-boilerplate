@@ -4,13 +4,23 @@ import {type_validation} from "./customInterfaces";
 import {Container} from "typedi";
 import {GenerateTokens} from "./generateTokens";
 
+interface tokenObject {
+    token : string,
+    status : boolean
+}
+
 interface tokenTypes {
     access: string,
     refresh: string
 }
 
+interface tokenPayload {
+    access : tokenObject,
+    refresh : tokenObject
+}
+
 export async function tokenSetup(tokens: tokenTypes, user_id: number, ip: string): Promise<void> {
-    let payload: any = {
+    let payload: tokenPayload = {
         access: {
             token: tokens.access,
             status: true

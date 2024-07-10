@@ -1,4 +1,4 @@
-import { EventSubscriber, EntitySubscriberInterface, InsertEvent, UpdateEvent } from 'typeorm';
+import {EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent} from 'typeorm';
 import {User} from "../modules/userAccount/userAccount.entity";
 import {hash} from 'bcryptjs';
 

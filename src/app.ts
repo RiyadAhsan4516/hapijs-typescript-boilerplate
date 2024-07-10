@@ -26,11 +26,11 @@ import {payloadFormatter} from "./helpers/payloadFormatter";
 dotenv.config();
 
 
-// ********************************************
-// *                                          *
-// *         CREATE REDIS CONNECTION          *
-// *                                          *
-// ********************************************
+// * * * * * * * * * * * * * * * * * * * * * *
+// *                                         *
+// *         CREATE REDIS CONNECTION         *
+// *                                         *
+// * * * * * * * * * * * * * * * * * * * * * *
 const client : any = createClient({url: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/0`});
 try{
     client.connect().then(()=>console.log("redis connected"));
@@ -41,11 +41,11 @@ try{
 
 
 
-// ********************************************
-// *                                          *
-// *         CREATE SERVER INSTANCE           *
-// *                                          *
-// ********************************************
+// * * * * * * * * * * * * * * * * * * * * * *
+// *                                         *
+// *         CREATE SERVER INSTANCE          *
+// *                                         *
+// * * * * * * * * * * * * * * * * * * * * * *
 
 const server : Server<ServerApplicationState> = new Server({
     port: process.env.PORT,
@@ -65,11 +65,11 @@ const server : Server<ServerApplicationState> = new Server({
 });
 
 
-// ********************************************
-// *                                          *
-// *          SET UP PINO LOGGER              *
-// *                                          *
-// ********************************************
+// * * * * * * * * * * * * * * * * * * * * * *
+// *                                         *
+// *          SET UP PINO LOGGER             *
+// *                                         *
+// * * * * * * * * * * * * * * * * * * * * * *
 
 // MULTIPLE TARGETS CAN ALSO BE SET AT ONCE. IN THAT CASE THE TARGETS MUST BE AN ARRAY
 let transport : any  = {        // THIS DATA IS STATIC SO ANY TYPE WILL DO NO HARM
@@ -79,11 +79,11 @@ let transport : any  = {        // THIS DATA IS STATIC SO ANY TYPE WILL DO NO HA
 
 
 
-// ********************************************
-// *                                          *
-// *          SERVER INITIALIZER              *
-// *                                          *
-// ********************************************
+// * * * * * * * * * * * * * * * * * * * * * *
+// *                                         *
+// *          SERVER INITIALIZER             *
+// *                                         *
+// * * * * * * * * * * * * * * * * * * * * * *
 
 const init = async () : Promise<Server<ServerApplicationState>> => {
 
@@ -180,11 +180,11 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
 
 
 
-// ********************************************
-// *                                          *
-// *         SERVER START FUNCTION            *
-// *                                          *
-// ********************************************
+// * * * * * * * * * * * * * * * * * * * * * *
+// *                                         *
+// *         SERVER START FUNCTION           *
+// *                                         *
+// * * * * * * * * * * * * * * * * * * * * * *
 
 const start = async (server:Server<ServerApplicationState>) : Promise<Server<ServerApplicationState>> =>{
     await server.start();
