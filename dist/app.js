@@ -58,11 +58,11 @@ const routes_1 = __importDefault(require("./routes"));
 const promises_1 = __importDefault(require("fs/promises"));
 const payloadFormatter_1 = require("./helpers/payloadFormatter");
 dotenv.config();
-// * * * * * * * * * * * * * * * * * * * * * *
-// *                                         *
-// *         CREATE REDIS CONNECTION         *
-// *                                         *
-// * * * * * * * * * * * * * * * * * * * * * *
+// ********************************************
+// *                                          *
+// *         CREATE REDIS CONNECTION          *
+// *                                          *
+// ********************************************
 const client = (0, redis_1.createClient)({ url: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/0` });
 exports.client = client;
 try {
@@ -71,11 +71,11 @@ try {
 catch (err) {
     console.log(err);
 }
-// * * * * * * * * * * * * * * * * * * * * * *
-// *                                         *
-// *         CREATE SERVER INSTANCE          *
-// *                                         *
-// * * * * * * * * * * * * * * * * * * * * * *
+// ********************************************
+// *                                          *
+// *         CREATE SERVER INSTANCE           *
+// *                                          *
+// ********************************************
 const server = new hapi_1.Server({
     port: process.env.PORT,
     host: process.env.LOCALHOST,
@@ -92,21 +92,21 @@ const server = new hapi_1.Server({
         }
     },
 });
-// * * * * * * * * * * * * * * * * * * * * * *
-// *                                         *
-// *          SET UP PINO LOGGER             *
-// *                                         *
-// * * * * * * * * * * * * * * * * * * * * * *
+// ********************************************
+// *                                          *
+// *          SET UP PINO LOGGER              *
+// *                                          *
+// ********************************************
 // MULTIPLE TARGETS CAN ALSO BE SET AT ONCE. IN THAT CASE THE TARGETS MUST BE AN ARRAY
 let transport = {
     target: "pino/file",
     options: { destination: `${__dirname}/../app.log` }
 };
-// * * * * * * * * * * * * * * * * * * * * * *
-// *                                         *
-// *          SERVER INITIALIZER             *
-// *                                         *
-// * * * * * * * * * * * * * * * * * * * * * *
+// ********************************************
+// *                                          *
+// *          SERVER INITIALIZER              *
+// *                                          *
+// ********************************************
 const init = () => __awaiter(void 0, void 0, void 0, function* () {
     // CREATE CUSTOM EVENTS
     server.event("empty_temp");
@@ -192,11 +192,11 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     return server;
 });
 exports.init = init;
-// * * * * * * * * * * * * * * * * * * * * * *
-// *                                         *
-// *         SERVER START FUNCTION           *
-// *                                         *
-// * * * * * * * * * * * * * * * * * * * * * *
+// ********************************************
+// *                                          *
+// *         SERVER START FUNCTION            *
+// *                                          *
+// ********************************************
 const start = (server) => __awaiter(void 0, void 0, void 0, function* () {
     yield server.start();
     return server;
