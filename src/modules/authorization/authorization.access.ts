@@ -45,7 +45,29 @@ export class CasbinEnforcer {
         newEnforcer(join(__dirname, 'access_model.conf'), casbin_adapter).then((e: Enforcer)=> this.enforcer = e)
     }
 
-    async authorize(sub : string, obj: string, act : string){
+    async checkAuthorization(sub : string, obj: string, act : string): Promise<void>{
+        // STEP 1 : LOAD THE FILTERED POLICY HERE
+        await this.enforcer.loadFilteredPolicy({
+            'ptype': 'p',
+            'v0' : sub,
+            'v1' : obj
+        })
+
+        // STEP 2 : CHECK PERMISSION
         if(! await this.enforcer.enforce(sub, obj, act)) throw forbidden("you do not have permission to perform this action")
+    }
+
+    async addPolicy(sub: string, obj: string, act: string) : Promise<void> {
+        await this.enforcer.addPolicy(sub, obj, act)
+        await this.savePolicy();
+    }
+
+    async removePolicy(sub: string, obj: string, act: string) : Promise<void> {
+        await this.enforcer.removePolicy(sub, obj, act)
+        await this.savePolicy();
+    }
+
+    async savePolicy() : Promise<void> {
+        await this.enforcer.savePolicy();
     }
 }
