@@ -1,6 +1,6 @@
 import type {ReqRefDefaults, Request, ResponseObject, ResponseToolkit} from '@hapi/hapi';
 import {Inject, Service} from "typedi";
-import * as Boom from "@hapi/boom";
+import {badRequest} from "@hapi/boom";
 import {NotificationService} from "./notification.service";
 import {Notification} from "./notification.entity";
 
@@ -17,7 +17,7 @@ export class NotificationController{
         //@ts-ignore
         let notification : string = req.payload["notification"];
         let result : Notification[] =  await this.service.createNotification(notification);
-        if(result.length<1) throw Boom.badRequest("no notification was created");
+        if(result.length<1) throw badRequest("no notification was created");
         return result;
     }
 
