@@ -1,6 +1,6 @@
 // THIRD PARTY IMPORTS
 import Joi from "joi";
-import {ReqRefDefaults, ResponseToolkit, Server} from "@hapi/hapi";
+import {ReqRefDefaults, Request, ResponseToolkit, Server} from "@hapi/hapi";
 import {Container} from "typedi";
 import {badData} from "@hapi/boom";
 
@@ -23,10 +23,29 @@ export function serverRoutes(server: Server) {
     let authController : AuthController = Container.get(AuthController);
     let rolesController : RoleController = Container.get(RoleController);
     let userAccountController : UserAccountController = Container.get(UserAccountController);
+    let notificationController : NotificationController = Container.get(NotificationController);
     
 
     return server.route(
         [
+
+            // FEATURE : SERVE FILE
+            {
+                method: "GET",
+                path: `/{path*}`,
+                options: {
+                    cache: {
+                        expiresIn: 5 * 60 * 1000, // Cache for 5 minutes (in milliseconds)
+                        privacy: 'public',        // Cache should be public
+                    }
+                },
+                handler:{
+                    file: function(req : Request){
+                        return req.params.path
+                    }
+                }
+            },
+
 
             // FEATURE : LOGIN/LOGOUT
             {
@@ -136,7 +155,7 @@ export function serverRoutes(server: Server) {
             {
                 method: "GET",
                 path: `${prefix}/notification`,
-                handler : errorCatcher(Container.get(NotificationController).getNotification)
+                handler : errorCatcher(notificationController.getNotification.bind(notificationController))
             },
             {
                 method: "POST",
@@ -148,7 +167,7 @@ export function serverRoutes(server: Server) {
                         })
                     }
                 },
-                handler: errorCatcher(Container.get(NotificationController).createNotification)
+                handler: errorCatcher(notificationController.createNotification.bind(notificationController))
             },
             {
                 method: "PUT",
@@ -161,7 +180,7 @@ export function serverRoutes(server: Server) {
                         })
                     }
                 },
-                handler: errorCatcher(Container.get(NotificationController).changeReadStatus)
+                handler: errorCatcher(notificationController.changeReadStatus.bind(notificationController))
             },
 
 

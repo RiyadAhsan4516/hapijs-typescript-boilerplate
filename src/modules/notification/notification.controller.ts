@@ -1,16 +1,22 @@
 import type {ReqRefDefaults, Request, ResponseObject, ResponseToolkit} from '@hapi/hapi';
-import {Container, Service} from "typedi";
+import {Inject, Service} from "typedi";
 import * as Boom from "@hapi/boom";
 import {NotificationService} from "./notification.service";
 import {Notification} from "./notification.entity";
 
 @Service()
 export class NotificationController{
+    
+    constructor(
+        @Inject() private readonly service : NotificationService
+    ) {
+    }
+    
     // POST A NOTIFICATION. INITIALLY WITH THE STATUS 0
     public async createNotification(req: Request, h:ResponseToolkit<ReqRefDefaults>){
         //@ts-ignore
         let notification : string = req.payload["notification"];
-        let result : Notification[] =  await Container.get(NotificationService).createNotification(notification);
+        let result : Notification[] =  await this.service.createNotification(notification);
         if(result.length<1) throw Boom.badRequest("no notification was created");
         return result;
     }
@@ -29,17 +35,17 @@ export class NotificationController{
     //
     //     // const stream : ResponseStream = new ResponseStream();
     //     const stream : PassThrough = new PassThrough();
-    //     let service : NotificationService = Container.get(NotificationService);
+    //    
     //
     //     let intervalId : NodeJS.Timer = setInterval(async () => {
-    //         let data : Notification[] = await service.serveNotification();
+    //         let data : Notification[] = await this.service.serveNotification();
     //         if (data.length > 0) {
     //             for(let i: number = 0 ; i<data.length; i++){
     //                 stream.write(`id: ${data[i].id}\n`);
     //                 stream.write('data:' + data[i].notification + ';\n\n');
     //
     //                 // CHANGE READ STATUS
-    //                 await service.changeStatus(data[i].id, 1);
+    //                 await this.service.changeStatus(data[i].id, 1);
     //             }
     //         }
     //         //@ts-ignore
@@ -56,15 +62,14 @@ export class NotificationController{
 
     // USING PACKAGE =>
     public async getNotification(req: Request, h:any) : Promise<ResponseObject>{
-        let service : NotificationService = Container.get(NotificationService);
         let res = h.event({id: 0, data : "Event source initiated"})
         let intervalId : NodeJS.Timer | any = setInterval(async () => {
-            let data : Notification[] = await service.serveNotification();
+            let data : Notification[] = await this.service.serveNotification();
             if (data.length > 0) {
                 for(let i: number = 0 ; i<data.length; i++){
                     h.event({id : data[i].id, data : data[i].notification})
                     // CHANGE READ STATUS
-                    await service.changeStatus(data[i].id, 1);
+                    await this.service.changeStatus(data[i].id, 1);
                 }
             }
         }, 1000);
@@ -80,7 +85,7 @@ export class NotificationController{
     // CHANGE NOTIFICATION STATUS TO 2 WHEN IT IS READ
     public async changeReadStatus(req: Request, h:ResponseToolkit<ReqRefDefaults>){
         let id : number = +req.params["id"];
-        return await Container.get(NotificationService).changeStatus(+id, 2);
+        return await this.service.changeStatus(+id, 2);
     }
 
 }

@@ -1,6 +1,6 @@
 // Third party imports
 import * as dotenv from "dotenv"
-import {Request, ResponseObject, Server, ServerApplicationState} from "@hapi/hapi"
+import {ResponseObject, Server, ServerApplicationState} from "@hapi/hapi"
 import {join} from "path";
 import * as inert from "@hapi/inert";
 import * as HapiJwt from "hapi-auth-jwt2";
@@ -147,7 +147,6 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
     ]);
 
 
-    // EXTRACT THE KEY FOR IS LOGGED IN JWT VERIFICATION
     // RUN "yarn run openssl" TO GENERATE THE PUBLIC AND PRIVATE KEYS
     const publicKey: string = await fs.readFile(join(__dirname, '../', "public_key.pem"), 'utf8')
     let authController : AuthController = Container.get(AuthController)
@@ -171,23 +170,6 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
         return this.response(compressedData).code(code).header('Content-Encoding', 'gzip').type("application/json")
     }
     server.decorate('toolkit', 'success', success)
-
-    // FILE SERVING ROUTE
-    server.route({
-        method: "GET",
-        path: `/{path*}`,
-        options: {
-            cache: {
-                expiresIn: 5 * 60 * 1000, // Cache for 5 minutes (in milliseconds)
-                privacy: 'public',        // Cache should be public
-            }
-        },
-        handler:{
-            file: function(req : Request){
-                return req.params.path
-            }
-        }
-    });
 
     // CALL THE ROUTES FUNCTION TO GET ALL THE ROUTES
     serverRoutes(server)
