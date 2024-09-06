@@ -1,24 +1,29 @@
-import {Repository} from "typeorm";
+import {ObjectLiteral, Repository} from "typeorm";
 import {AppDataSource} from "./data-source";
 import {Service} from "typedi";
 import {paginate} from "./helpers/paginator";
 
 
 @Service()
-export class RepoFactory {
+export class RepoFactory<T extends ObjectLiteral> {
 
-    private repository: Repository<any>
-    private entity : any
+    private repository : Repository<T>;
 
-    public set repoSetter(entity: any){
-        this.entity = entity
-        this.repository = AppDataSource.getRepository(entity)
+    constructor(private readonly entity: { new (): T }){
+        this.repository = AppDataSource.getRepository(this.entity)
     }
+
+    // private repository: Repository<any>
+    // private entity : any
+    //
+    // public set repoSetter(entity: any){
+    //     this.entity = entity
+    //     this.repository = AppDataSource.getRepository(entity)
+    // }
 
     async create(payload: any){
         await this.repository.createQueryBuilder()
             .insert()
-            .into(this.entity)
             .values(payload)
             .execute()
         return {message: "Data inserted successfully"}
@@ -33,7 +38,7 @@ export class RepoFactory {
         return await paginate(query, limit, pageNo, {"modified_at": "DESC"})
     }
 
-    async getOne(id: string){
+    async getOne(id: string) : Promise<T | null>{
         return await this.repository.createQueryBuilder()
             .where("id = :id", {id})
             .maxExecutionTime(1000)
@@ -42,7 +47,7 @@ export class RepoFactory {
 
     async update(payload: any, id: string) {
         await this.repository.createQueryBuilder()
-            .update(this.entity)
+            .update()
             .set(payload)
             .where("id = :id", {id})
             .execute()
@@ -52,16 +57,14 @@ export class RepoFactory {
     async delete(id: string){
         await this.repository.createQueryBuilder()
             .delete()
-            .from(this.entity)
             .where("id = :id", {id})
             .execute()
-
         return {message: "Data has been deleted"}
     }
 
     async addQuery(query: any, params: any) {
         // ADD QUERIES HERE
-        if(params){/*set params here*/}
+        if(params){}
         return query
     }
 

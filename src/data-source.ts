@@ -1,36 +1,50 @@
 import {DataSource, EntitySchema} from "typeorm"
-import {User} from "./modules/userAccount/userAccount.entity";
-import {UserProfile} from "./modules/userProfile/userProfile.entity";
 import {Roles} from "./modules/roles/roles.entity";
 import {Notification} from "./modules/notification/notification.entity";
 import {PasswordEncryptionSubscriber} from "./helpers/passwordEncryptionSubscriber";
 import {SnakeNamingStrategy} from "typeorm-naming-strategies";
 import TypeORMAdapter from "typeorm-adapter";
 import {CustomCasbinRule} from "./modules/authorization/casbin.entity";
+import {AuthTokensEntity} from "./modules/authentication/authTokens.entity";
+import {UserAccountEntity} from "./modules/userAccount/userAccount.entity";
 
-let entity_list : (Function | string | EntitySchema<any>)[] = [User, UserProfile, Roles, Notification, CustomCasbinRule] as (Function | string | EntitySchema<any>)[]
+let entity_list: (Function | string | EntitySchema)[] =
+    [
+        UserAccountEntity, Roles, Notification, CustomCasbinRule, AuthTokensEntity,
+    ] as (Function | string | EntitySchema)[]
 
-export let casbin_adapter : TypeORMAdapter;
+
+let username: string | undefined = process.env.DB_USER;
+let password: string | undefined = process.env.DB_PASSWORD;
+let database: string | undefined = process.env.DB_LOCAL;
+
+if (process.env.NODE_ENV == 'production') {
+    username = process.env.DB_PROD_USER;
+    password = process.env.DB_PROD_PASSWORD;
+    database = process.env.DB_PROD;
+}
+
+export let casbin_adapter: TypeORMAdapter;
 TypeORMAdapter.newAdapter({
         type: 'mysql',
         host: 'localhost',
         port: 3306,
-        username: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_LOCAL,
+        username,
+        password,
+        database,
     },
     {
         customCasbinRuleEntity: CustomCasbinRule,
     },
-).then((a: TypeORMAdapter)=> casbin_adapter = a)
+).then((a: TypeORMAdapter) => casbin_adapter = a)
 
-export const AppDataSource : DataSource = new DataSource({
+export const AppDataSource: DataSource = new DataSource({
     type: "mariadb",
     host: "localhost",
     port: 3306,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_LOCAL,
+    username,
+    password,
+    database,
     synchronize: true,
     logging: ["error"],
     poolSize: 10,

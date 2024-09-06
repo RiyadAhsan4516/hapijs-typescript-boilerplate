@@ -1,11 +1,11 @@
-import {CreateDateColumn, Entity, UpdateDateColumn} from "typeorm";
+import {Column, Entity} from "typeorm";
 import {CasbinRule} from "typeorm-adapter";
 
 @Entity('casbin_rule')
 export class CustomCasbinRule extends CasbinRule {
-    @CreateDateColumn()
-    createdDate: Date;
+    @Column({type: "date", nullable: true})
+    created_at: Date;
 
-    @UpdateDateColumn()
-    updatedDate: Date;
+    @Column({type: "date", nullable: true})
+    updated_at: Date;
 }

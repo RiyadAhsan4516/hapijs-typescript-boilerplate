@@ -11,17 +11,15 @@ import {createClient} from "redis";
 import {Container} from "typedi";
 import * as hapi_rate_limitor from "hapi-rate-limitor";
 
-// @ts-ignore
-import * as scooter from "@hapi/scooter"
-
 // Local module imports
 import {AuthController} from "./modules/authentication/authentication.controller";
 import {eventHandlerPlugin} from "./helpers/customPlugins";
 
 // Local routes imports
-import routes from "./routes";
+import {serverRoutes} from "./routes";
 import fs from "fs/promises";
 import {payloadFormatter} from "./helpers/payloadFormatter";
+import {payloadCompressor} from "./helpers/payloadCompressor";
 
 dotenv.config();
 
@@ -33,7 +31,9 @@ dotenv.config();
 // ********************************************
 const client : any = createClient({url: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/0`});
 try{
-    client.connect().then(()=>console.log("redis connected"));
+    client.connect().then(()=>{
+        if (process.env.NODE_ENV == "development") console.log("redis connected")
+    });
 }catch(err){
     console.log(err);
 }
@@ -47,9 +47,18 @@ try{
 // *                                          *
 // ********************************************
 
+let port: string | undefined | number = process.env.PORT;
+let host: string | undefined = process.env.LOCALHOST;
+
+if (process.env.NODE_ENV == 'production') {
+    port = process.env.PROD_PORT;
+    host = process.env.PRODUCTION;
+}
+
+
 const server : Server<ServerApplicationState> = new Server({
-    port: process.env.PORT,
-    host: process.env.LOCALHOST,
+    port,
+    host,
     debug: false,
     routes: {
         files:{
@@ -92,7 +101,6 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
 
 
     // REGISTER PLUGINS
-    // @ts-ignore
     await server.register([
         {
             plugin: inert   // inert is a plugin used for serving static files
@@ -136,37 +144,44 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
                 Server : server
             }
         },
-        {
-            plugin : scooter
-        }
     ]);
 
 
     // EXTRACT THE KEY FOR IS LOGGED IN JWT VERIFICATION
     // RUN "yarn run openssl" TO GENERATE THE PUBLIC AND PRIVATE KEYS
-    const publicKey: string = await fs.readFile(join(__dirname, "public_key.pem"), 'utf8')
+    const publicKey: string = await fs.readFile(join(__dirname, '../', "public_key.pem"), 'utf8')
+    let authController : AuthController = Container.get(AuthController)
     server.auth.strategy('jwt', 'jwt', {        // inject the auth strategy as jwt into the server
         key: publicKey,
-        validate: Container.get(AuthController).isLoggedIn,      // the token will be decoded by the plugin automatically
+        validate: authController.isLoggedIn.bind(authController),      // the token will be decoded by the plugin automatically
         verifyOptions : {
             algorithms: ["RS256"]
         }
     })
+
     server.auth.strategy('static', 'bearer-access-token', {
-        validate: Container.get(AuthController).staticTokenValidator
+        validate: authController.staticTokenValidator.bind(authController)
     })
 
 
     // SERVER DECORATOR
     async function success(this: any, result: any, code: number): Promise<ResponseObject>{
-        return this.response(await payloadFormatter(result)).code(code)
+        let data : any = await payloadFormatter(result)
+        let compressedData : Buffer = await payloadCompressor(data)
+        return this.response(compressedData).code(code).header('Content-Encoding', 'gzip').type("application/json")
     }
     server.decorate('toolkit', 'success', success)
 
-
+    // FILE SERVING ROUTE
     server.route({
         method: "GET",
         path: `/{path*}`,
+        options: {
+            cache: {
+                expiresIn: 5 * 60 * 1000, // Cache for 5 minutes (in milliseconds)
+                privacy: 'public',        // Cache should be public
+            }
+        },
         handler:{
             file: function(req : Request){
                 return req.params.path
@@ -174,21 +189,12 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
         }
     });
 
-    server.route(routes);
+    // CALL THE ROUTES FUNCTION TO GET ALL THE ROUTES
+    serverRoutes(server)
+
     return server
 };
 
 
 
-// ********************************************
-// *                                          *
-// *         SERVER START FUNCTION            *
-// *                                          *
-// ********************************************
-
-const start = async (server:Server<ServerApplicationState>) : Promise<Server<ServerApplicationState>> =>{
-    await server.start();
-    return server
-}
-
-export {init, start, client}
+export {init, client}

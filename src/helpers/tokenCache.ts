@@ -1,64 +1,40 @@
 import {client} from "../app";
-import {forbidden} from "@hapi/boom";
 import {type_validation} from "./customInterfaces";
-import {Container} from "typedi";
-import {GenerateTokens} from "./generateTokens";
+import {join} from "path";
+import {readFile} from "fs/promises";
+import {sign} from "jsonwebtoken";
 
-interface tokenObject {
-    token : string,
-    status : boolean
+
+// NEEDED
+export async function tokenInvalidator(token: string, expires_at: number): Promise<boolean> {      // CHECKED
+    await client.set(token, "true")
+    await client.expire(token, expires_at)
+
+    return true
 }
 
-interface tokenTypes {
-    access: string,
-    refresh: string
-}
-
-interface tokenPayload {
-    access : tokenObject,
-    refresh : tokenObject
-}
-
-export async function tokenSetup(tokens: tokenTypes, user_id: number, ip: string): Promise<void> {
-    let payload: tokenPayload = {
-        access: {
-            token: tokens.access,
-            status: true
-        },
-        refresh: {
-            token: tokens.refresh,
-            status: true
-        }
-    }
-    await client.hSet(`tokens-${user_id}`, ip, JSON.stringify(payload))
-    await client.expire(`tokens-${user_id}`, 24 * 60 * 60)
-}
-
-export async function tokenInvalidator(user_id: number, ip: string): Promise<void> {
-    let cached_tokens: any = JSON.parse(await client.hGet(`tokens-${user_id}`, ip))
-    if (!cached_tokens) throw forbidden("You are not authorized to perform this action")
-
-    let token_list: string[] = [cached_tokens.access.token, cached_tokens.refresh.token]
-    let invalid_tokens = JSON.parse(await client.hGet(`blacklist-${user_id}`, ip))
-    if (invalid_tokens && invalid_tokens.length > 0) {
-        token_list = [...token_list, ...invalid_tokens]
-    }
-
-    await client.hSet(`blacklist-${user_id}`, ip, JSON.stringify(token_list))
-    await client.expire(`blacklist-${user_id}`, 24 * 60 * 60)
-}
-
+// NEEDED
 export async function tokenRenew(user: any, ip: string): Promise<{ accessToken: string, refreshToken: string }> {
+
     const payload: type_validation.tokenFormat = {
         id: user.id,
         role: user.role_id.name,
         rateLimit: 100
     }
-    const accessToken: string = await Container.get(GenerateTokens).createToken(payload, "15m")
-    const refreshToken: string = await Container.get(GenerateTokens).createToken(payload, "1d")
 
-    // SET UP NEW TOKENS IN REDIS
-    await tokenSetup({access: accessToken, refresh: refreshToken}, user.id, ip)
+    let path : any = join(__dirname, '../', '../', 'private_key.pem')
+    const privateKey: string = await readFile(path, 'utf8')
+
+    let accessToken : string = sign(payload, privateKey, {
+        expiresIn: "15m",
+        algorithm: "RS256"
+    })
+
+    let refreshToken : string =  sign(payload, privateKey, {
+        expiresIn: "1d",
+        algorithm: "RS256"
+    })
+
 
     return {accessToken, refreshToken}
 }

@@ -39,13 +39,13 @@ process.on('unhandledRejection', (err) => {
 
 async function launch(){
     if(process.env.NODE_ENV === 'development') {
-        let server : Hapi.Server<Hapi.ServerApplicationState> =   await init();
-        await server.start();
         console.log(`[server]: ${process.env.LOCALHOST}:${process.env.PORT}`)
     } else {
-        let server : Hapi.Server<Hapi.ServerApplicationState> =   await init();
-        await server.start();
+        console.log("Environment switched to production")
     }
+
+    let server : Hapi.Server<Hapi.ServerApplicationState> =  await init();
+    await server.start();
 }
 
 launch().then(() : void=>{}).catch(err=>{

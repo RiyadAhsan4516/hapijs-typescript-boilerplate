@@ -1,5 +1,8 @@
-import {rename} from "fs";
+import {rename, unlink} from "fs";
 import {badData, unsupportedMediaType} from "@hapi/boom";
+import {join} from "path";
+
+// MEMO : FILE PROCESSOR ALWAYS UPLOADS THE IMAGE IN A SUB DIRECTORY NAMED ORIGINAL INSIDE THE PROVIDED MAIN DIRECTORY
 
 export async function fileProcessor(
     uploaded_file: any,
@@ -11,7 +14,7 @@ export async function fileProcessor(
     if (uploaded_file.bytes > file_size) throw badData("the uploaded file is too large!")
     let {fileType, filepath} = await checkFileTypeAndReturnPath(uploaded_file, allowed_types);
     let dest: string = await getUploadDestination(folder, filepath, uploaded_file, fileType)
-    await rename(uploaded_file.path, dest, (err: NodeJS.ErrnoException | null): void => {
+    rename(uploaded_file.path, dest, (err: NodeJS.ErrnoException | null): void => {
         if (err) {
             throw badData("Bad file was provided. Upload failed");
         }
@@ -29,6 +32,16 @@ async function checkFileTypeAndReturnPath(uploaded_file: any, allowed_types: str
 
 
 async function getUploadDestination(folder: string | null, filepath: string, uploaded_file: any, fileType: string) : Promise<string> {
-    if (folder) return `${filepath}/${folder}${uploaded_file.path.split("tmp")[1]}.${fileType}`
+    if (folder) return `${filepath}/${folder}/original${uploaded_file.path.split("tmp")[1]}.${fileType}`
     else return `${filepath}${uploaded_file.path.split("tmp")[1]}.${fileType}`
+}
+
+
+export async function deleteFile(image_path: string) : Promise<void> {
+    let filePath : string = join(__dirname, '/..', '/..', 'public', image_path)
+    unlink(filePath, (err: NodeJS.ErrnoException | null): void => {
+        if (err) {
+            console.error(`Failed to delete file: ${filePath}`, err);
+        }
+    })
 }

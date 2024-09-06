@@ -1,10 +1,10 @@
 import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
-import {User} from "../userAccount/userAccount.entity";
+import {UserAccountEntity} from "../userAccount/userAccount.entity";
 
 interface role{
     id: number,
     name: string,
-    user_id: User []
+    user_id: UserAccountEntity []
 }
 
 @Entity()
@@ -17,7 +17,7 @@ export class Roles implements role{
     @Column({length:50})
     name: string
 
-    @OneToMany(()=> User, (user_id : User )=> user_id.role_id)
-    user_id: User[]
+    @OneToMany(()=> UserAccountEntity, (user_id : UserAccountEntity )=> user_id.role_id)
+    user_id: UserAccountEntity[]
 
 }

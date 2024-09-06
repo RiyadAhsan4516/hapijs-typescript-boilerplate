@@ -1,18 +1,18 @@
 import {EntitySubscriberInterface, EventSubscriber, InsertEvent, UpdateEvent} from 'typeorm';
-import {User} from "../modules/userAccount/userAccount.entity";
 import {hash} from 'bcryptjs';
+import {UserAccountEntity} from "../modules/userAccount/userAccount.entity";
 
 @EventSubscriber()
-export class PasswordEncryptionSubscriber implements EntitySubscriberInterface<User> {
+export class PasswordEncryptionSubscriber implements EntitySubscriberInterface<UserAccountEntity> {
     listenTo() {
-        return User;
+        return UserAccountEntity;
     }
 
-    async beforeInsert(event: InsertEvent<User>) {
+    async beforeInsert(event: InsertEvent<UserAccountEntity>) {
         event.entity.password = await hash(event.entity.password, 10);
     }
 
-    async beforeUpdate(event: UpdateEvent<Partial<User>>){
+    async beforeUpdate(event: UpdateEvent<Partial<UserAccountEntity>>){
         if(event?.entity?.password) event.entity.password = await hash(event.entity.password, 10)
     }
 

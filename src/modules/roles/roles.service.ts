@@ -1,14 +1,15 @@
 import {RoleRepository} from "./roles.repository";
 import {Roles} from "./roles.entity";
-import {Service, Container} from "typedi";
+import {Inject, Service} from "typedi";
 import {Boom} from "@hapi/boom";
 
 @Service()
 export class RoleService{
-    private _roleRepo: RoleRepository
 
-    constructor() {
-        this._roleRepo = Container.get(RoleRepository);
+
+    constructor(
+        @Inject() private _roleRepo: RoleRepository
+    ) {
     }
 
     public async getAllRoles(){

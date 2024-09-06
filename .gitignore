@@ -1,7 +1,7 @@
 /node_modules
 .idea
-.env
 yarn-error.log
 app.log
-src/private_key.pem
-src/public_key.pem
+private_key.pem
+public_key.pem
+/dist/

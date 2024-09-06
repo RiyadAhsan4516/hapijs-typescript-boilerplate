@@ -4,7 +4,7 @@ interface Order {
     [key: string] : "ASC" | "DESC"
 }
 
-export async function paginate(query : SelectQueryBuilder<any>, limit: number, pageNo: number, order : Order) : Promise<{total_count: number, data : any[]}>{
+export async function paginate(query : SelectQueryBuilder<any>, limit: number, pageNo: number, order : Order | {}) : Promise<{total_count: number, data : any[]}>{
     let take : number = limit;
     let skip : number = (pageNo-1) * limit;
 

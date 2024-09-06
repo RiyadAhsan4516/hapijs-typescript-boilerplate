@@ -1,81 +1,53 @@
 // THIRD PARTY IMPORTS
 import type {ReqRefDefaults, Request, ResponseObject, ResponseToolkit} from '@hapi/hapi';
-import {Container, Service} from "typedi";
-import {AES, enc} from "crypto-js";
+import {Inject, Service} from "typedi";
 
 // LOCAL IMPORTS
 import {AuthService} from "./authentication.service";
-import {type_validation} from "../../helpers/customInterfaces";
+import {ResponseType} from "../../extensions";
+import {sendEmail} from "../../helpers/email";
+import {unauthorized} from "@hapi/boom";
 
 
 @Service()
 export class AuthController {
 
+    constructor(
+        @Inject(() => AuthService) private readonly service: AuthService,
+    ) {
+    }
+
     // FEATURE : USER LOGIN
-    public async provideSaltKey(req: Request, h: ResponseToolkit<ReqRefDefaults>): Promise<ResponseObject> {
-        let saltKey: string;
-        req.query["key"] === "1" ? saltKey = "5425e523c30a45e504780e952d57ed15" : saltKey = 'b2aeffe655c33180cfdc4a949957cb5f'
-        return h.response({salt: saltKey}).code(200)
-    }
-
-    public async saltLogin(req: Request, h: ResponseToolkit<ReqRefDefaults>): Promise<any> {
-        const service: AuthService = Container.get(AuthService);
-        //@ts-ignore
-        const {data} = req.payload;
-
-        // DECRYPT THE DATA AND EXTRACT THE EMAIL AND PASSWORD
-        const bytes: CryptoJS.lib.WordArray = AES.decrypt(data, "5425e523c30a45e504780e952d57ed15");
-        const originalData: type_validation.loginInfo = JSON.parse(bytes.toString(enc.Utf8));
-
-        // SEND DECRYPTED DATA TO SERVICE TO COMPLETE VALIDATION.
-        const result: type_validation.generatedTokens = await service.validateLogin(originalData, req.info.remoteAddress);
-
-        // SET THE COOKIE WITH NECESSARY OPTIONS
-        h.state('refresh', result.refreshToken, {
-            encoding: 'none',
-            isSecure: true,
-            isHttpOnly: true,
-            isSameSite: "None"
-        })
-
-        // ENCRYPT THE ACCESS TOKEN
-        let accessToken: string = AES.encrypt(result.accessToken, 'b2aeffe655c33180cfdc4a949957cb5f').toString()
-
-        // RETURN THE ACCESS TOKEN ALONG WITH A MESSAGE
-        return {
-            message: "Login successful",
-            token: `Bearer ${accessToken}`
-        }
-
-    }
-
-    public async generalLogin(req: Request, h: ResponseToolkit<ReqRefDefaults>): Promise<ResponseObject> {
-        const service: AuthService = Container.get(AuthService);
+    public async generalLogin(req: Request, h: ResponseType): Promise<ResponseObject> {
+        // const service: AuthService = Container.get(AuthService);
         const {email, password}: any = req.payload;
-        const result: { accessToken: string, refreshToken: string } = await service.validateLogin({email, password}, req.info.remoteAddress);
+        const result: { accessToken: string, refreshToken: string } = await this.service.validateLogin({
+            email,
+            password
+        }, req.info.remoteAddress);
 
         // SET NAME OF THE REFRESH COOKIE ACCORDING TO THE ORIGIN
         let name: string = req.headers.origin?.split("://")[1].split(".")[0].concat(`-refresh`)
+        // let name: string = 'designer-refresh'
 
         // SET THE COOKIE WITH NECESSARY OPTIONS
         h.state(name, result.refreshToken, {encoding: 'none', isSecure: true, isHttpOnly: true, isSameSite: "None"})
 
         // RETURN THE ACCESS TOKEN ALONG WITH A MESSAGE
-        return h.response({
+        return h.success({
             message: "Login successful",
             token: `${result.accessToken}`
-        }).code(200)
+        }, 200)
     }
 
 
     // FEATURE : CHECK LOGGED IN USER
-    public async isLoggedIn(decoded: any, req: Request, h: ResponseToolkit<ReqRefDefaults>): Promise<{ isValid: boolean }> {
+    public async isLoggedIn(decoded: any, req: Request, h: ResponseToolkit<ReqRefDefaults>): Promise<{
+        isValid: boolean
+    }> {
         let token: string = req.headers.authorization.split(" ")[1]
-        let url: string = `/api${req.url.href.split("api")[1]}`
-        let method: string = req.method
-        return await Container.get(AuthService).validateTokenInfo(decoded, token, url, method, req.info.remoteAddress);
+        return await this.service.validateTokenInfo(token);
     }
-
 
     public async staticTokenValidator(req: Request, token: string, h: ResponseToolkit<ReqRefDefaults>): Promise<{
         isValid: boolean,
@@ -90,38 +62,86 @@ export class AuthController {
     }
 
 
-    // FEATURE: TAKE REFRESH TOKEN
-    public async refreshToken(req: Request, h: ResponseToolkit<ReqRefDefaults>): Promise<ResponseObject> {
-        let service: AuthService = Container.get(AuthService)
+    // FEATURE : TAKE REFRESH TOKEN
+    public async refreshToken(req: Request, h: ResponseType): Promise<ResponseObject> {
         // SET NAME OF THE REFRESH COOKIE ACCORDING TO THE ORIGIN
-        let name : string = req.headers.origin.split("://")[1].split(".")[0].concat("-refresh")
-        let payload : any = await service.refreshToken(req.state[name], req.info.remoteAddress)
+        let name: string = req.headers.origin.split("://")[1].split(".")[0].concat("-refresh")
+        // let name : string = "designer-refresh"
+        if (!req.state[name]) throw unauthorized("no refresh token found")
+        let payload: any = await this.service.refreshToken(req.state[name], req.info.remoteAddress)
         h.state(name, payload.refreshToken, {encoding: 'none', isSecure: true, isHttpOnly: true, isSameSite: "None"})
-        return h.response({token: payload.accessToken}).code(200)
+        return h.success({token: payload.accessToken}, 200)
     }
 
 
     // FEATURE : LOGOUT USER
-    public async logout(req: Request, h: ResponseToolkit<ReqRefDefaults>): Promise<ResponseObject> {
-
-        let user_id: string = `${req.auth.credentials.id}`
-        // let access_token: string = req.headers.authorization.split(" ")[1]
-
-        // CALL AUTH SERVICE AND LOGOUT THE USER
-        const service: AuthService = Container.get(AuthService);
-        const result: { accessToken: string, refreshToken: string } = await service.logoutUser(user_id, req.info.remoteAddress);
+    public async logout(req: Request, h: ResponseType): Promise<ResponseObject> {
 
         // SET NAME OF THE REFRESH COOKIE ACCORDING TO THE ORIGIN
-        let name : string = req.headers.origin.split("://")[1].split(".")[0].concat(`-refresh`)
+        let name: string = req.headers.origin.split("://")[1].split(".")[0].concat(`-refresh`)
+        // let name : string = "designer-refresh"
+
+        let access_token: string = req.headers.authorization.split(" ")[1]
+
+        // CALL AUTH SERVICE AND LOGOUT THE USER
+        const result: {
+            accessToken: string,
+            refreshToken: string
+        } = await this.service.logoutUser(req.state[name], access_token);
 
         // SET THE COOKIE WITH NECESSARY OPTIONS
         h.state(name, result.refreshToken, {encoding: 'none', isSecure: true, isHttpOnly: true, isSameSite: "None"})
 
         // RETURN THE ACCESS TOKEN ALONG WITH A MESSAGE
-        return h.response({
+        return h.success({
             message: "Logged out!",
             token: `${result.accessToken}`
-        }).unstate(name)
+        }, 200)
+    }
+
+
+    // FEATURE : FORGOT PASSWORD
+    public async forgotPassword(req: Request, h: ResponseType): Promise<ResponseObject> {
+        //@ts-ignore
+        let {email} = req.payload
+        // let service : AuthService = Container.get(AuthService)
+        let result: any = await this.service.forgotPassword(email)
+
+        let response: ResponseObject = await h.success({message: "recovery email sent"}, 200)
+
+        // STEP 3 : SEND EMAIL, SET CODE IN THE EMAIL
+        let options: any = {
+            email: result.user.email,
+            subject: 'Password Recovery',
+            message: `Please use this code to recover your password : ${result.code} . Note that this code will expire within 5 minutes`
+        }
+
+        sendEmail(options).then(() => console.log("email sent"))
+            .catch((err: any) => console.log(err))
+
+        // STEP 4 : SEND RESPONSE
+        return response
+    }
+
+    public async recoveryToken(req: Request, h: ResponseType): Promise<ResponseObject> {
+        //@ts-ignore
+        let {code} = req.payload
+        // let service : AuthService = Container.get(AuthService)
+        let result: { accessToken: string } = await this.service.passwordRecoveryToken(code)
+
+        // RETURN THE ACCESS TOKEN ALONG WITH A MESSAGE
+        return h.success({
+            message: "code validated",
+            token: `${result.accessToken}`
+        }, 200)
+    }
+
+    public async resetPassword(req: Request, h: ResponseType): Promise<ResponseObject> {
+        //@ts-ignore
+        let {new_password, confirm_password} = req.payload
+        let user_id: string = `${req.auth.credentials.id}`
+        let result = await this.service.setNewPassword(new_password, confirm_password, user_id);
+        return h.success(result, 200)
     }
 
 }

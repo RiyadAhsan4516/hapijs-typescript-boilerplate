@@ -1,23 +1,24 @@
-import {UserRepository} from "./userAccount.repository";
-import {Service} from "typedi";
-import {Container} from "typedi";
+import {UserAccountRepository} from "./userAccount.repository";
+import {Inject, Service} from "typedi";
 import moment from "moment";
-import {User} from "./userAccount.entity";
+import {UserAccountEntity} from "./userAccount.entity";
+import {RepoFactory} from "../../factory";
+
 
 @Service()
-export class UserService {
+export class UserAccountService {
 
-    private repository: UserRepository
-
-    constructor() {
-        this.repository = Container.get(UserRepository)
+    constructor(
+        @Inject() private repository: UserAccountRepository,
+        @Inject() private factory : RepoFactory<UserAccountEntity>
+    ) {
     }
 
     async getAll(limit: number, pageNo: number, params: { [key: string]: string }): Promise<{ total_count: number, data: any[] }> {
         return await this.repository.getAllUsers(limit, pageNo, params)
     }
 
-    async getOne(id: number): Promise<User | null> {
+    async getOne(id: number): Promise<UserAccountEntity | null> {
         return await this.repository.getOneUser(id);
     }
 
@@ -28,7 +29,7 @@ export class UserService {
     }
 
     async updateUser(inputs: any, id: string) {
-        return await this.repository.UpdateUser(inputs, id)
+        return await this.factory.update(inputs, id)
     }
 
 
