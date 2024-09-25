@@ -391,7 +391,7 @@
   resolved "https://registry.yarnpkg.com/@hapi/hoek/-/hoek-9.3.0.tgz#8368869dcb735be2e7f5cb7647de78e167a251fb"
   integrity sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==
 
-"@hapi/hoek@^11.0.0", "@hapi/hoek@^11.0.2":
+"@hapi/hoek@^11.0.0", "@hapi/hoek@^11.0.2", "@hapi/hoek@^11.0.4":
   version "11.0.4"
   resolved "https://registry.yarnpkg.com/@hapi/hoek/-/hoek-11.0.4.tgz#42a7f244fd3dd777792bfb74b8c6340ae9182f37"
   integrity sha512-PnsP5d4q7289pS2T2EgGz147BFJ2Jpb4yrEdkpz2IhgEUzos1S7HTl7ezWh1yfYzYlj89KzLdCRkqsP6SIryeQ==
@@ -1037,6 +1037,14 @@ braces@^3.0.2, braces@~3.0.2:
   integrity sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==
   dependencies:
     fill-range "^7.0.1"
+
+brok@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/brok/-/brok-6.0.0.tgz#82f081de7a180802c224955cb6c2888b81a27b28"
+  integrity sha512-z5ND+K0+Go4Doiq8GtEMuBicbbky2DSbNzrRqEnOFYJgqrSu85nK2HsczCRwd7UznHTSUVYEkuEpRm5HtfaCSw==
+  dependencies:
+    "@hapi/hoek" "^11.0.4"
+    "@hapi/validate" "^2.0.1"
 
 browserslist@^4.22.2:
   version "4.23.0"

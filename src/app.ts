@@ -3,6 +3,7 @@ import * as dotenv from "dotenv"
 import {ResponseObject, Server, ServerApplicationState} from "@hapi/hapi"
 import {join} from "path";
 import * as inert from "@hapi/inert";
+import * as brok from "brok";
 import * as HapiJwt from "hapi-auth-jwt2";
 import * as vision from "@hapi/vision";
 import * as pino from "hapi-pino";
@@ -115,7 +116,13 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
             plugin: vision  // a plugin used for rendering templates
         },
         {
-            plugin : require("susie")
+            plugin : require("susie")    // sse plugin for
+        },
+        {
+            plugin : brok,   // brotli encoder and decoder for hapi
+            options: {
+                compress: {quality : 5}
+            }
         },
         {
             plugin: pino,    // request logger
