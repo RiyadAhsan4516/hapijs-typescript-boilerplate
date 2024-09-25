@@ -171,12 +171,11 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
 
 
     // SERVER DECORATOR
-    async function success(this: any, result: any, code: number): Promise<ResponseObject>{
+    server.decorate('toolkit', 'success', async function success(this: any, result: any, code: number): Promise<ResponseObject>{
         let data : any = await payloadFormatter(result)
         let compressedData : Buffer = await payloadCompressor(data)
         return this.response(compressedData).code(code).header('Content-Encoding', 'gzip').type("application/json")
-    }
-    server.decorate('toolkit', 'success', success)
+    } )
 
     // CALL THE ROUTES FUNCTION TO GET ALL THE ROUTES
     serverRoutes(server)
