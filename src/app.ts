@@ -14,7 +14,7 @@ import * as hapi_rate_limitor from "hapi-rate-limitor";
 
 // Local module imports
 import {AuthController} from "./modules/authentication/authentication.controller";
-import {eventHandlerPlugin} from "./helpers/customPlugins";
+import {cronPlugin, eventHandlerPlugin} from "./helpers/customPlugins";
 
 // Local routes imports
 import {serverRoutes} from "./routes";
@@ -151,6 +151,9 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
                 Server : server
             }
         },
+        {
+            plugin : cronPlugin
+        }
     ]);
 
 

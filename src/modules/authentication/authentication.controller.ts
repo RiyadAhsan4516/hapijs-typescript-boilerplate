@@ -28,10 +28,16 @@ export class AuthController {
 
         // SET NAME OF THE REFRESH COOKIE ACCORDING TO THE ORIGIN
         let name: string = req.headers.origin?.split("://")[1].split(".")[0].concat(`-refresh`)
-        // let name: string = 'designer-refresh'
 
         // SET THE COOKIE WITH NECESSARY OPTIONS
-        h.state(name, result.refreshToken, {encoding: 'none', isSecure: true, isHttpOnly: true, isSameSite: "None"})
+        h.state(name, result.refreshToken, {
+            encoding: 'none',
+            isSecure: true,
+            isHttpOnly: true,
+            isSameSite: "None",
+            ttl: 86400000,
+            path: '/',
+        })
 
         // RETURN THE ACCESS TOKEN ALONG WITH A MESSAGE
         return h.success({
@@ -66,10 +72,18 @@ export class AuthController {
     public async refreshToken(req: Request, h: ResponseType): Promise<ResponseObject> {
         // SET NAME OF THE REFRESH COOKIE ACCORDING TO THE ORIGIN
         let name: string = req.headers.origin.split("://")[1].split(".")[0].concat("-refresh")
-        // let name : string = "designer-refresh"
+
         if (!req.state[name]) throw unauthorized("no refresh token found")
         let payload: any = await this.service.refreshToken(req.state[name], req.info.remoteAddress)
-        h.state(name, payload.refreshToken, {encoding: 'none', isSecure: true, isHttpOnly: true, isSameSite: "None"})
+        h.unstate(name, {path: '/'})
+        h.state(name, payload.refreshToken, {
+            encoding: 'none',
+            isSecure: true,
+            isHttpOnly: true,
+            isSameSite: "None",
+            ttl: 86400000,
+            path: '/',
+        })
         return h.success({token: payload.accessToken}, 200)
     }
 
@@ -90,6 +104,7 @@ export class AuthController {
         } = await this.service.logoutUser(req.state[name], access_token);
 
         // SET THE COOKIE WITH NECESSARY OPTIONS
+        h.unstate(name, {path: '/'})
         h.state(name, result.refreshToken, {encoding: 'none', isSecure: true, isHttpOnly: true, isSameSite: "None"})
 
         // RETURN THE ACCESS TOKEN ALONG WITH A MESSAGE

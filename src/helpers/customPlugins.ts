@@ -1,4 +1,6 @@
 import {Server} from "@hapi/hapi";
+import {schedule} from "node-cron";
+import {cronJobs} from "../modules/cronJobs/cronDistributor";
 
 type plugins = {
     name: string,
@@ -18,5 +20,15 @@ const eventHandlerPlugin : plugins = {
     }
 }
 
+const cronPlugin : plugins = {
+    name: 'hapi-schedule',
+    version: '0.1.0',
+    register: async function() : Promise<void>{
+        cronJobs.forEach((job: any)=> {
+            if(job.status) schedule(job.schedule, job.task)
+        })
+    }
+}
 
-export{eventHandlerPlugin}
+
+export{eventHandlerPlugin, cronPlugin}
