@@ -46,6 +46,22 @@ async function launch(){
 
     let server : Hapi.Server<Hapi.ServerApplicationState> =  await init();
     await server.start();
+
+    // Graceful shutdown
+    process.on('SIGINT', async () => {
+        console.log('Shutting down gracefully...');
+        await server.stop({ timeout: 10000 });
+        console.log('Server stopped');
+        process.exit(0);
+    });
+
+    process.on('SIGTERM', async () => {
+        console.log('Terminating server...');
+        await server.stop({ timeout: 10000 });
+        console.log('Server terminated');
+        process.exit(1);
+    });
+
 }
 
 launch().then(() : void=>{}).catch(err=>{

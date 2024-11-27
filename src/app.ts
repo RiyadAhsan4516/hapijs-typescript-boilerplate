@@ -30,7 +30,7 @@ dotenv.config();
 // *         CREATE REDIS CONNECTION          *
 // *                                          *
 // ********************************************
-const client : any = createClient({url: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/0`});
+const client : any = createClient({url: `redis://default:${process.env.REDIS_PASSWORD}@${process.env.REDIS_URL}`});
 try{
     client.connect().then(()=>{
         if (process.env.NODE_ENV == "development") console.log("redis connected")
@@ -135,7 +135,7 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
         {
             plugin : hapi_rate_limitor,
             options: {
-                redis: `redis://default:${process.env.REDIS_PASSWORD}@127.0.0.1:6379/0`,
+                redis: `redis://default:${process.env.REDIS_PASSWORD}@${process.env.REDIS_URL}`,
                 extensionPoint : 'onPostAuth',
                 namespace : 'hapi-rate-limitor',
                 max : 100,
@@ -177,7 +177,7 @@ const init = async () : Promise<Server<ServerApplicationState>> => {
     server.decorate('toolkit', 'success', async function success(this: any, result: any, code: number): Promise<ResponseObject>{
         let data : any = await payloadFormatter(result)
         let compressedData : Buffer = await payloadCompressor(data)
-        return this.response(compressedData).code(code).header('Content-Encoding', 'gzip').type("application/json")
+        return this.response(compressedData).code(code).header('Content-Encoding', 'gzip').header('Server', "Joker").type("application/json")
     } )
 
     // CALL THE ROUTES FUNCTION TO GET ALL THE ROUTES

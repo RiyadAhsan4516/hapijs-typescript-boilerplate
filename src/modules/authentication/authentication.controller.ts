@@ -93,7 +93,6 @@ export class AuthController {
 
         // SET NAME OF THE REFRESH COOKIE ACCORDING TO THE ORIGIN
         let name: string = req.headers.origin.split("://")[1].split(".")[0].concat(`-refresh`)
-        // let name : string = "designer-refresh"
 
         let access_token: string = req.headers.authorization.split(" ")[1]
 
