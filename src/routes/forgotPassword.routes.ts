@@ -1,5 +1,5 @@
 import {inputValidations} from "../helpers/inputValidator";
-import {errorCatcher} from "../helpers/errorCatcher";
+import {errorCatcher} from "../config/errorCatcher";
 import {Container} from "typedi";
 import {AuthController} from "../modules/authentication/authentication.controller";
 

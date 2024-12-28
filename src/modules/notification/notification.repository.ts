@@ -19,7 +19,6 @@ export class NotificationRepository{
                 .where('notification.read_status = :value', { value: 0 })
                 .getMany();
         }catch(err){
-            console.log(err);
             throw Boom.badData("getNotification query failed")
         }
     }
@@ -50,7 +49,6 @@ export class NotificationRepository{
 
             return true;
         }catch(err){
-            console.log(err)
             throw Boom.badData("updateReadStatus failed")
         }
 

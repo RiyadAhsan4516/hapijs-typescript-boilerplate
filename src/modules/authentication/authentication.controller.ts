@@ -130,7 +130,7 @@ export class AuthController {
             message: `Please use this code to recover your password : ${result.code} . Note that this code will expire within 5 minutes`
         }
 
-        sendEmail(options).then(() => console.log("email sent"))
+        sendEmail(options).then()
             .catch((err: any) => console.log(err))
 
         // STEP 4 : SEND RESPONSE

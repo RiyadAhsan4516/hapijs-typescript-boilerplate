@@ -1,4 +1,4 @@
-import {errorCatcher} from "../helpers/errorCatcher";
+import {errorCatcher} from "../config/errorCatcher";
 import {Container} from "typedi";
 import {multipartConfig} from "../config/multipartConfiguration";
 import {ReqRefDefaults, ResponseToolkit} from "@hapi/hapi";

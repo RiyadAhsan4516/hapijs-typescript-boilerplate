@@ -1,4 +1,4 @@
-import {errorCatcher} from "../helpers/errorCatcher";
+import {errorCatcher} from "../config/errorCatcher";
 import {Container} from "typedi";
 import {RoleController} from "../modules/roles/roles.controller";
 

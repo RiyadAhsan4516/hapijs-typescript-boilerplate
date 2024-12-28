@@ -1,5 +1,5 @@
 import {inputValidations} from "../helpers/inputValidator";
-import {errorCatcher} from "../helpers/errorCatcher";
+import {errorCatcher} from "../config/errorCatcher";
 import {Container} from "typedi";
 import Joi from "joi";
 import {badData} from "@hapi/boom";

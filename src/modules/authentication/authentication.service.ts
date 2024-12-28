@@ -2,6 +2,7 @@
 import {Inject, Service} from "typedi";
 import {compare} from "bcryptjs";
 import {badData, badRequest, forbidden, unauthorized} from "@hapi/boom";
+import {differenceInSeconds, add, isEqual, isAfter} from "date-fns";
 
 // LOCAL IMPORTS
 import {type_validation} from "../../helpers/customInterfaces";
@@ -10,7 +11,7 @@ import {tokenInvalidator, tokenRenew} from "../../helpers/tokenCache";
 import fs from "fs/promises";
 import jwt, {VerifyErrors} from "jsonwebtoken";
 import path from "path";
-import moment from "moment";
+
 import {GenerateTokens} from "../../helpers/generateTokens";
 import {AuthTokensRepository} from "./authTokens.repository";
 import {AuthTokensEntity} from "./authTokens.entity";
@@ -32,10 +33,13 @@ export class AuthService {
 
         // SEARCH THE DATABASE FOR THE ACCESS TOKEN USING THE REFRESH TOKEN
         let tokens: AuthTokensEntity | null = await this.authTokenRepo.getUsingRefresh(refresh_token)
+        let now : Date = new Date();
+        const refreshExpiresAt = new Date(tokens?.refresh_expires_at);
+        const accessExpiresAt = new Date(tokens?.access_expires_at);
 
         // INVALIDATE THE TOKEN WITH EXPIRATION TIME
-        let refresh_expires = moment(tokens?.refresh_expires_at).diff(moment(), 'seconds');
-        let access_expires = moment(tokens?.access_expires_at).diff(moment(), 'seconds');
+        let refresh_expires = differenceInSeconds(refreshExpiresAt, now);
+        let access_expires = differenceInSeconds(accessExpiresAt, now);
 
         // INVALIDATE THE REFRESH TOKEN
         await tokenInvalidator(refresh_token, refresh_expires)
@@ -75,8 +79,8 @@ export class AuthService {
             user_id: user.id,
             refresh_token: result.refreshToken,
             access_token: result.accessToken,
-            refresh_expires_at: moment().add(1, 'days').toISOString(),
-            access_expires_at: moment().add(15, 'minutes').toISOString()
+            refresh_expires_at: add(new Date(), { days: 1 }).toISOString(),
+            access_expires_at: add(new Date(), { minutes: 15 }).toISOString(),
         }
         await this.authTokenRepo.create(payload)
         return result
@@ -87,9 +91,6 @@ export class AuthService {
     }> {
 
         let validated = await client.get(token)
-
-        console.log("validated => ", validated)
-
         if (!validated) return {isValid: true}
         else return {isValid: false}
     }
@@ -120,16 +121,17 @@ export class AuthService {
         // CREATE AND RETURN NEW TOKENS
         let new_tokens = await tokenRenew(user, ip)
 
-        if(new_tokens.accessToken != prev_refresh.access_token){
+        if (new_tokens.accessToken !== prev_refresh.access_token) {
             // INVALIDATE ACCESS TOKEN
-            await tokenInvalidator(prev_refresh.access_token, moment(prev_refresh.access_expires_at).diff(moment(), 'seconds'))
+            const expiresInSeconds = differenceInSeconds(new Date(prev_refresh.access_expires_at), new Date());
+            await tokenInvalidator(prev_refresh.access_token, expiresInSeconds);
         }
 
-        // UPDATE THE DATABASE WITH NEW ACCESS TOKEN
+// UPDATE THE DATABASE WITH NEW ACCESS TOKEN
         await this.authTokenRepo.updateUsingRefresh({
             access_token: new_tokens.accessToken,
-            access_expires_at: moment().add(15, 'minutes').toISOString(),
-        }, token)
+            access_expires_at: add(new Date(), { minutes: 15 }).toISOString(),
+        }, token);
 
 
         return {accessToken: new_tokens.accessToken, refreshToken: token}
@@ -146,7 +148,7 @@ export class AuthService {
 
         // STEP 2 : IF USER EXISTS, CREATE CODE AND EXPIRATION TIME
         let code: string = `${Math.floor(100000 + Math.random() * 900000)}`;
-        let expiration_time: any = moment().add(5, 'minutes');
+        let expiration_time: any = add(new Date(), { minutes: 5 });
         expiration_time = expiration_time.toISOString()
         await this.userRepository.setRecoveryCode(code, expiration_time, `${user.id}`);
 
@@ -158,9 +160,9 @@ export class AuthService {
         if (!user) throw unauthorized()
 
         // CHECK EXPIRATION TIME
-        let received_time = moment(user.reset_code_expired_at)
-        const currentTime = moment();
-        const isTimeReached = currentTime.isSameOrAfter(received_time);
+        let received_time = new Date(user.reset_code_expired_at);
+        const currentTime = new Date();
+        const isTimeReached = isEqual(received_time, currentTime) || isAfter(currentTime, received_time);
 
         if (isTimeReached) throw badRequest("Your 5 minutes is over")
 
